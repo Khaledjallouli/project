@@ -1,0 +1,72 @@
+\section{Aufzählungen}
+\label{sec:Aufzaehlungen}
+%
+Aufzählungen verschiedener Art treten natürlich häufig in Schriftstücken auf und sollen daher auch speziell
+erwähnt werden. In diesem Zusammenhang bietet das Paket \Paket{paralist} erweiterte
+Möglichkeiten. Es folgen einige Beispiele.
+%
+
+Zunächst eine normale Punktliste:
+\begin{itemize}
+\item Hat erst einen Punkt (bzw.~Spiegelstrich)
+\item und dann noch einen zweiten
+\item sowie beliebig viele weitere
+\end{itemize}
+
+Oder lieber wirklich mit Strichen statt Punkten (einfach änderbar durch \Paket{paralist}):
+%
+% der (optionale) Parameter funktioniert wegen des paralist-Pakets
+\begin{itemize}[\quad---]
+\item Hat erst einen Punkt (bzw.~Spiegelstrich)
+\item und dann noch einen zweiten
+\item sowie beliebig viele weitere
+\end{itemize}
+
+Oder obige Listen mit \Code{compactitem} aus dem \Paket{paralist}-Paket:
+\begin{compactitem}
+\item Hat erst einen Punkt (bzw.~Spiegelstrich)
+\item und dann noch einen zweiten
+\item sowie beliebig viele weitere
+\end{compactitem}
+
+\begin{compactitem}[\quad---]
+\item Hat erst einen Punkt (bzw.~Spiegelstrich)
+\item und dann noch einen zweiten
+\item sowie beliebig viele weitere
+\end{compactitem}
+
+
+Unterlisten sind selbstverständlich auch möglich:
+\begin{itemize}
+\item Hat erst einen Punkt (bzw.~Spiegelstrich)
+	\begin{compactitem}
+	\item und einen Unterpunkt
+	\item und dann noch einen zweiten
+	\end{compactitem}
+\item und dann noch einen zweiten
+\item sowie beliebig viele weitere
+\end{itemize}
+
+Eine nummerierte Liste hingegen sieht so aus:
+\begin{enumerate}
+\item Es geht um dies und
+\item um das.
+\end{enumerate}
+
+Eine kompakte nummerierte Liste mit Kleinbuchstaben statt Zahlen erscheint folgendermaßen:
+\begin{compactenum}[\quad(a)]
+\item Es geht um dies und
+\item um das.
+\end{compactenum}
+
+Beschreibungen sind auch möglich (hier wieder in kompakter Form):
+\begin{compactdesc}
+\item[\quad Hund] ein Kläffer
+\item[\quad Katze] eine Schnurrerin
+\item[\quad Maus] fehlt noch für die Montagsmaler
+\end{compactdesc}
+%
+Nach diesen Eindrücken verschiedener Aufzählungen soll es im letzten Abschnitt des Kapitels noch um
+Software zur Erstellung der \LaTeX{}-Dokumente sowie für die Literaturverwaltung gehen.
+%
+\todo[size=\footnotesize, color=green!30, noline]{Überleitung\checkmark}

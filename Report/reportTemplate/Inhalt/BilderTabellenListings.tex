@@ -1,0 +1,167 @@
+\section{Bilder, Tabellen und Listings}
+\label{sec:BilderTabellenListings}
+%
+Für \LaTeX{} handelt es sich bei allen drei Arten von Objekten um sogenannte \Fachbegriff{Gleitobjekte}
+(engl.~\emph{floats}), die beim Setzen an Stellen verschoben werden, wo sie am besten passen (im Falle
+der Listings ist dies optional). 
+Speziell bei Tabellen helfen die Pakete \Paket{booktabs} und \Paket{longtable}.
+%
+\subsection{Abbildungen}
+\label{subsec:Abbildungen}
+%
+Bislang wurden in diesem Dokument zwei Abblidungen, nämlich \abbildung{ThreeCycleView} und 
+\abbildung{Interviewkategorien}, verwendet. Hierbei wurden jeweils \emph{Screenshots} eingebunden. Allerdings
+wurde dabei auch darauf geachtet, dass diese nicht einfach aus einem gefundenen PDF herauskopiert wurden, sondern
+die Bilder wurden selbst erstellt. Das führt meist zu wesentlich besser lesbaren Abbildungen.
+
+Besonders gut lesbar sind natürlich \Fachbegriff{Vektorgrafiken}. Diese lassen sich direkt in \LaTeX{} mit 
+Hilfe des Pakets \Paket{tikz} erstellen, welches extrem mächtig ist. Viele Beispiele findet man hierzu auf
+der Webseite \url{www.texample.net} und natürlich auch im zugehörigen (über tausendseitigen) Handbuch. 
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[scale=.45]
+  \begin{scope}[blend group = soft light]
+    \fill[red!30!white]   ( 90:1.2) circle (2);
+    \fill[green!30!white] (210:1.2) circle (2);
+    \fill[blue!30!white]  (330:1.2) circle (2);
+  \end{scope}
+  \node [font=\tiny] at ( 90:2)    {Typography};
+  \node [font=\tiny] at ( 210:2)   {Design};
+  \node [font=\tiny] at ( 330:2)   {Coding};
+  \node [font=\footnotesize] {\LaTeX};
+\end{tikzpicture}
+\end{center}
+\caption{Mit \Paket{tikz} erstellte Abbildung (eigene Darstellung)}
+\label{fig:tikz}
+\end{figure}
+%
+Dieses muss man natürlich nicht vollständig lesen, um mit \Paket{tikz} ansprechende Grafiken wie in 
+\abbildung{tikz} erstellen zu können (das Original findet man bei \url{http://www.texample.net/tikz/examples/venn/}
+und die obige \glqq Quellenangabe\grqq{} ist damit geflunkert \frownie).
+
+%
+Vielleicht sollte man noch weitere Abbildungen einfügen? Dann kann man sich auch eine Erinnerung setzen, damit das in der ToDo-Liste auftaucht.
+%
+\missingfigure{Da muss noch eine Abbildung hin}
+%
+Dies ist oft hilfreich, wie andere ToDos auch.
+%
+\subsection{Listings}
+\label{subsec:Listings}
+%
+In Abschnitt \ref{subsec:ZR-WH-Trennung} hatten wir bereits ein Listing gesehen, welches aus einer
+Datei eingelesen wurde. Das muss aber nicht sein, wie man am folgenden Beispiel sieht, welches der
+Masterarbeit von \textcite{Walcher2014} entnommen wurde und direkt in der \LaTeX{}-Datei reproduziert
+wird.
+
+%
+% Listing direkt hier eingefügt
+\lstset{basicstyle=\footnotesize, showstringspaces=false}
+\begin{lstlisting}[label=lst:bs4,caption=Einlesen einer Webseite mit \Paket{BeautifulSoup}]
+from bs4 import BeautifulSoup
+import urllib2
+seite = urllib2.urlopen("http://blog.metropolsolar.de/")
+seiteHtml = seite.read()
+seite.close()
+soup = BeautifulSoup(seiteHtml)
+\end{lstlisting}
+
+Besonders interessant ist die Möglichkeit, Listings mit \Paket{tikz}-Bildern zu kombinieren wie im Beispiel 
+von \listing{tikzfiglst}
+(leicht angepasst übernommen von \url{http://www.texample.net/tikz/examples/tikz-listings/}).
+%
+\newpage
+\phantom{xyz}\vspace{1cm}
+%
+\begin{lstlisting}[language = C++, numbers = none, escapechar = !,
+    basicstyle = \ttfamily\bfseries, xleftmargin=.2\linewidth, xrightmargin=.2\linewidth,
+    frame=tb, tabsize=1, framesep = 3pt, framerule =.4pt,
+    backgroundcolor = \color{white}, caption=Ein Listing kombiniert mit \Paket{tikz}-Bild, label=lst:tikzfiglst] 
+ int!
+   \tikz[remember picture] \node [] (a) {};
+ !puissance!
+   \tikz[remember picture] \node [] (b) {};
+ !(int x,!
+   \tikz[remember picture] \node [] (c){};
+ !int n) { 
+
+     int i, p = 1; !\tikz[remember picture] \node [] (d){};!           
+
+     for (i = 1; i <= n; i++) 
+       p = p * x; !\tikz[remember picture] \node [inner xsep = 40pt] (e){};! 
+
+     return p; !
+       \tikz[remember picture] \node [] (f){};!  
+ }
+\end{lstlisting}
+\begin{tikzpicture}[remember picture, overlay,
+    every edge/.append style = { ->, thick, >=stealth,
+                                  Gray!60, dashed, line width = 1pt },
+    every node/.append style = { align = center, minimum height = 10pt,
+                                 font = \small\bfseries, fill= green!20},
+                  text width = 2.9cm ]
+  \node [above left = .75cm and -.75 cm of a,text width = 2.2cm]
+                             (A) {return value type};
+  \node [right = 0.25cm of A, text width = 1.9cm]
+                             (B) {function name};
+  \node [right = 0.5cm of B] (C) {list of formal parameters};
+  \node [right = 4.cm of d]  (D) {local variables declaration};
+  \node [right = 2.cm of e]  (E) {instructions};
+  \node [right = 5.cm of f]  (F) {instruction \texttt{\bfseries return}};  
+  \draw (A.south) + (0, 0) coordinate(x1) edge (x1|-a.north);
+  \draw (B.south) + (0, 0) coordinate(x2) edge (x2|-b.north);
+  \draw (C.south) + (0, 0) coordinate(x3) edge (x3|-c.north);
+  \draw (D.west) edge (d.east) ;
+  \draw (E.west) edge (e.east) ;  
+  \draw (F.west) edge (f.east) ;
+\end{tikzpicture}%
+%
+Es ist natürlich nicht sinnvoll, ständig den Stil der Listings zu wechseln. Man sollte sich für einen entscheiden
+und diesen dann für die eigene Arbeit durchhalten. Lediglich bei der Verwendung mehrerer Programmiersprachen könnte
+man diese durch Verwendung verschiedener Hintergrundfarben eventuell unterscheidbar machen.
+%
+\subsection{Tabellen richtig setzen}
+\label{subsec:Tabellensatz}
+%
+Man vergleiche die Tabellen \ref{tab:richtlinie} und \ref{tab:richtlinie2} (entnommen
+aus \cite{Markus2016}).
+%
+\begin{table}[htpb]
+\centering
+\caption{Tabelle nach \cite{Goossens1995}}
+\label{tab:richtlinie}
+\begin{tabular}{|c|c|c|c|}
+\hline
+     Versuchsreihe A&Druck & Temperatur 1 & Temperatur 2\\
+\hline
+     1. Zeitpunkt& &&\\
+\hline
+     2. Zeitpunkt& &&\\
+\hline
+\end{tabular}
+%
+\bigskip
+%
+\caption{\autoref{tab:richtlinie} mit \Paket{booktabs}-Paket \cite{Els2016} gesetzt}
+\begin{tabular}{cccc}
+\midrule
+     Versuchsreihe A&Druck & Temperatur 1 & Temperatur 2\\
+\toprule
+     1. Zeitpunkt& &&\\
+     2. Zeitpunkt& &&\\
+\bottomrule
+\end{tabular}
+\label{tab:richtlinie2}
+\end{table}
+%
+
+Der Unterschied ist klar zu erkennen.  Das Setzen von Tabellen wird oft falsch gemacht, indem die
+Abstände der Linien nicht stimmen und vor allem, indem überall herum Rahmen gezogen werden. 
+Die mit \Paket{booktabs} gestaltete Tabelle wird auch eine \emph{formale Tabelle} genannt.
+Zumeist sollte man sich an diese Art der Gestaltung halten.
+
+Nach diesem Abschnitt über Gleitobjekte geht es im nächsten um Aufzählungen.
+%
+\todo[color=green!30,size=\tiny]{Themenwechsel $\rightarrow$ Überleitung!}
+%

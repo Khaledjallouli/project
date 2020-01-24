@@ -1,0 +1,208 @@
+\chapter{Zitate und Referenzen}
+\label{cha:ZitateReferenzen}
+% 
+Dieses Kapitel beschäftigt sich mit Verweisen -- zum einen mit internen, aber zum anderen und im Besonderen
+mit dem Verweis auf verwendete Quellen durch Zitieren. Eine \gls{faq} in diesem Zusammenhang ist die nach 
+dem \Fachbegriff{Zitationsstil}. 
+%
+\todo{Welche Zitationsstile sind möglich?} 
+%
+
+Daneben geht es auch um besondere Formen interner Referenzen, etwa für besondere Verzeichnisse. Ferner
+gibt es einige weitere Hinweise, etwa zum \gls{doi} oder auf Software zur Verwaltung der Quellen.
+
+Außerdem werden in der
+Quelldatei \Datei{Inhalt/ZitateReferenzen.tex} auch einige der in der Datei \Datei{Formales/Befehle.tex} 
+definierten eigenen Befehle verwendet, um auch dies zu exemplifizieren.
+%
+\section{Zitate}
+\label{sec:ZR-Zitate}
+%
+Zunächst einmal sind beim Zitieren bestimmte \emph{Prinzipien} zu beachten. Das sicher wichtigste
+dieser Prinzipien lautet:
+%
+\begin{quote}
+\textsl{Hat man etwas aus Quellen
+übernommen (Text, Ideen, Abbildungen, Code, etc.), so muss man die Quelle auch angeben!}
+\end{quote}
+%
+Anderenfalls handelt es sich um ein \gls{plagiat}, was insbesondere bei Vorsatz zur Bewertung der
+Abschlussarbeit mit \textbf{ungenügend} führt!
+
+Hinsichtlich Zitaten stellt sich außerdem immer die Frage nach dem \emph{Stil}. Oftmals wird mit Fußnoten
+gearbeitet, was aber nicht den Vorgaben entspricht. Eigentlich handelt es sich lediglich um eine einzige:
+%
+\begin{quote}
+\textsl{Es ist der \Fachbegriff{Harvard-Stil}, auch \Fachbegriff{Autor-Jahr-Zitierweise} genannt, mit
+Kurzbelegen zu verwenden! \parencite[s.][]{Wikipedia2010}}
+\end{quote}
+%
+Wie dies umzusetzen ist, kann man bereits in den Kapiteln \ref{cha:Einleitung} und \ref{cha:Forschungsmethoden}
+in Verbindung mit dem Literaturverzeichnis sehen. Dort erkennt man eine weitere Anforderung, nämlich:
+%
+\begin{quote}
+\textsl{Reine Onlinequellen sind von wissenschaftlichen Quellen wie Büchern und Artikeln in 
+(wissenschaftlichen) Publikationen zu trennen!}
+\end{quote}
+%
+
+Weitere nützliche Hinweise zum korrekten Zitieren findet man auf der Website der Uni Ulm 
+bei \textcite{Hoelting2018}. Zusätzlich ist auch zu beachten, dass man keine \Fachbegriff{Blindquellen}
+ins Literaturverzeichnis aufnimmt, \dh keine Quellen, die nicht auch wirklich in der Arbeit zitiert
+werden. Um dies sicher zu stellen ist eine weitere Anforderung:
+%
+\begin{quote}
+\textsl{Im Literaturverzeichnis sind Rückverweise zu verwenden!}
+\end{quote}
+% 
+Dies bedeutet, dass im Literaturverzeichnis bei den Quellen anzugeben ist, auf welcher Seite der Arbeit
+sie verwendet wurden. Mehr zum Thema Rückverweise findet sich in Abschnitt \ref{subsec:ZR-BR-Rueckverweise}.
+%
+\todo{Das obige ToDo kann weg} 
+%
+\section{Besondere Referenzen}
+\label{sec:ZR-BesondereReferenzen}
+%
+Es werden bei Verwendung dieser \LaTeX{}-Vorlage auch Referenzen für das Abkürzungs- und Symbolverzeichnis
+sowie für das Glossar erzeugt (Informationen hierzu findet man in kompakter Form bei \textcite{Partosch2015}).
+Ferner wird aus dem Literaturverzeichnis heraus auf die Seiten zurückverwiesen, auf denen ein Zitat vorkommt.
+Diese Arten von besonderen Referenzen sollen hier kurz diskutiert werden.
+
+Dabei werden Abkürzungen, Symbole und Glossar mit Hilfe des Pakets \Paket{glossaries} und den zugehörigen
+Befehlen wie etwa \Code{\bs{}gls\{\}} erzeugt, während für
+die Rückverweise eine Kombination von Optionen in den Paketen \Paket{biblatex} und \Paket{hyperref} 
+verantwortlich sind.
+%
+\subsection{Abkürzungen}
+\label{subsec:ZR-BR-Abkuerzungen}
+%
+Auch für Abkürzungen ist eine wichtige Regel zu beachten:
+%
+\begin{quote}
+\textsl{Bei der ersten Verwendung einer Abkürzung / eines Akronyms im Text ist
+der Begriff zusätzlich auszuschreiben bzw.~zu erklären!}
+\end{quote}
+%
+Abkürzungen werden bei dieser Vorlage, wie Symbole und Glossareinträge auch, in einer speziellen Datei,
+nämlich \Datei{Inhalt/Glossar.tex}, gesammelt.
+Ein Beispiel ist das Akronym \gls{degeval}. Man beachte, dass bei der ersten Verwendung weiter oben
+automatisch der ausgeschriebene Begriff verwendet wurde, während später, wie \zB hier, lediglich
+das Akronym kommt,
+so wie vorgeschrieben. In jedem Fall wird im PDF auf das Abkürzungsverzeichnis referenziert. Ein
+Abkürzungsverzeichnis wird erwartet!
+%
+\subsection{Symbole}
+\label{subsec:ZR-BR-Symbole}
+%
+Die folgenden Symbole werden exemplarisch definiert und dann ins Symbolverzeichnis übernommen:
+zunächst das \gls{kappa} und dann das \gls{datenbasis}. 
+%
+\subsection{Glossar}
+\label{subsec:ZR-BR-Glossar}
+%
+Das Glossar ist ein besonderes Verzeichnis, in dem man wichtige Begriffe bei Bedarf näher erläutern kann. Wie
+das Symbolverzeichnis ist es optional, während ein Abkürzungsverzeichnis eigentlich immer nötig ist. 
+%
+\subsection{Rückverweise}
+\label{subsec:ZR-BR-Rueckverweise}
+%
+Eine interessante Option für das Literaturverzeichnis sind Rückverweise auf die Seite, auf der die Verweise
+erfolgt sind. Dies wird, wie in Abschnitt \ref{sec:ZR-Zitate} erwähnt, auch explizit verlangt, um die
+Angabe von Blindquellen auszuschließen.
+Für die korrekte Umsetzung mit \LaTeX{} sind sowohl im Paket \Paket{biblatex} die Option \Code{backref} und im
+Paket \Paket{hyperref} verschiedene Optionen zu setzen (siehe Datei \Datei{Formales/Packages.tex}).
+Darüberhinaus muss man noch in der Hauptdatei \Datei{Abschlussarbeit.tex} mit dem
+\Code{\bs{}pagenumbering}-Befehl geschickt arbeiten (siehe dort). Tut man dies nicht, so werden zwar die
+Seitenzahlen korrekt im Literaturverzeichnis angegeben, aber die Verweise im PDF sind inkorrekt.
+%
+
+Abschließend soll noch erwähnt werden, dass offensichtlich auch interne Verweise auf Abschnitte oder
+bestimmte Positionen möglich sind. Dafür ist die Vergabe einer Markierung mittels \Code{\bs{}label\{name\}}
+notwendig und die spätere Referenzierung mittels \Code{\bs{}ref\{name\}} oder \Code{\bs{}pageref\{name\}} 
+(bzw.~\Code{\bs{}autoref\{name\}} in Verbindung mit dem \Paket{hyperref}-Paket). 
+So kann man etwa den Unterschied beim Zitieren zwischen den Befehlen \Code{\bs{}textcite} und 
+\Code{\bs{}parencite} im \autoref{citedemo} sehen.
+%
+\section{Weitere Hinweise}
+\label{sec:ZR-WeitereHinweise}
+%
+%
+\subsection{Trennung nach Quellenart}
+\label{subsec:ZR-WH-Trennung}
+%
+Um die Anforderung nach Trennung von Online-Quellen und Büchern / (wissenschaftlichen) Publikationen umzusetzen
+wird in dieser Vorlage einfach das Schlüsselwort \Code{internet} für Internetquellen verwendet und dieses dann
+beim Erzeugen des Literaturverzeichnisses als Diskriminator nutzt. In der Hauptdatei
+\Datei{Abschlussarbeit.tex} sieht das dann in den Zeilen 138 -- 144 wie in \listing{QuellenTrennung} aus:\\
+%
+\todo[size=\footnotesize]{Zei\-len\-num\-mern prüfen!!}
+%
+% Als Hintergrund eine Farbe mit Namen (dvipsnames), und davon nur 30%
+%
+\lstinputlisting[firstline=138, lastline=144, language={[LaTeX]TeX}, %
+ caption={Trennung der Quellenarten}, backgroundcolor=\color{SkyBlue!30}, %
+ emph={notkeyword,keyword}, emphstyle=\color{YellowOrange}, %
+ label=lst:QuellenTrennung,
+]{Abschlussarbeit.tex}
+%
+\paragraph{Umgang mit URLs} 
+\label{para:urls}%
+Diese sollten bei Büchern und Publikationen \emph{nicht} mit angegeben werden, während
+sie bei Online-Quellen natürlich essenziell sind. Daher kann man hier nicht allgemein die Option setzen, um URLs
+komplett aus dem Literaturverzeichnis zu verbannen. Allerdings sollte die URL-Information auch nicht ganz unter
+den Tisch fallen, zumindest in der Literaturdatei sollte sie vorhanden sein. Daher ist diese in Quellen, die keine
+Online-Quellen sind, im \emph{Kommentarfeld} zu hinterlegen.
+
+Gleiches gilt für den Fall, dass eine URL einer Internetquelle im Literaturverzeichnis als deutlich zu lang
+empfunden wird oder gar von \LaTeX{} nicht richtig umgebrochen werden kann. In diesem Fall benötigt man allerdings
+einen Ersatz in Form eines \Fachbegriff{Shortlinks}, den man beispielsweise mit \textsf{Bitly} 
+(\url{https://bitly.com/}) oder \textsf{Google} (\url{https://goo.gl/}) erzeugen kann.
+%
+\subsection{Verwendung von DOI}
+\label{subsec:ZR-WH-DOI}
+%
+Neuere Bücher und (wissenschaftliche) Publikationen verwenden \glslink{doi}{DOI} als eindeutigen Identifikator
+der Quelle. Daher sollte dieser, falls vorhanden, auch in der \emph{Literatur\underline{datei}}, aber
+\textbf{nicht} im \emph{Literaturverzeichnis} auftauchen.
+
+Es ist jedoch \emph{Vorsicht geboten}, denn diese DOI stimmen nicht immer (gerade bei älteren Publikationen) und sollten somit auf jeden Fall überprüft werden, denn fehlerhafte DOI in der Literaturdatei führen zur
+Abwertung.
+%
+\subsection{Software}
+\label{subsec:ZR-WH-Software}
+%
+Neben einer \gls{ide} für das Erstellen der \LaTeX{}-Dateien (wie etwa \Software{TeXmaker} (siehe Abschnitt
+\ref{subsec:texmaker}) ist auch eine Software für die Verwaltung Ihrer Quellen zu verwenden. Hierbei 
+ist eine klare Empfehlung \Software{JabRef}, ein plattformunabhängiges Java-Programm mit umfangreicher
+Funktionalität (siehe Abschnitt \ref{subsec:jabref}).
+
+Man beachte, dass \Software{JabRef} die Möglichkeit bietet, direkt aus dem Programm heraus eine
+beträchtliche Anzahl an Internetportalen für wissenschaftliche Publikationen zu recherchieren
+und anschließend die gefundenen Quellen
+direkt zu übernehmen (sowie diese an die \LaTeX{}-\gls{ide} zu \emph{pushen}).
+
+Eine kompakte Einführung mit Beispielen für Internetrecherche und Betrachtung verschiedener 
+Literaturverwaltungssoftware gibt \textcite{Partosch2011}. Hier wird allerdings noch Bib\TeX{} verwendet.
+Den Umgang mit \Paket{biblatex} mit \Paket{biber}-Backend behandelt \textcite{Pospiech2011} oder
+(neuer) \textcite{Frank2017}. Dort findet man auch noch viele weitere Kursteile mit Übungen.
+%
+
+\underline{\emph{Bemerkung:}} Die beiden oben genannten Tutorials wurden ebenfalls mit \LaTeX{}
+erstellt, nämlich mit dem Paket \Paket{latex-beamer}.
+%
+
+In jedem Fall gilt:
+%
+\begin{quote}
+\textsl{Es ist ein Quellenverzeichnis im Bib(La)\TeX{}-Format in elektronischer Form mit abzugeben!}
+\end{quote}
+%
+
+In den vorangegangenen beiden Kapiteln wurden allgemeingültige Informationen für Abschlussarbeiten
+hinsichtlich der einzusetzenden
+Forschungsmethoden sowie des Zitierens und anderer Arten von Verweisen gegeben, wobei in diesem Zusammenhang
+natürlich bereits zahlreiche \LaTeX{}-Elemente exemplarisch verwendet wurden. Im nächsten Kapitel wird nun auf
+spezielle Elemente nochmals näher eingegangen.
+%
+\todo[color=green!30]{übergeleitet!}
+%

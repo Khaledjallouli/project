@@ -1,0 +1,232 @@
+% Anpassung des Seitenlayouts --------------------------------------------------
+%   siehe Seitenstil.tex
+% ------------------------------------------------------------------------------
+%\usepackage[
+%    automark, % Kapitelangaben in Kopfzeile automatisch erstellen
+%    headsepline, % Trennlinie unter Kopfzeile
+%    ilines % Trennlinie linksbündig ausrichten
+%]{scrpage2}
+%
+% Nutzung des aktuelleren Pakets
+\usepackage[
+    automark, % Kapitelangaben in Kopfzeile automatisch erstellen
+    headsepline, % Trennlinie unter Kopfzeile
+    ilines % Trennlinie linksbündig ausrichten
+]{scrlayer-scrpage}
+% zur Vermeidung von float-warnings
+\usepackage{scrhack}
+% für bessere Umbruchpunkte
+% siehe: https://texfragen.de/overfull_hbox
+\usepackage{microtype}
+
+% Moderneres Backend für das Literaturverzeichnis
+% Quelle: https://golatex.de/vorlage-fuer-abschlussarbeiten-htwk-leipzig-t18498.html
+%
+\usepackage[
+    backend=biber,
+%    style=numeric-comp,  % entspricht dem Stil der AMS
+%    style=authoryear, % entspricht dem Harvard-Stil
+    style=ieee, % entspricht dem IEEE-Stil
+%    natbib,
+    sorting=nyt,
+    defernumbers=true,
+    backref=true,
+    giveninits=true, % Initialen statt vollständige Vornamen
+    uniquename=init,
+    doi=false,
+    isbn=false
+]{biblatex}
+% Familienname in Käpitälchen im Literaturverzeichnis
+\renewcommand*{\mkbibnamefamily}[1]{\textsc{#1}}
+%\renewcommand*{\mkbibnamefirst}[1]{#1\addcomma}
+%\renewcommand*{\mkbibnameprefix}[1]{\textsc{#1}}
+\addbibresource{Bibtex/sources.bib}
+\setlength{\bibitemsep}{0.5\baselineskip}
+% siehe: https://tex.stackexchange.com/questions/39285/whats-the-advantage-of-using-csquotes-over-using-an-editors-auto-replacement-f
+\usepackage[babel, german=quotes]{csquotes}
+\renewcommand{\mkcitation}[1]{#1}
+
+% Schrift ----------------------------------------------------------------------
+\usepackage{lmodern} % bessere Fonts
+\usepackage{relsize} % Schriftgröße relativ festlegen
+
+% Grafiken ---------------------------------------------------------------------
+% Einbinden von JPG-Grafiken ermöglichen
+\usepackage[dvips,final]{graphicx}
+% hier liegen die Bilder des Dokuments
+\graphicspath{{Bilder/}}
+
+% Befehle aus AMSTeX für mathematische Symbole z.B. \boldsymbol \mathbb --------
+\usepackage{amsmath,amsfonts}
+
+% für Index-Ausgabe mit \printindex --------------------------------------------
+\usepackage{makeidx}
+
+% Einfache Definition der Zeilenabstände und Seitenränder etc. -----------------
+\usepackage{setspace}
+\usepackage{geometry}
+
+% zum Umfließen von Bildern ----------------------------------------------------
+\usepackage{floatflt}
+% Zum Erzwingen der Platzierung von Tabellen und Abbildungen mitels [H] --------
+\usepackage{float}
+
+\usepackage[dvipsnames]{xcolor}        %  erm"oglicht Benutzung von Farbe durch Namensgebung 
+
+% fortlaufendes Durchnummerieren der Fußnoten ----------------------------------
+\usepackage{chngcntr}
+
+% für lange Tabellen -----------------------------------------------------------
+\usepackage{booktabs}
+% für lange Tabellen -----------------------------------------------------------
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{lscape}
+
+% Spaltendefinition rechtsbündig mit definierter Breite ------------------------
+\newcolumntype{w}[1]{>{\raggedleft\hspace{0pt}}p{#1}}
+
+% Formatierung von Listen ändern -----------------------------------------------
+\usepackage{paralist}
+
+% bei der Definition eigener Befehle benötigt
+\usepackage{ifthen}
+
+% definiert u.a. die Befehle \todo, \missingfigure und \listoftodos
+% siehe: https://mirror.hmc.edu/ctan/macros/latex/contrib/todonotes/todonotes.pdf
+\usepackage{todonotes}
+
+% sorgt dafür, dass Leerzeichen hinter parameterlosen Makros nicht als Makroendezeichen interpretiert werden
+\usepackage{xspace}
+
+% stellt zusätzliche Symbole bereit (z.B. \Square == Checkbox)
+% siehe: http://texdoc.net/texmf-dist/doc/latex/wasysym/wasysym.pdf
+\usepackage{wasysym}
+
+% flexible Verweise
+% siehe: https://ctan.org/pkg/varioref
+\usepackage{varioref}
+
+% zum Einbinden von Programmcode -----------------------------------------------
+\usepackage{listings}
+%
+\definecolor{hellgrau}{rgb}{0.95,0.95,0.95}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{hellgruen}{rgb}{.7,1,.7}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{orange1}{RGB}{255,153,102}
+\definecolor{hellgelb}{RGB}{255,255,204}
+\definecolor{hellgrau1}{RGB}{204,204,204}
+\definecolor{LightGray}{gray}{0.9} % new color for background of listing
+%
+\lstset{ %
+  language=Python,                % the language of the code
+  %basicstyle=\small, % print whole listing small
+  %basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,                   % where to put the line-numbers
+  numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+  stepnumber=1,                   % the step between two line-numbers. If it's 1, each line 
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{LightGray},  % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+  tabsize=4,                      % sets default tabsize to 4 spaces (in accordance with Python)
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+  title=\lstname,                 % show the filename of files included with \lstinputlisting;
+                                  % also try caption instead of title
+  keywordstyle=\color{blue},      % keyword style
+  commentstyle=\color{dkgreen},   % comment style
+  stringstyle=\color{mauve},      % string literal style
+  escapeinside={\%*}{*)},         % if you want to add LaTeX within your code
+  morekeywords={*,...}            % if you want to add more keywords to the set
+}
+
+% Umlaute in Listings (Kommentaren) verarbeiten
+\lstset{
+  literate={ö}{{\"o}}1
+           {ä}{{\"a}}1
+           {ü}{{\"u}}1
+           {Ö}{{\"O}}1
+           {Ä}{{\"A}}1
+           {Ü}{{\"U}}1
+           {ß}{{\"s}}1
+}
+
+% URL verlinken, lange URLs umbrechen etc. -------------------------------------
+\usepackage{url}
+
+% wichtig für korrekte Zitierweise ---------------------------------------------
+% ersetzt durch biblatex + biber
+%\usepackage[square]{natbib}
+
+% PDF-Optionen -----------------------------------------------------------------
+%
+\usepackage[
+    bookmarks,
+    bookmarksopen=true,
+    colorlinks=true,
+%    backref, -- nicht mit biblatex vereinbar; dortige Option verwenden!
+    plainpages=false, % zur korrekten Erstellung der Bookmarks
+    pdfpagelabels, % zur korrekten Erstellung der Bookmarks
+    hypertexnames=true, % zur korrekten Erstellung der Bookmarks
+    linktocpage % Seitenzahlen anstatt Text im Inhaltsverzeichnis verlinken
+]{hyperref}
+% 
+% Nutzung des Schalters für Druck/PDF (Datei Abschlussarbeit.tex Zeilen 46 -- 48)
+%
+\ifprint 
+% alles schwarz
+\hypersetup{
+    linkcolor=black,
+    anchorcolor=black,% Ankertext
+    citecolor=black, % Verweise auf Literaturverzeichniseinträge im Text
+    filecolor=black, % Verknüpfungen, die lokale Dateien öffnen
+    menucolor=black, % Acrobat-Menüpunkte
+    urlcolor=black % Verweise auf Webseiten
+    }
+\else
+% farbig
+\hypersetup{
+    linkcolor=CadetBlue,
+    anchorcolor=black,% Ankertext
+    citecolor=blue, % Verweise auf Literaturverzeichniseinträge im Text
+    filecolor=magenta, % Verknüpfungen, die lokale Dateien öffnen
+    menucolor=red, % Acrobat-Menüpunkte
+    urlcolor=ForestGreen % Verweise auf Webseiten
+	}
+\fi
+%
+% Meta-Informationen
+%
+\hypersetup{
+    pdftitle={\titel \untertitel},
+    pdfauthor={\verfasser},
+    pdfcreator={\verfasser},
+    pdfsubject={\titel \untertitel},
+    pdfkeywords={\titel \untertitel},
+}
+
+% ---- Paket für Abkürzungen, Symbole und Erklärungen ---
+% Einführung siehe: https://www.dante.de/events/dante2015/Programm/vortraege/vortrage-partosch.pdf
+\usepackage[%
+toc, % ins Inhaltsverzeichnis übernehmen
+nonumberlist, % keine Seitenzahlen
+symbols, % ermöglichst Symbole+Symbolverzeichnis
+acronym % ermoeglicht Abkuerzungen+Abkuerzungsverz.
+]{glossaries} % ermoeglicht Glossar, ...
+\renewcommand*{\glspostdescription}{}
+%
+% ---- Paket für Bilder
+%
+\usepackage{tikz}
+\usetikzlibrary{positioning} % für Beispiel mit Listing
+

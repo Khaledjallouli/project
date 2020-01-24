@@ -1,0 +1,174 @@
+% ------------------------------------------------------------------------------
+% Formatvorlage für Abschlussarbeiten an der Hochschule Ulm, Prof. Dr. Rr. von Schwerin
+% ------------------------------------------------------------------------------
+%   
+%   Original erstellt von Stefan Macke, 24.04.2009
+%   http://blog.stefan-macke.de
+% Dokumentenkopf ---------------------------------------------------------------
+%   Diese Vorlage basiert auf "scrreprt" aus dem koma-script.
+% ------------------------------------------------------------------------------
+\documentclass[
+    12pt, % Schriftgröße
+    DIV10,
+%    ngerman, % für Umlaute, Silbentrennung etc.
+    american,
+    a4paper, % Papierformat
+    oneside, % einseitiges Dokument
+    titlepage, % es wird eine Titelseite verwendet
+    parskip=half, % Abstand zwischen Absätzen (halbe Zeile)
+    headings=normal, % Größe der Überschriften verkleinern
+    listof=totoc, % Verzeichnisse im Inhaltsverzeichnis aufführen
+    bibliography=totoc, % Literaturverzeichnis im Inhaltsverzeichnis aufführen
+    index=totoc, % Index im Inhaltsverzeichnis aufführen
+    captions=tableheading, % Beschriftung von Tabellen unterhalb ausgeben
+    final % Status des Dokuments (final/draft)
+]{scrreprt}
+%
+% Verweis auf Abbildungsverzeichnis im Text ermöglichen
+%
+\BeforeStartingTOC[lof]{\label{listoffigures}}
+
+% Kodierung als erstes, daher in der Hauptdatei, nicht in Packages (s.u.)
+%
+% Anpassung an Landessprache ---------------------------------------------------
+%\usepackage[ngerman]{babel}
+\usepackage[USenglish]{babel}
+
+% Umlaute ----------------------------------------------------------------------
+%   Umlaute/Sonderzeichen wie äüöß direkt im Quelltext verwenden (CodePage).
+%   Erlaubt automatische Trennung von Worten mit Umlauten.
+% ------------------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp} % Euro-Zeichen etc.
+%
+% Schalter für print oder PDF definieren
+%
+% https://golatex.de/eigene-schalter-fuer-verschiedene-varianten-t7130.html
+\newif\ifprint
+%\printtrue  % für die Druckversion
+\printfalse  % für die PDF-Version
+
+% Meta-Informationen -----------------------------------------------------------
+%   Informationen über das Dokument, wie z.B. Titel, Autor, Matrikelnr. etc
+%   werden in der Datei Meta.tex definiert und können danach global
+%   verwendet werden.
+% ------------------------------------------------------------------------------
+\input{Formales/Meta}
+
+% benötigte Packages -----------------------------------------------------------
+%   LaTeX-Packages, die benötigt werden, sind in die Datei Packages.tex
+%   "ausgelagert", um diese Vorlage möglichst übersichtlich zu halten.
+% ------------------------------------------------------------------------------
+\input{Formales/Packages}
+
+% Kopf- und Fußzeilen, Seitenränder etc. ---------------------------------------
+\input{Formales/Seitenstil}
+
+% eigene Definitionen für Silbentrennung
+\include{Formales/Silbentrennung}
+
+% eigene LaTeX-Befehle
+\include{Formales/Befehle}
+
+% Abkürzungsverzeichnis --------------------------------------------------------
+\makeglossaries
+\loadglsentries{Inhalt/Glossar.tex}
+
+% Das eigentliche Dokument -----------------------------------------------------
+%   Der eigentliche Inhalt des Dokuments beginnt hier. Die einzelnen Seiten
+%   und Kapitel werden in eigene Dateien ausgelagert und hier nur inkludiert.
+% ------------------------------------------------------------------------------
+\begin{document}
+%\selectlanguage{ngerman}
+\selectlanguage{american}
+% auch subsubsection nummerieren
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% Seitennummerierung -----------------------------------------------------------
+%   Die ersten beiden Seiten werden nicht nummeriert -> wir nehmen einen sonst
+%   nicht verwendeten Stil, um hyperref sonst nicht verwendete "Seitennamen"
+%   vorzugaukeln (Option: hypertexnames=true !)
+%
+%  siehe https://tex.stackexchange.com/questions/58941/hyperref-pagebackref-page-number-and-link-in-references-wrong/58962#58962
+% ------------------------------------------------------------------------------
+\pagenumbering{Alph}
+% Deckblatt und Abstract ohne Seitenzahl
+\ofoot{}
+\include{Formales/Cover}
+\cleardoublepage
+%\include{Formales/Eigenstaendigkeit} % Selbständigkeitserklärung
+%\cleardoublepage
+%\include{Inhalt/Abstract}
+\cleardoublepage
+\ofoot{\pagemark}
+
+% Seitennummerierung -----------------------------------------------------------
+%   Vor dem Hauptteil werden die Seiten in großen römischen Ziffern 
+%   nummeriert.
+% ------------------------------------------------------------------------------
+\pagenumbering{Roman}
+
+\tableofcontents % Inhaltsverzeichnis
+
+\printglossary[type=acronym, title={Abkürzungsverzeichnis}] % Abkuerzungen ausgeben
+\printglossary[title={Glossar}] % Glossar ausgeben
+\printglossary[type=symbols, title={Symbolverzeichnis}] % Symbole ausgeben
+\listoffigures % Abbildungsverzeichnis
+\listoftables % Tabellenverzeichnis
+\renewcommand{\lstlistlistingname}{Listings}
+\lstlistoflistings % Listings-Verzeichnis
+
+% arabische Seitenzahlen im Hauptteil ------------------------------------------
+\cleardoublepage
+\pagenumbering{arabic}
+
+% die Inhaltskapitel -----------------------------------------------------------
+\include{Chapter/Preprocessing}
+%\include{Inhalt/Forschungsmethoden}
+%\include{Inhalt/ZitateReferenzen}
+%\include{Inhalt/Umgang}
+%\include{Inhalt/Fazit}
+
+% Literaturverzeichnis ---------------------------------------------------------
+%   Das Literaturverzeichnis wird aus der BibTeX-Datenbank "Bibtex/sources.bib"
+%   erstellt.
+% ------------------------------------------------------------------------------
+%
+% \nocite{*} % -- genau dies führt zu Blindquellen und darf nicht verwendet werden!
+\printbibheading[heading=bibnumbered]
+%
+% einfache Möglichkeit der Trennung von Quellenarten via keyword
+%
+\printbibliography[notkeyword=internet, heading=subbibliography, %
+   title={Books and Journals}]
+\printbibliography[keyword=internet, heading=subbibliography, %
+   title={Online Sources}]
+
+% Anhang -----------------------------------------------------------------------
+%   Die Inhalte des Anhangs werden analog zu den Kapiteln inkludiert.
+%   Die Seitennummerierung erfolgt jetzt mit kleinen römischen Ziffern
+% ------------------------------------------------------------------------------
+\begin{appendix}
+    \cleardoublepage
+    \pagenumbering{roman}
+    \chapter{Appendix}
+    \label{ch:Appendix}
+    \thispagestyle{empty}
+%    \include{Inhalt/Anforderungen}
+%    \include{Inhalt/Abgabe}
+%    \include{Inhalt/Literaturreview}
+\end{appendix}
+
+% Index ------------------------------------------------------------------------
+%   Zum Erstellen eines Index, die folgende Zeile auskommentieren.
+% ------------------------------------------------------------------------------
+%\printindex
+
+% ToDos ------------------------------------------------------------------------
+%   Am Ende, für die fertige Arbeit, einkommentieren
+% ------------------------------------------------------------------------------
+%\listoftodos
+
+\end{document}

@@ -1,0 +1,95 @@
+\chapter{Einleitung}
+\label{cha:Einleitung}
+%
+Diese Vorlage basiert auf einer von \textsc{Stefan Macke} auf \gls{github} veröffentlichten Vorlage
+\parencite{Macke2009}. Dabei wurde die Struktur weitestgehend übernommen und sinnvoll ergänzt. Die verwendeten
+Pakete wurden teilweise aktualisiert. Die wichtigsten dieser Änderungen sind:
+%
+\begin{compactitem}[\quad$\star$]
+\item Ersetzen des veralteten Pakets \texttt{scrpage2}\footnote{%
+Die Quellen zu \LaTeX{}-Paketen werden in den seltensten Fällen angegeben, da in den Distributionen normalerweise auch die Dokumentation enthalten ist bzw.~die Dokumente leicht durch eine Internetrecherche auffindbar sind.}
+%
+  durch das neuere \texttt{scrlayer-scrpage}
+\item Verwendung von \texttt{biblatex} mit \texttt{biber} als Backend anstelle von \texttt{bibtex}
+\item Erstellung von \emph{Glossar}, \emph{Abkürzungs-} und \emph{Symbolverzeichnis} mit Hilfe des
+  modernen \texttt{glossaries}-Pakets statt \texttt{nomencl}
+\end{compactitem}
+%
+Die Details sind den Kommentaren in den entsprechenden Dateien zu entnehmen.
+
+Darüberhinaus wurden die Inhalte der einzelnen Kapitel dem Zweck des Dokuments gemäß angepasst, so dass
+vom ursprünglichen Text, der komplett beispielorientiert war, so gut wie gar nichts mehr übrig geblieben ist.
+
+\section{Motivation}
+\label{sec:Einl-Motivation}
+%
+Dieses Dokument dient als Vorlage für Abschlussarbeiten, die mit \LaTeX{} angefertigt werden. Dabei werden
+einige Aspekte exemplarisch dargestellt. Ferner wird in Kapitel \ref{cha:Forschungsmethoden} auf einzusetzende
+Forschungsmethoden eingegangen, die unabhängig vom verwendeten Textverarbeitungs- und Satzprogramm sind. Auch
+die allgemeinen Hinweise zum Zitieren in Kapitel \ref{cha:ZitateReferenzen} sind unabhängig vom
+Textverarbeitungsprogramm umzusetzen.
+
+Hinsichtlich \LaTeX{} beginnen wir hier mit den allerersten Aspekten. Man sieht etwa sofort den Unterschied
+zwischen z.B. und \zB wenn man auf den Leerraum achtet (dabei wird für die zweite Variante ein eigener Befehl
+definiert).
+%
+\todo{Hier fehlt noch was.}
+%
+Auch interessant ist sicherlich die hier gezeigte Verwendung von \emph{ToDos}, gerade während des Schreibens der Arbeit. Diese sind ganz am Schluss des Dokuments noch einmal zusammengefasst aufgelistet.
+
+
+\section{Ziel der Arbeit}
+\label{sec:Einl-Ziel}
+%
+Die Ziele des Dokuments (welches selbst natürlich keine Abschlussarbeit ist \smiley) sind dreierlei:
+%
+\begin{enumerate}
+\item Zunächst soll veranschaulicht werden, welch eindrucksvolles Schriftbild die Dokumentenerstellung mit
+  \LaTeX{} hervorbringt und wie gut Aufgaben wie die Erstellung von Verzeichnissen (einschließlich Symbol-
+  und Abkürzungsverzeichnissen) automatisiert werden können.
+\item Darüber hinaus ist das Dokument so strukturiert, wie es häufig auch für eine Arbeit Sinn ergibt.
+  Insofern kann es auch diesbezüglich als Orientierung dienen.
+\item Ferner soll das Dokument auch exemplarisch die Umsetzung einiger Anforderungen, etwa zum Zitieren,
+  aufzeigen sowie geeignete Forschungsmethoden nennen, die bei der Erstellung einer Abschlussarbeit einzusetzen
+  sind.
+\end{enumerate}
+%
+Allerdings werden für die eigene Abschlussarbeit immer auch spezifische Anpassungen etwa mit eigenen
+\LaTeX{}-Befehlen oder der Verwendung
+spezieller \LaTeX{}-Pakete nötig sein, ebenso wie strukturelle Anpassungen gemäß der eigenen Aufgabenstellung.
+Allgemein wird \textbf{erwartet}, dass die jeweiligen Autoren die üblichen Regeln für wissenschaftliches
+Arbeiten beachten und insbesondere die \emph{Struktur} der Arbeit der einer wissenschaftlichen Arbeit
+entspricht!
+
+\section{Aufbau der Arbeit}
+\label{sec:Einl-Aufbau}
+%
+Das vorliegende Kapitel \ref{cha:Einleitung} bildet die \emph{Einleitung}, in der in das Thema eingeführt
+wird und die Ziele abgesteckt werden.
+Der \emph{Hauptteil} gliedert sich in drei Kapitel. Zunächst
+werden in Kapitel \ref{cha:Forschungsmethoden} Forschungsmethoden vorgestellt, die insbesondere bei
+Abschlussarbeiten an \glspl{haw} typischer Weise anwendbar sind. Kapitel \ref{cha:ZitateReferenzen} geht
+dann auf das Zitieren ein. Diese beiden Kapitel sind unabhängig vom verwendeten Textverarbeitungsprogramm
+relevant. Dahingegen geht  Kapitel \ref{cha:Umgang} darauf ein, wie man wichtige Elemente einer Arbeit mit
+\LaTeX{} umsetzen kann. Zum \emph{Schluss} wird in Kapitel \ref{cha:Fazit} ein Fazit gezogen und eine kritische
+Bewertung vorgenommen.
+
+Ergänzende Aspekte finden sich im Anhang.
+
+\section{Voraussetzungen zum Verständnis der Arbeit}
+\label{sec:Einl-Voraussetzungen}
+%
+Es bietet sich an, zur Einführung in \LaTeX{} die \LaTeXe{}-Kurzbeschreibung von \textcite{Daniel2018} 
+durchzulesen, die bereits die wesentlichen Informationen enthält. Eine ebenfalls kurz gehaltene Einführung
+gibt \textcite{Gitter2018}.
+
+\section{Typographische Konventionen}
+\label{sec:Einl-Typographie}
+%
+Namen von Autoren werden in \textsc{Kapitälchen} gesetzt. \emph{Betonung} erfolgt normalerweise durch kursive
+Schrift, in besonderen Fällen auch durch \textbf{fette Schrift}. Für Code, Dateinamen sowie die Namen von
+\LaTeX{}-Paketen kommt \texttt{Schreibmaschinenschrift} zum Einsatz.
+
+Nachdem in diesem Kapitel die Aufgabenstellung und die Zielsetzung grob abgesteckt wurden, widmet sich das
+folgende Kapitel Forschungsmethoden, die typischerweise bei der Erstellung von Abschlussarbeiten an
+\gls{haw} anzuwenden sind.
