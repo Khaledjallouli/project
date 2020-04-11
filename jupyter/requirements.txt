@@ -1,0 +1,13 @@
+numpy
+matplotlib
+pandas
+tensorflow
+git+https://github.com/tensorflow/docs
+IPython
+pathlib
+pytest-shutil
+sklearn
+pydotplus
+seaborn
+#pandas_profiling -> version problem, as pandas has a too high version. Isn't currently required if I'm correct.
+tensorboardcolab
