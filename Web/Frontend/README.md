@@ -20,4 +20,4 @@ Frontend:
 			Start your local http server, open the browser and your default hosted web page will be shown.
 
 Note: 
-	The frontend is dynamic. To get the data you should run the backend before.
+	The frontend is dynamic. To get the data you should run the backend first.
