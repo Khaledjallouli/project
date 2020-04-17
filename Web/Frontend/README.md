@@ -19,3 +19,5 @@ Frontend:
 		$ npm run dev    OR npm run serve
 			Start your local http server, open the browser and your default hosted web page will be shown.
 
+Note: 
+	The frontend is dynamic. To get the data you should run the backend before.
