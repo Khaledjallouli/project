@@ -1,4 +1,11 @@
-Frontend:
+
+
+
+## Define REST API
+
+We used https://app.swaggerhub.com to define the REST API as you can find in RESTful_API_Definition folder.
+
+## Frontend:
 	Used Technologie:
 		- Vue.js: JavaScript framework for building user interfaces and single-page applications.
 			https://vuejs.org/
@@ -19,3 +26,14 @@ Frontend:
 		$ npm run dev    OR npm run serve
 			Start your local http server, open the browser and your default hosted web page will be shown.
 
+Note: 
+	The frontend is dynamic. To get the data you should run the backend first.
+
+## Backend 
+
+We are using flask as a python framework.
+
+To run it:
+
+	set FLASK_APP=server.py #in windows
+	flask run

@@ -1,111 +1,75 @@
 <template>
   <div class="content">
-    <div class="row">
-      <div class="col-12">
-        <card>
-          <template slot="header">
-            <h4 class="card-title">Soccer Games Prediction</h4>
-          </template>
-          <div>
-            <base-table :data="table1.data"
-                        :columns="table1.columns"
-                        thead-classes="text-primary">
-            </base-table>
-          </div>
-        </card>
-      </div>
-
-      <div class="col-12">
-        <card class="card-plain">
-          <template slot="header">
-                <h4 class="card-title"> Soccer Games Prediction</h4>
-              </template>
-          <div class="table-full-width">
-            <base-table :title="table2.title" :sub-title="table2.subTitle" :data="table2.data"
-                        :columns="table2.columns">
-            </base-table>
-          </div>
-        </card>
-      </div>
-
+    <div class="gamePrediction">Soccer Games Prediction</div>
+    <div class="tableMatches">
+      <ul class="gameAttributesHome">
+        <li>Home Team</li>
+        <li>Away Team</li>
+        <li>Date</li>
+        <li>Final result</li>
+      </ul>
+      <hr />
+      <b-table
+        v-for="(item,index) in  this.SoccerGamesList.SoccerGames"
+        :key="index"
+        :items="items"
+        :fields="index"
+      >
+        <soccer-game bottom-nav v-bind="item"></soccer-game>
+      </b-table>
     </div>
+    <div></div>
   </div>
 </template>
 <script>
+import axios from "axios";
+import SoccerGame from "@/components/SoccerGames/SoccerGame";
 
-import {
-  Card
-} from "@/components/index";
-
-import BaseTable from "@/components/BaseTable";
-
-const tableColumns = ["HomeTeam", "AwayTeam","FinalResult"];
-const tableData = [
-  {
-    id: 1,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
+export default {
+  components: {
+    SoccerGame
   },
-  {
-    id: 2,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
+  data: () => ({
+    SoccerGamesList: null
+  }),
+  created() {
+    console.log("route: ", this.$route);
+    if (!this.SoccerGamesList) {
+      this.getSGData();
+    }
   },
-  {
-    id: 3,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
+  beforeMount() {
+    this.getSGData();
   },
-  {
-    id: 4,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
-  },
-  {
-    id: 5,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
-  },
-  {
-    id: 6,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
-  },
-  {
-    id: 7,
-    hometeam: "FC Bayern Munich",
-    awayteam: "Borussia Dortmund",
-    finalresult: "Win Home Team"
+  methods: {
+    getSGData: function getSGData() {
+      axios.get(`http://127.0.0.1:5000/soccerGames`).then(response => {
+        this.SoccerGamesList = response.data;
+      });
+    }
   }
-];
-
-
-export default{
-  components:{
-    Card,
-    BaseTable
-  },
-  data() {
-    return {
-      table1: {
-        title: "Simple Table",
-        columns: [...tableColumns],
-        data: [...tableData]
-      },
-      table2: {
-        title: "Table on Plain Background",
-        columns: [...tableColumns],
-        data: [...tableData]
-      }
-    };
-  }
-}
+};
 </script>
 <style>
+.gameAttributesHome {
+  list-style-type: none;
+  margin: 0;
+  padding: 10px;
+  padding-top: 20px;
+  overflow: hidden;
+}
+.gameAttributesHome li {
+  float: left;
+  margin-right: 140px;
+  margin-left: 38px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.gamePrediction {
+  text-align: left;
+  color: rgb(134, 134, 134);
+  font-size: 20px;
+  padding-bottom: 10px;
+}
 </style>
