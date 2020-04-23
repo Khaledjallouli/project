@@ -35,5 +35,6 @@ We are using flask as a python framework.
 
 To run it:
 
+	export FLASK_APP=server.py #in mac / unix / linux
 	set FLASK_APP=server.py #in windows
 	flask run
