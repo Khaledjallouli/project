@@ -12,7 +12,24 @@ import CloseButton from "./CloseButton";
 import DropDown from "./Dropdown.vue";
 import Notifications from "./NotificationPlugin/index";
 
-let components = {
+//currently unused:
+// let components = {
+//   Card,
+//   BaseInput,
+//   SidebarPlugin,
+//   BaseAlert,
+//   BaseButton,
+//   BaseCheckbox,
+//   BaseRadio,
+//   BaseTable,
+//   BaseNav,
+//   Modal,
+//   CloseButton,
+//   DropDown,
+//   Notifications
+// };
+
+export {
   Card,
   BaseInput,
   SidebarPlugin,
@@ -27,19 +44,3 @@ let components = {
   DropDown,
   Notifications
 };
-
-export{
-  Card,
-  BaseInput,
-  SidebarPlugin,
-  BaseAlert,
-  BaseButton,
-  BaseCheckbox,
-  BaseRadio,
-  BaseTable,
-  BaseNav,
-  Modal,
-  CloseButton,
-  DropDown,
-  Notifications
-}
