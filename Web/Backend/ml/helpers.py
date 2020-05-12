@@ -1,5 +1,6 @@
 import tensorflow as tf
-import pandas
+import pandas as pd
+from sklearn import preprocessing
 
 # load_model(modelname): Load model <modelname>.h5 from ml/ folder
 def load_model(modelname):
@@ -13,14 +14,19 @@ def load_model(modelname):
 
 
 # exec_model(model, data): Execute <model> with <data>
-def exec_model(model, data):
+def exec_model(model, df):
     print("START exec model")
 
-    # format input
-    dataset = pandas.json_normalize(data)
+    # normalize
+    column_names_to_not_normalize = ['result']
+    column_names_to_normalize = [x for x in list(df) if x not in column_names_to_not_normalize ]
+    x = df[column_names_to_normalize].values
+    x_scaled = preprocessing.normalize(x)
+    df[column_names_to_normalize] = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = df.index)   
+    n = preprocessing.normalize(df[column_names_to_normalize])
 
     # predict
-    result = model.predict(dataset, batch_size=1)
+    result = model.predict(n, batch_size=1)
 
     print("END exec model")
     return(result)

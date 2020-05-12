@@ -47,13 +47,13 @@ export default {
   beforeMount() {
     if (0 == this.finalResult) {
       //this.backgroundColor = "#aba4a3";
-      this.finalResultText = "Draw";
+      this.finalResultText = "Win Home Team";
     } else if (1 == this.finalResult) {
       //this.backgroundColor = "#23822a";
-      this.finalResultText = "Win Home Team";
+      this.finalResultText = "Win Away Team";
     } else if (2 == this.finalResult) {
       //this.backgroundColor = "#b82c21";
-      this.finalResultText = "Win Away Team";
+      this.finalResultText = "Draw";
     }
   }
 };
