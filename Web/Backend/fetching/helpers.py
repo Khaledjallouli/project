@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 # IDEA
 # Download .csv file from https://www.football-data.co.uk/germanym.php (updated frequently, only contains past matches)
@@ -30,8 +31,8 @@ def fetchdata(season): # season == "19-20"
             #print(match)
             #print(matchvalues[1]) # date
             #print(matchvalues[2]) # time
-            pastbettingdataentry = [matchvalues[1],matchvalues[2],matchvalues[11],matchvalues[13],matchvalues[12],matchvalues[14],matchvalues[23],matchvalues[25]]
-            #                      [date          ,time          ,home-shots     ,h-shots-target ,away-shots     ,a-shots-target ,odds-home      ,odds-away      ]
+            pastbettingdataentry = [matchvalues[1],matchvalues[2],matchvalues[11],matchvalues[13],matchvalues[12],matchvalues[14],matchvalues[23],matchvalues[24],matchvalues[25]]
+            #                      [date          ,time          ,home-shots     ,h-shots-target ,away-shots     ,a-shots-target ,odds-home      ,odds-draw      ,odds-away      ]
             pastbettingdata.append(pastbettingdataentry)
 
     #
@@ -88,10 +89,13 @@ def fetchdata(season): # season == "19-20"
         match = []
         match.append(md[2]) # hometeam
         match.append(md[3]) # awayteam
-        match.append(pbd[0]) # date
+        date = datetime.strptime(pbd[0], "%d/%m/%Y") # get date from string
+        datenum = int(datetime.strftime(date, "%Y%m%d")) # number from date
+        match.append(datenum) # date
         match.append(result) # result
         match.append(pbd[6]) # odds-home
-        match.append(pbd[7]) # odds-away
+        match.append(pbd[7]) # odds-draw
+        match.append(pbd[8]) # odds-away
         match.append(hg) # home-goals
         match.append(pbd[2]) # home-shots
         match.append(pbd[3]) # home-shots-on-target
@@ -105,6 +109,6 @@ def fetchdata(season): # season == "19-20"
 
 # testing:
 def main():
-    print(len(fetchdata("19-20")))
+    print(fetchdata("19-20")[0])
 if __name__ == "__main__":
     main()

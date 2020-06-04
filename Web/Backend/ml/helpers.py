@@ -29,11 +29,25 @@ def exec_model(model, df):
     result = model.predict(n, batch_size=1)
 
     print("END exec model")
-    return(result)
+    return result
 
 
-# write_to_txt(filename,content): Write <content> to file with <filename>
-def write_to_txt(filename,content):
-    f = open(filename,"w+") # open file with filename <filename>
-    f.write(content) # write <content> in file
-    f.close() # close file
+def prepare_data(matches):
+
+    prepared_data = [0,0,0,0,0,0,0,0,0] # see after 'return' line
+    for match in matches:
+        if match[0] > match[3]: # if ownteam has more goals than oppositeteam
+            prepared_data[0] += match[0] # own-wins
+        elif match[0] < match[3]: # if ownteam has less goals than oppositeteam
+            prepared_data[2] += match[2] # own-losses
+        else: # draw
+            prepared_data[1] += match[1] # own-draws
+        prepared_data[3] += match[0] # own-goals
+        prepared_data[4] += match[3] # opposition-goals
+        prepared_data[5] += match[1] # own-shots
+        prepared_data[6] += match[2] # own-shots-on-target
+        prepared_data[7] += match[4] # opposition-shots
+        prepared_data[8] += match[5] # opposition-shots-on-target
+
+    return prepared_data
+    # prepared_data == [own-wins, own-draws, own-losses, own-goals, opposition-goals, own-shots, own-shots-on-target, opposition-shots, opposition-shots-on-target]
