@@ -1,16 +1,6 @@
 import sqlite3
 from datetime import datetime, date
 
-# IDEA
-# Download .csv file from https://www.football-data.co.uk/germanym.php (updated frequently)
-# add missing matches to database
-# Fetch dates for future matches from https://www.worldfootball.net/all_matches/bundesliga-2019-2020/
-# predict them based on database contents
-
-# Q
-# - Where to take total goals from / how to calculate it?
-# - last 10 games
-
 def create_database(file):
     with sqlite3.connect(file) as con:
         cursor = con.cursor()
@@ -152,6 +142,12 @@ def get_teamhistory(file,teamname,date): # return cumulated data of last 10 matc
             else:
                 raise Exception("Neither home-team nor away-team matches the provided teamname.")
     return matches # list of [own-goals, own-shots, own-shots-on-target, opposite-goals, opposite-shots, opposite-shots-on-target]
+
+def get_matches(file):
+    with sqlite3.connect(file) as con:
+        cursor = con.cursor()
+        cursor.execute("SELECT * FROM matches")
+        return cursor.fetchall()
 
 # testing:
 def main():

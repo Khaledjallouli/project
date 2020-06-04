@@ -49,5 +49,4 @@ def prepare_data(matches):
         prepared_data[7] += match[4] # opposition-shots
         prepared_data[8] += match[5] # opposition-shots-on-target
 
-    return prepared_data
-    # prepared_data == [own-wins, own-draws, own-losses, own-goals, opposition-goals, own-shots, own-shots-on-target, opposition-shots, opposition-shots-on-target]
+    return prepared_data # -> [own-wins, own-draws, own-losses, own-goals, opposition-goals, own-shots, own-shots-on-target, opposition-shots, opposition-shots-on-target]

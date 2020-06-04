@@ -5,40 +5,37 @@ import json
 import pandas as pd
 import numpy
 from sklearn import preprocessing
+from datetime import datetime
 
+def predict_soccerGames():
 
-def predict_soccerGame():
-
-    #TODO insert dynamic inputjson
-    # first row of sliding02.csv
-    #TODO: unify names ['_'|'-']
-    jasonstring = '{"0":{"result": "H","odds-home": 3.5,"odds-draw": 3.3,"odds-away": 2.1,"home-wins": 1,"home-draws": 3,"home-losses": 6,"home-goals": 11,"home-opposition-goals": 16,"home-shots": 137,"home-shots_on_target": 67,"home_opposition_shots": 117,"home-opposition_shots_on_target": 53,"away-wins": 8,"away-draws": 2,"away-losses": 0,"away-goals": 15,"away-opposition-goals": 6,"away-shots": 161,"away-shots_on_target": 78,"away-opposition_shots": 72,"away-opposition_shots_on_target": 30}}'
-
-    df = pd.read_json(jasonstring).T # read json and create dataframe
-    
+    file = "db/database.sqlite"
+    db.create_database(file)
+    fetching.fetchdata("19-20")
     model = ml.load_model("model02_H3_M") # load model
+    result_object = {"SoccerGames": []}
 
-    predictedResultArray = ml.exec_model(model,df) # retrieve result from model
+    for match in db.get_matches(file): # for each unpredicted match
+        prepared_data = preparedata(file,match[3],match[4],match[5]) # prepare data for model
+        #TODO: The following step is probably unnecessary, as the index could be passed right away from the beginning (no for-loop required).
+        final_prepared_object = {"0":prepared_data} # creating the (required) index
+        jasonstring = json.dumps(final_prepared_object) # prepare data for model
+        df = pd.read_json(jasonstring).T # read json and create dataframe
+        predictedResultArray = ml.exec_model(model,df) # retrieve result from model
+        predictedResult = numpy.argmax(predictedResultArray, axis=None) # get max value
 
-    predictedResult = numpy.argmax(predictedResultArray, axis=None) # get max value
-
-    print(predictedResult)
-    #jason["finalResult"] = 0 # 0 == draw, 1 == hometeam win, 2 == awayteam win
-
-    #TODO insert correct homeTeam and awayTeam and dateMatch
-    jason = json.loads("""{
-        "SoccerGames":[
-            {
-                "homeTeam": "A Home-Team",
-                "awayTeam": "An Away-Team",
-                "dateMatch": "20/02/20"
-            }
-        ]
-    }""")
-
-    jason["SoccerGames"][0]["finalResult"] = int(str(predictedResult)) # not beautiful, but works for now
-
-    return json.dumps(jason)
+        date = datetime.strptime(str(match[5]), "%Y%m%d") # get date from number
+        formatted_date = datetime.strftime(date, "%d/%m/%Y") # string from date
+        predicted_match = {
+            "homeTeam": match[3],
+            "awayTeam": match[4],
+            "dateMatch": formatted_date,
+            "finalResult": int(str(predictedResult)) # not beautiful, but works for now
+        }
+        result_object["SoccerGames"].append(predicted_match)
+    
+    print(result_object)
+    return json.dumps(result_object)
 
 
 def fetchdata(file):
@@ -79,9 +76,7 @@ def preparedata(file,hometeam,awayteam,date):
         "away-opposition-shots-on-target": away_prepared_data[8] # calculated
     }
 
-    dic = {"0" : prepared_data}
-
-    return json.dumps(dic)
+    return prepared_data
 
 
 # testing:

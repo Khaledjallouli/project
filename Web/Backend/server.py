@@ -16,7 +16,7 @@ def test():
 @app.route('/soccerGames', methods=['GET'])
 def soccerGamesOutput():
     return app.response_class(
-        response=c.predict_soccerGame(),
+        response=c.predict_soccerGames(),
         status=200,
         mimetype='application/json'
     )
