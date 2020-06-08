@@ -35,7 +35,6 @@ def predict_soccerGames():
         }
         result_object["SoccerGames"].append(predicted_match)
     
-    print(result_object)
     return json.dumps(result_object)
 
 
