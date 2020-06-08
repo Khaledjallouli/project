@@ -11,7 +11,8 @@ def predict_soccerGames():
 
     file = "db/database.sqlite"
     db.create_database(file)
-    fetching.fetchdata("19-20")
+    #fetching.fetchdata("19-20")
+    fetchdata(file)
     model = ml.load_model("model02_H3_M") # load model
     result_object = {"SoccerGames": []}
 
