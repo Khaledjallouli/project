@@ -2,13 +2,25 @@
   <div class="content">
     <div class="gamePrediction">Soccer Games Prediction</div>
     <div class="tableMatches">
-      <ul class="gameAttributesHome">
-        <li>Home Team</li>
-        <li>Away Team</li>
-        <li>Date</li>
-        <li>Final result</li>
-      </ul>
-      <hr />
+      <div id="gridtitle">
+        <div class="col">
+          <div class="section">Home Team</div>
+          <hr />
+        </div>
+        <div class="col">
+          <div class="section">Away Team</div>
+          <hr />
+        </div>
+        <div class="col">
+          <div class="section">Date Match</div>
+          <hr />
+        </div>
+        <div class="col">
+          <div class="section">Final Result</div>
+          <hr />
+        </div>
+      </div>
+
       <b-table
         v-for="(item,index) in  this.SoccerGamesList.SoccerGames"
         :key="index"
@@ -18,6 +30,7 @@
         <soccer-game bottom-nav v-bind="item"></soccer-game>
       </b-table>
     </div>
+
     <div></div>
   </div>
 </template>
@@ -71,5 +84,20 @@ export default {
   color: rgb(134, 134, 134);
   font-size: 20px;
   padding-bottom: 10px;
+}
+
+#gridtitle {
+  margin-left: -15px;
+  font-weight: bold;
+}
+
+.col {
+  width: 25%;
+  float: left;
+}
+
+.section {
+  margin-left: 15px;
+  height: 40px;
 }
 </style>

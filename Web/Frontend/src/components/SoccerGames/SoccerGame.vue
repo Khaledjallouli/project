@@ -2,7 +2,7 @@
   <div class="soccer-game">
     <v-card ref="soccergame">
       <v-card-text v-bind:style="{ backgroundColor: this.backgroundColor}">
-        <div class="layout ma-0 align-center">
+        <!-- <div class="layout ma-0 align-center">
           <div class="flex" :class="computeTextAlgin">
             <div class="subheading" v-bind:style="{ backgroundColor: this.backgroundColor}">
               <ul class="gameAttributes">
@@ -11,10 +11,30 @@
                 <li>{{dateMatch}}</li>
                 <li>{{finalResultText}}</li>
               </ul>
-              <hr />
-            </div>
+        -->
+
+        <div id="grid">
+          <div class="col">
+            <div class="section">{{homeTeam}}</div>
+            <hr />
+          </div>
+          <div class="col">
+            <div class="section">{{awayTeam}}</div>
+            <hr />
+          </div>
+          <div class="col">
+            <div class="section">{{dateMatch}}</div>
+            <hr />
+          </div>
+          <div class="col">
+            <div class="section">{{finalResultText}}</div>
+            <hr />
           </div>
         </div>
+
+        <!--</div>
+          </div>
+        </div>-->
       </v-card-text>
     </v-card>
   </div>
@@ -77,5 +97,26 @@ export default {
   text-align: center;
   margin-right: 140px;
   margin-left: 45px;
+}
+
+tr {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#grid {
+  margin-top: 30px;
+  margin-left: -15px;
+}
+
+.col {
+  width: 25%;
+  float: left;
+}
+
+.section {
+  margin-left: 15px;
+  height: 50px;
+  padding-top: 15px;
 }
 </style>
