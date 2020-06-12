@@ -42,7 +42,8 @@ def create_database(file):
             "'home-shots-on-target' INTEGER,"                   # (not to mistake for home-total-shots-on-target which is calculated & inserted into the model at position "home-shots-on-target")
             "'away-goals' INTEGER,"                             # (not to mistake for away-total-goals which is calculated & inserted into the model at position "away-goals")
             "'away-shots' INTEGER,"                             # (not to mistake for away-total-shots which is calculated & inserted into the model at position "away-shots")
-            "'away-shots-on-target' INTEGER"                    # (not to mistake for away-total-shots-on-target which is calculated & inserted into the model at position "away-shots-on-target")
+            "'away-shots-on-target' INTEGER,"                    # (not to mistake for away-total-shots-on-target which is calculated & inserted into the model at position "away-shots-on-target")
+            "UNIQUE('home-team','away-team','date')"           ### unifying
             ")")
         con.commit()
 
