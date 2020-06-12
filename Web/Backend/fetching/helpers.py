@@ -8,7 +8,7 @@ from datetime import datetime
 # Fetch dates for future matches from https://www.worldfootball.net/all_matches/bundesliga-2019-2020/ (updated realtime, contains all matches)
 # predict them based on database contents
 
-def fetchdata(season): # season == "19-20"
+def fetchseason(season): # season == "19-20"
     firstseasonyear = season.split('-')[0]
     secondseasonyear = season.split('-')[1]
 
@@ -80,28 +80,22 @@ def fetchdata(season): # season == "19-20"
 
         hg = md[4].split(':')[0]
         ag = md[4].split(':')[1]
-        result = 'D'
-        if hg > ag:
-            result = 'H'
-        elif hg < ag:
-            result = 'A'
 
-        match = []
-        match.append(md[2]) # hometeam
-        match.append(md[3]) # awayteam
+        match = {}
+        match["home-team"] = md[2] # hometeam
+        match["away-team"] = md[3] # awayteam
         date = datetime.strptime(pbd[0], "%d/%m/%Y") # get date from string
         datenum = int(datetime.strftime(date, "%Y%m%d")) # number from date
-        match.append(datenum) # date
-        match.append(result) # result
-        match.append(pbd[6]) # odds-home
-        match.append(pbd[7]) # odds-draw
-        match.append(pbd[8]) # odds-away
-        match.append(hg) # home-goals
-        match.append(pbd[2]) # home-shots
-        match.append(pbd[3]) # home-shots-on-target
-        match.append(ag) # away-goals
-        match.append(pbd[4]) # away-shots
-        match.append(pbd[5]) # away-shots-on-target
+        match["date"] = datenum # date
+        match["odds-home"] = pbd[6] # odds-home
+        match["odds-draw"] = pbd[7] # odds-draw
+        match["odds-away"] = pbd[8] # odds-away
+        match["home-goals"] = hg # home-goals
+        match["home-shots"] = pbd[2] # home-shots
+        match["home-shots-on-target"] = pbd[3] # home-shots-on-target
+        match["away-goals"] = ag # away-goals
+        match["away-shots"] = pbd[4] # away-shots
+        match["away-shots-on-target"] = pbd[5] # away-shots-on-target
 
         matches.append(match)
     
@@ -109,6 +103,6 @@ def fetchdata(season): # season == "19-20"
 
 # testing:
 def main():
-    print(fetchdata("19-20")[0])
+    print(fetchseason("19-20")[0])
 if __name__ == "__main__":
     main()

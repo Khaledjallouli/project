@@ -9,14 +9,42 @@ CORS(app)
 # START OF ROUTES SECTION
 #####
 
-@app.route('/')
-def test():
-    return "Hello World!"
-
-@app.route('/soccerGames', methods=['GET'])
-def soccerGamesOutput():
+@app.route('/soccerGamesClassification', methods=['GET'])
+def soccerGamesClassification():
     return app.response_class(
-        response=c.predict_soccerGames(),
+        response=c.getSoccerGamesClassification(),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route('/soccerGamesRegression', methods=['GET'])
+def soccerGamesRegression():
+    return app.response_class(
+        response=c.getSoccerGamesRegression(),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route('/fetchNewMatches', methods=['GET'])
+def fetchNewMatches():
+    return app.response_class(
+        response=c.fetchNewMatches(),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route('/retrainClassification', methods=['GET'])
+def retrainClassification():
+    return app.response_class(
+        response=c.retrainClassification(),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route('/retrainRegression', methods=['GET'])
+def retrainRegression():
+    return app.response_class(
+        response=c.retrainRegression(),
         status=200,
         mimetype='application/json'
     )

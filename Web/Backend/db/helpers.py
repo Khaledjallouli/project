@@ -29,11 +29,11 @@ def create_database(file):
         # - away-opposition-shots-on-target (nullable) (calculated)
         cursor.execute("CREATE TABLE IF NOT EXISTS matches ("
             "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"    # primary-key
-            "'predicted-result' TEXT,"                          # 'H'|'D'|'A'
-            "'actual-result' TEXT,"                             # 'H'|'D'|'A'
+            "'predicted-classification-result' TEXT,"           # 'H'|'D'|'A'
+            "'predicted-regression-result' TEXT,"               # "3-2"
             "'home-team' TEXT NOT NULL,"                        # self-explaining
             "'away-team' TEXT NOT NULL,"                        # self-explaining
-            "'date' INTEGER NOT NULL,"                             # date, stored as int (sqlite doesn't support date-type)
+            "'date' INTEGER NOT NULL,"                          # date, stored as int (to enable sorting) (sqlite doesn't support date-type)
             "'odds-home' REAL,"                                 # (float)
             "'odds-draw' REAL,"                                 # (float)
             "'odds-away' REAL,"                                 # (float)
@@ -42,19 +42,20 @@ def create_database(file):
             "'home-shots-on-target' INTEGER,"                   # (not to mistake for home-total-shots-on-target which is calculated & inserted into the model at position "home-shots-on-target")
             "'away-goals' INTEGER,"                             # (not to mistake for away-total-goals which is calculated & inserted into the model at position "away-goals")
             "'away-shots' INTEGER,"                             # (not to mistake for away-total-shots which is calculated & inserted into the model at position "away-shots")
-            "'away-shots-on-target' INTEGER,"                    # (not to mistake for away-total-shots-on-target which is calculated & inserted into the model at position "away-shots-on-target")
-            "UNIQUE('home-team','away-team','date')"           ### unifying
+            "'away-shots-on-target' INTEGER,"                   # (not to mistake for away-total-shots-on-target which is calculated & inserted into the model at position "away-shots-on-target")
+            "UNIQUE('home-team','away-team','date')"            ### adding uniqueness
             ")")
         con.commit()
 
-def add_match(file,hometeam,awayteam,date,result,oddshome,oddsdraw,oddsaway,homegoals,homeshots,homeshotsontarget,awaygoals,awayshots,awayshotsontarget):
+def add_match(file,hometeam,awayteam,date,predicted_classification_result,predicted_regression_result,oddshome,oddsdraw,oddsaway,homegoals,homeshots,homeshotsontarget,awaygoals,awayshots,awayshotsontarget):
     with sqlite3.connect(file) as con:
         cursor = con.cursor()
         cursor.execute("INSERT OR IGNORE INTO matches ("
             "'home-team',"
             "'away-team',"
             "'date',"
-            "'actual-result',"
+            "'predicted-classification-result',"
+            "'predicted-regression-result',"
             "'odds-home',"
             "'odds-draw',"
             "'odds-away',"
@@ -68,7 +69,8 @@ def add_match(file,hometeam,awayteam,date,result,oddshome,oddsdraw,oddsaway,home
             +hometeam+"','"
             +awayteam+"',"
             +str(date)+",'"
-            +result+"','"
+            +str(predicted_classification_result)+"','"
+            +str(predicted_regression_result)+"','"
             +oddshome+"','"
             +oddsdraw+"','"
             +oddsaway+"','"
@@ -81,8 +83,22 @@ def add_match(file,hometeam,awayteam,date,result,oddshome,oddsdraw,oddsaway,home
             "')")
         con.commit()
 
+def update_matchprediction(file,hometeam,awayteam,date,predicted_classification_result,predicted_regression_result):
+     with sqlite3.connect(file) as con:
+        cursor = con.cursor()    
+        cursor.execute("UPDATE matches SET"
+        "  'predicted-classification-result' = " + predicted_classification_result +
+        ", 'predicted-regression-result' = " + predicted_regression_result +
+        " WHERE"
+        " 'hometeam' = " + hometeam + " AND" +
+        " 'awayteam' = " + awayteam + " AND" +
+        " 'date' = " + date)
+        con.commit()
+
+#Note: get_match only exists for controller.main (testing) purpose
 def get_match(file,hometeam,awayteam,date):
     with sqlite3.connect(file) as con:
+        con.row_factory = dict_factory
         cursor = con.cursor()
         cursor.execute("SELECT * FROM matches WHERE "
             "matches.'home-team'='"+hometeam+"' AND "
@@ -97,6 +113,7 @@ def get_teamhistory(file,teamname,date): # return cumulated data of last 10 matc
     matches = []
     matchids = []
     with sqlite3.connect(file) as con:
+        con.row_factory = dict_factory
         cursor = con.cursor()
         cursor.execute("SELECT id FROM matches WHERE "
             "(matches.'home-team'='"+teamname+"' OR "
@@ -106,11 +123,12 @@ def get_teamhistory(file,teamname,date): # return cumulated data of last 10 matc
             "LIMIT 10"
         )
         matchids = cursor.fetchall()
-        matchids = [str(matchid[0]) for matchid in matchids] # convert each tuple to single value and convert that to string
+        matchids = [str(matchid["id"]) for matchid in matchids] # convert each tuple to single value and convert that to string
     
     # get gamedata of last 10 matches
 
     with sqlite3.connect(file) as con:
+        con.row_factory = dict_factory
         cursor = con.cursor()
         
         joined_matchids = ','.join(matchids)
@@ -120,25 +138,25 @@ def get_teamhistory(file,teamname,date): # return cumulated data of last 10 matc
             ")"
         )
         for match in cursor.fetchall():
-            if match[3] == teamname: # home-team
+            if match["home-team"] == teamname: # home-team
                 # add home-team values
                 matches.append([
-                    match[ 9], # home-goals
-                    match[10], # home-shots
-                    match[11], # home-shots-on-target
-                    match[12], # away-goals
-                    match[13], # away-shots
-                    match[14]  # away-shots-on-target
+                    match["home-goals"], # home-goals
+                    match["home-shots"], # home-shots
+                    match["home-shots-on-target"], # home-shots-on-target
+                    match["away-goals"], # away-goals
+                    match["away-shots"], # away-shots
+                    match["away-shots-on-target"]  # away-shots-on-target
                 ])
-            elif match[4] == teamname: # away-team
+            elif match["away-team"] == teamname: # away-team
                 # add away-team values
                 matches.append([
-                    match[12], # away-goals
-                    match[13], # away-shots
-                    match[14], # away-shots-on-target
-                    match[ 9], # home-goals
-                    match[10], # home-shots
-                    match[11]  # home-shots-on-target
+                    match["away-goals"], # away-goals
+                    match["away-shots"], # away-shots
+                    match["away-shots-on-target"], # away-shots-on-target
+                    match["home-goals"], # home-goals
+                    match["home-shots"], # home-shots
+                    match["home-shots-on-target"]  # home-shots-on-target
                 ])
             else:
                 raise Exception("Neither home-team nor away-team matches the provided teamname.")
@@ -146,9 +164,16 @@ def get_teamhistory(file,teamname,date): # return cumulated data of last 10 matc
 
 def get_matches(file):
     with sqlite3.connect(file) as con:
+        con.row_factory = dict_factory
         cursor = con.cursor()
         cursor.execute("SELECT * FROM matches")
         return cursor.fetchall()
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 # testing:
 def main():
