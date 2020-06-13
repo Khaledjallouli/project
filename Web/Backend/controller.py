@@ -6,89 +6,111 @@ import pandas as pd
 import numpy
 from sklearn import preprocessing
 from datetime import datetime
+from os import path
 
-def predict_soccerGames():
 
-    file = "db/database.sqlite"
-    db.create_database(file)
-    #fetching.fetchdata("19-20")
-    fetchdata(file)
-    model = ml.load_model("model02_H3_M") # load model
+dbfile = "db/database.sqlite"
+season = "19-20"
+classificationmodelname = "model02_H3_M"
+regressionmodelname= "regression_model_ann"
+
+def getSoccerGamesClassification():
     result_object = {"SoccerGames": []}
 
-    for match in db.get_matches(file): # for each unpredicted match
-        prepared_data = preparedata(file,match[3],match[4],match[5]) # prepare data for model
-        #TODO: The following step is probably unnecessary, as the index could be passed right away from the beginning (no for-loop required).
-        final_prepared_object = {"0":prepared_data} # creating the (required) index
-        jasonstring = json.dumps(final_prepared_object) # prepare data for model
-        df = pd.read_json(jasonstring).T # read json and create dataframe
-        predictedResultArray = ml.exec_model(model,df) # retrieve result from model
-        predictedResult = numpy.argmax(predictedResultArray, axis=None) # get max value
-
-        date = datetime.strptime(str(match[5]), "%Y%m%d") # get date from number
-        formatted_date = datetime.strftime(date, "%d/%m/%Y") # string from date
-        predicted_match = {
-            "homeTeam": match[3],
-            "awayTeam": match[4],
-            "dateMatch": formatted_date,
-            "finalResult": int(str(predictedResult)) # not beautiful, but works for now
-        }
-        result_object["SoccerGames"].append(predicted_match)
+    if path.exists(dbfile): # only if db-file exists
+        for match in db.get_matches(dbfile): # for each unpredicted match
+            date = datetime.strptime(str(match["date"]), "%Y%m%d") # get date from number
+            formatted_date = datetime.strftime(date, "%d/%m/%Y") # string from date
+            predicted_match = {
+                "homeTeam": match["home-team"],
+                "awayTeam": match["away-team"],
+                "dateMatch": formatted_date,
+                "predictedResult": match["predicted-classification-result"],
+                "actualResult": str(match["home-goals"]) + ":" + str(match["away-goals"])
+            }
+            result_object["SoccerGames"].append(predicted_match)
     
     return json.dumps(result_object)
 
 
-def fetchdata(file):
-    for match in fetching.fetchdata("19-20"): # for each past match of season 2019-2020
-        db.add_match(file,match[0],match[1],match[2],match[3],match[4],match[5],match[6],match[7],match[8],match[9],match[10],match[11],match[12])
+def getSoccerGamesRegression():
+    result_object = {"SoccerGames": []}
 
-
-def preparedata(file,hometeam,awayteam,date):
-
-    dbmatch = db.get_match(file,hometeam,awayteam,date)
+    if path.exists(dbfile): # only if db-file exists
+        for match in db.get_matches(dbfile): # for each unpredicted match
+            date = datetime.strptime(str(match["date"]), "%Y%m%d") # get date from number
+            formatted_date = datetime.strftime(date, "%d/%m/%Y") # string from date
+            predicted_match = {
+                "homeTeam": match["home-team"],
+                "awayTeam": match["away-team"],
+                "dateMatch": formatted_date,
+                "predictedResult": match["predicted-regression-result"],
+                "actualResult": str(match["home-goals"]) + ":" + str(match["away-goals"])
+            }
+            result_object["SoccerGames"].append(predicted_match)
     
-    home_prepared_data = ml.prepare_data(db.get_teamhistory(file,hometeam,date))
-    away_prepared_data = ml.prepare_data(db.get_teamhistory(file,awayteam,date))
-    # prepared_data == [home-wins, home-draws, home-losses, home-goals, home-opposition-goals, home-shots, home-shots-on-target, home-opposition-shots, home-opposition-shots-on-target]
-    
-    prepared_data = {
-        "result": dbmatch[2],
-        "odds-home": dbmatch[6],
-        "odds-draw": dbmatch[7],
-        "odds-away": dbmatch[8],
-        "home-wins": home_prepared_data[0], # calculated
-        "home-draws": home_prepared_data[1], # calculated
-        "home-losses": home_prepared_data[2], # calculated
-        "home-goals": home_prepared_data[3], # calculated
-        "home-opposition-goals": home_prepared_data[4], # calculated
-        "home-shots": home_prepared_data[5], # calculated
-        "home-shots-on-target": home_prepared_data[6], # calculated
-        "home-opposition-shots": home_prepared_data[7], # calculated
-        "home-opposition-shots-on-target": home_prepared_data[8], # calculated
-        "away-wins": away_prepared_data[0], # calculated
-        "away-draws": away_prepared_data[1], # calculated
-        "away-losses": away_prepared_data[2], # calculated
-        "away-goals": away_prepared_data[3], # calculated
-        "away-opposition-goals": away_prepared_data[4], # calculated
-        "away-shots": away_prepared_data[5], # calculated
-        "away-shots-on-target": away_prepared_data[6], # calculated
-        "away-opposition-shots": away_prepared_data[7], # calculated
-        "away-opposition-shots-on-target": away_prepared_data[8] # calculated
-    }
+    return json.dumps(result_object)
 
-    return prepared_data
+
+def fetchNewMatches():
+    db.create_database(dbfile) # create db if not exists
+
+    classificationmodel = ml.load_model(classificationmodelname) # load model for classification
+    regressionmodel = ml.load_model(regressionmodelname) # load model for regression
+
+    for match in fetching.fetchseason(season): # for each past match of season 2019-2020
+        hometeamdata = db.get_teamhistory(dbfile,match["home-team"],match["date"]) # get history
+        awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
+        prepared_data = ml.prepare_matchdata(match,hometeamdata,awayteamdata) # prepare data for model
+
+        predictedClassificationResult = ml.exec_classification_model(classificationmodel,prepared_data) # run the model
+        predictedRegressionResult = ml.exec_regression_model(regressionmodel,prepared_data) # run the model
+
+        db.add_match(dbfile,match["home-team"],match["away-team"],match["date"],predictedClassificationResult,predictedRegressionResult,match["odds-home"],match["odds-draw"],match["odds-away"],match["home-goals"],match["home-shots"],match["home-shots-on-target"],match["away-goals"],match["away-shots"],match["away-shots-on-target"])
+    return "ok"
+
+
+def retrainClassification():
+    return "ok"
+
+
+def retrainRegression():
+    return "ok"
+
+
+def predict_match(classificationmodel,regressionmodel,match):
+    hometeamdata = db.get_teamhistory(dbfile,match[4],match[2]) # get history
+    awayteamdata = db.get_teamhistory(dbfile,match[5],match[2]) # get history
+    prepared_data = ml.prepare_matchdata(match[2],hometeamdata,awayteamdata) # prepare data for model
+    predictedClassificationResult = ml.exec_classification_model(classificationmodel,prepared_data) # run the model
+    predictedRegressionResult = ml.exec_regression_model(regressionmodel,prepared_data) # run the model
+
+    return predictedClassificationResult,predictedRegressionResult
+
+
+def repredictMatches():
+    classificationmodel = ml.load_model(classificationmodelname) # load model for classification
+    regressionmodel = ml.load_model(regressionmodelname) # load model for regression
+
+    for match in db.get_matches(dbfile): # for each match
+        predictedClassificationResult,predictedRegressionResult = predict_match(classificationmodel,regressionmodel,match) # get predictions
+        db.update_matchprediction(dbfile,match["hometeam"],match["awayteam"],match["date"],predictedClassificationResult,predictedRegressionResult) # write predictions back to db
+
+    return "ok"
 
 
 # testing:
 def main():
-    file = "db/database.sqlite"
-    db.create_database(file)
-    fetchdata(file)
-    jasonstring = preparedata(file,"sc-paderborn-07","borussia-dortmund",20200601)
+    db.create_database(dbfile)
+    fetchNewMatches()
+    dbmatch = db.get_match(dbfile,"sc-paderborn-07","borussia-dortmund",20200601)
+    hometeamdata = db.get_teamhistory(dbfile,"sc-paderborn-07",20200601)
+    awayteamdata = db.get_teamhistory(dbfile,"borussia-dortmund",20200601)
+    jasonstring = ml.prepare_matchdata(dbmatch,hometeamdata,awayteamdata) # prepare data for model
 
     df = pd.read_json(jasonstring).T # read json and create dataframe
     model = ml.load_model("model02_H3_M") # load model
-    predictedResultArray = ml.exec_model(model,df) # retrieve result from model
+    predictedResultArray = ml.exec_classification_model(model,df) # retrieve result from model
     predictedResult = numpy.argmax(predictedResultArray, axis=None) # get max value
     print(predictedResult)
     #jason["finalResult"] = 0 # 0 == draw, 1 == hometeam win, 2 == awayteam win
