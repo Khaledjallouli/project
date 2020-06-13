@@ -1,5 +1,5 @@
 <template>
-  <div>Welcome to <b>White Dashboard</b> - a beautiful freebie for every web developer.</div>
+  <div>The model is retrained successfully </div>
 </template>
 
 <script>

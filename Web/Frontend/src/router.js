@@ -1,6 +1,7 @@
 import DashboardLayout from "@/pages/Layout/DashboardLayout.vue";
 
 import Dashboard from "@/pages/Home.vue";
+import Icons from "@/pages/Regression.vue";
 
 
 const routes = [{
@@ -10,8 +11,13 @@ const routes = [{
   children:[
     {
       path: "home",
-      name: "home",
+      name: "results",
       component: Dashboard
+    },
+    {
+      path: "goals",
+      name: "goals",
+      component: Icons
     }
   ]
 
