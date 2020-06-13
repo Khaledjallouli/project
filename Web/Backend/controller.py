@@ -12,7 +12,7 @@ from os import path
 dbfile = "db/database.sqlite"
 season = "19-20"
 classificationmodelname = "model02_H3_M"
-regressionmodelname= "model02_H3_M"
+regressionmodelname= "regression_model_ann"
 
 def getSoccerGamesClassification():
     result_object = {"SoccerGames": []}
@@ -32,7 +32,7 @@ def getSoccerGamesClassification():
     
     return json.dumps(result_object)
 
-#TODO: fit to regression
+
 def getSoccerGamesRegression():
     result_object = {"SoccerGames": []}
 
@@ -63,8 +63,8 @@ def fetchNewMatches():
         awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
         prepared_data = ml.prepare_matchdata(match,hometeamdata,awayteamdata) # prepare data for model
 
-        predictedClassificationResult = ml.exec_model(classificationmodel,prepared_data) # run the model
-        predictedRegressionResult = ml.exec_model(regressionmodel,prepared_data) # run the model
+        predictedClassificationResult = ml.exec_classification_model(classificationmodel,prepared_data) # run the model
+        predictedRegressionResult = ml.exec_regression_model(regressionmodel,prepared_data) # run the model
 
         db.add_match(dbfile,match["home-team"],match["away-team"],match["date"],predictedClassificationResult,predictedRegressionResult,match["odds-home"],match["odds-draw"],match["odds-away"],match["home-goals"],match["home-shots"],match["home-shots-on-target"],match["away-goals"],match["away-shots"],match["away-shots-on-target"])
     return "ok"
@@ -82,8 +82,8 @@ def predict_match(classificationmodel,regressionmodel,match):
     hometeamdata = db.get_teamhistory(dbfile,match[4],match[2]) # get history
     awayteamdata = db.get_teamhistory(dbfile,match[5],match[2]) # get history
     prepared_data = ml.prepare_matchdata(match[2],hometeamdata,awayteamdata) # prepare data for model
-    predictedClassificationResult = ml.exec_model(classificationmodel,prepared_data) # run the model
-    predictedRegressionResult = ml.exec_model(regressionmodel,prepared_data) # run the model
+    predictedClassificationResult = ml.exec_classification_model(classificationmodel,prepared_data) # run the model
+    predictedRegressionResult = ml.exec_regression_model(regressionmodel,prepared_data) # run the model
 
     return predictedClassificationResult,predictedRegressionResult
 
@@ -110,7 +110,7 @@ def main():
 
     df = pd.read_json(jasonstring).T # read json and create dataframe
     model = ml.load_model("model02_H3_M") # load model
-    predictedResultArray = ml.exec_model(model,df) # retrieve result from model
+    predictedResultArray = ml.exec_classification_model(model,df) # retrieve result from model
     predictedResult = numpy.argmax(predictedResultArray, axis=None) # get max value
     print(predictedResult)
     #jason["finalResult"] = 0 # 0 == draw, 1 == hometeam win, 2 == awayteam win
