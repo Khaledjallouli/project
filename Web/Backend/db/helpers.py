@@ -166,7 +166,7 @@ def get_matches(file):
     with sqlite3.connect(file) as con:
         con.row_factory = dict_factory
         cursor = con.cursor()
-        cursor.execute("SELECT * FROM matches")
+        cursor.execute("SELECT * FROM matches ORDER BY matches.date DESC")
         return cursor.fetchall()
 
 def dict_factory(cursor, row):
