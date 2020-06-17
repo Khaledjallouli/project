@@ -1,18 +1,7 @@
 <template>
   <div class="soccer-game">
     <v-card ref="soccergame">
-      <v-card-text v-bind:style="{ backgroundColor: this.backgroundColor}">
-        <!-- <div class="layout ma-0 align-center">
-          <div class="flex" :class="computeTextAlgin">
-            <div class="subheading" v-bind:style="{ backgroundColor: this.backgroundColor}">
-              <ul class="gameAttributes">
-                <li>{{homeTeam}}</li>
-                <li>{{awayTeam}}</li>
-                <li>{{dateMatch}}</li>
-                <li>{{finalResultText}}</li>
-              </ul>
-        -->
-
+      <v-card-text v-bind:style="{backgroundColor: this.backgroundColor}">
         <div id="grid">
           <div class="col">
             <div class="section">{{homeTeam}}</div>
@@ -27,14 +16,14 @@
             <hr />
           </div>
           <div class="col">
-            <div class="section">{{finalResultText}}</div>
+            <div class="section">{{originalFinalResultText}}</div>
+            <hr />
+          </div>
+          <div class="col">
+            <div class="section">{{predictedFinalResultText}}</div>
             <hr />
           </div>
         </div>
-
-        <!--</div>
-          </div>
-        </div>-->
       </v-card-text>
     </v-card>
   </div>
@@ -55,26 +44,43 @@ export default {
       type: String,
       default: ""
     },
-    finalResult: {
+    predictedResult: {
+      type: String,
+      default: ""
+    },
+    actualResult: {
       type: String,
       default: ""
     }
   },
   data: () => ({
     backgroundColor: "",
-    finalResultText: ""
+    predictedFinalResultText: "",
+    originalFinalResultText: ""
   }),
   beforeMount() {
-    if (0 == this.finalResult) {
-      //this.backgroundColor = "#aba4a3";
-      this.finalResultText = "Win Home Team";
-    } else if (1 == this.finalResult) {
-      //this.backgroundColor = "#23822a";
-      this.finalResultText = "Win Away Team";
-    } else if (2 == this.finalResult) {
-      //this.backgroundColor = "#b82c21";
-      this.finalResultText = "Draw";
+    if ("H" == this.predictedResult) {
+      this.predictedFinalResultText = "Win Home Team";
+    } else if ("A" == this.predictedResult) {
+      this.predictedFinalResultText = "Win Away Team";
+    } else if ("D" == this.predictedResult) {
+      this.predictedFinalResultText = "Draw";
     }
+    else {
+      this.predictedFinalResultText = this.predictedResult;
+    }
+
+    if ("H" == this.actualResult) {
+      this.originalFinalResultText = "Win Home Team";
+    } else if ("A" == this.actualResult) {
+      this.originalFinalResultText = "Win Away Team";
+    } else if ("D" == this.actualResult) {
+      this.originalFinalResultText = "Draw";
+    }
+    else {
+      this.originalFinalResultText = this.actualResult;
+    }
+
   }
 };
 </script>
@@ -110,7 +116,7 @@ tr {
 }
 
 .col {
-  width: 25%;
+  width: 20%;
   float: left;
 }
 

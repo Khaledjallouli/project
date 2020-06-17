@@ -1,4 +1,26 @@
+<template>
+  <div
+      class="sidebar"
+      :data="backgroundColor">
+      <div class="sidebar-wrapper text-left">
+        <div class="logo">
+          <a href="javascript:void(0)" class="simple-text logo-mini">
+            {{ abv }}
+          </a>
 
+          <a href="javascript:void(0)" class="simple-text logo-normal" :class="$rtl.isRTL ? '' : 'text-left'">
+            {{ title }}
+          </a>
+        </div>
+        <ul class="nav">
+          <slot>
+            <sidebar-link>
+            </sidebar-link>
+          </slot>
+        </ul>
+      </div>
+  </div>
+</template>
 <script>
 import SidebarLink from "./SidebarLink.vue";
 
@@ -10,11 +32,11 @@ export default{
   props: {
     abv: {
       type: String,
-      default: "CT"
+      default: "ST"
     },
     title: {
       type: String,
-      default: "Creative Tim"
+      default: "Soccer Team"
     },
     backgroundColor: {
       type: String,

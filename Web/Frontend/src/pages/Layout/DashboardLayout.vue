@@ -1,7 +1,23 @@
 <template>
   <div class="wrapper">
     <!-- <div class="wrapper" :class="{'nav-open': $sidebar.showSidebar}"> -->
-    <sidebar-share :background-color.sync="backgroundColor"></sidebar-share>
+      
+      <side-bar :background-color="backgroundColor">
+      <!-- <mobile-menu slot="content"></mobile-menu> -->
+      <sidebar-link to="/home">
+        <i class="tim-icons icon-chart-pie-36"></i>
+        <template v-if="!isRTL">
+          <p>Results</p>
+        </template>
+      </sidebar-link>
+      <sidebar-link to="/goals">
+        <i class="tim-icons icon-chart-bar-32"></i>
+        <template v-if="!isRTL">
+          <p>Goals</p>
+        </template>
+      </sidebar-link>
+    </side-bar>
+
 
     <div class="main-panel" :data="backgroundColor">
       <top-navbar></top-navbar>
@@ -19,10 +35,10 @@
 import TopNavbar from "./TopNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import DashboardContent from "./DashboardContent.vue";
+import SidebarShare from "./SidebarSharePlugin.vue";
 import MobileMenu from "./MobileMenu.vue";
 import SideBar from "@/components/SidebarPlugin/SideBar.vue";
 import SidebarLink from "@/components/SidebarPlugin/SidebarLink.vue";
-
 
 
 export default{
@@ -32,7 +48,8 @@ export default{
     ContentFooter,
     MobileMenu,
     SideBar,
-    SidebarLink
+    SidebarLink,
+    SidebarShare
   },
   data() {
     return {

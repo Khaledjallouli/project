@@ -36,9 +36,7 @@
         </card>
       </div>
     </div>
-
-    <div class="gamePrediction">Soccer Games Prediction - Results</div>
-
+    <div class="gamePrediction">Soccer Games Prediction - Goals</div>
     <div class="tableMatches">
       <div id="gridtitle">
         <div class="col">
@@ -54,11 +52,11 @@
           <hr />
         </div>
         <div class="col">
-          <div class="section">Actual Result</div>
+          <div class="section">Actual Goals</div>
           <hr />
         </div>
         <div class="col">
-          <div class="section">Predicted Result</div>
+          <div class="section">Predicted Goals</div>
           <hr />
         </div>
       </div>
@@ -113,7 +111,7 @@ export default {
   methods: {
     getSGData: function getSGData() {
       axios
-        .get(`http://127.0.0.1:5000/soccerMatchesClassification`)
+        .get(`http://127.0.0.1:5000/soccerMatchesRegression`)
         .then(response => {
           this.SoccerGamesList = response.data;
         })
@@ -128,16 +126,14 @@ export default {
       });
     },
 
-    getRetrainClassification: function getRetrainClassification() {
-      axios
-        .get(`http://127.0.0.1:5000/retrainClassification`)
-        .then(response => {
-          this.retrain = response.data;
-        });
+    getRetrainRegression: function getRetrainRegression() {
+      axios.get(`http://127.0.0.1:5000/retrainRegression`).then(response => {
+        this.retrain = response.data;
+      });
     },
     notifyVueRetrain(verticalAlign, horizontalAlign) {
       const color = Math.floor(Math.random() * 4 + 1);
-      this.getRetrainClassification();
+      this.getRetrainRegression();
       this.$notify({
         component: NotificationTemplate,
         icon: "tim-icons icon-bell-55",
