@@ -38,6 +38,7 @@
                  :show-close="true">
             <input slot="header" v-model="searchQuery" type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
           </modal>
+       
         </ul>
       </div>
     </div>

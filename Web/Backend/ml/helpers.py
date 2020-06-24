@@ -12,7 +12,7 @@ def load_model(modelname):
 
 
 # exec_model(model, data): Execute <model> with <data>
-def exec_model(model, prepared_data):
+def exec_classification_model(model, prepared_data):
 
     #TODO: The following step is probably unnecessary, as the index could be passed right away from the beginning (no for-loop required). But implementation isn't trivial...
     final_prepared_object = {"0":prepared_data} # creating the (required) index
@@ -29,9 +29,77 @@ def exec_model(model, prepared_data):
 
     # predict
     predictedResultArray = model.predict(n, batch_size=1)
+    predictedresult = int(str(numpy.argmax(predictedResultArray, axis=None)))
+
+    decoded_result = "D"
+    if predictedresult == 1:
+        decoded_result="H"
+    elif predictedresult == 2:
+        decoded_result="A"
 
     #TODO bug check for the following line; does it work as intended?
-    return int(str(numpy.argmax(predictedResultArray, axis=None))) # get max value as int (not beautiful, but works)
+    return decoded_result # get max value as int (not beautiful, but works)
+
+
+# exec_model(model, data): Execute <model> with <data>
+def exec_regression_model(model, prepared_data):
+
+    #TODO: The following step is probably unnecessary, as the index could be passed right away from the beginning (no for-loop required). But implementation isn't trivial...
+    final_prepared_object = {"0":prepared_data} # creating the (required) index
+    jasonstring = json.dumps(final_prepared_object) # prepare data for model
+    df = pd.read_json(jasonstring).T # read json and create dataframe
+
+    # normalize
+    column_names_to_not_normalize = ['result']
+    column_names_to_normalize = [x for x in list(df) if x not in column_names_to_not_normalize ]
+    x = df[column_names_to_normalize].values
+    x_scaled = preprocessing.normalize(x)
+    df[column_names_to_normalize] = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = df.index)
+
+    n = preprocessing.normalize(df[column_names_to_normalize])
+
+    # predict
+    predictedResultArray = model.predict(n, batch_size=1)
+
+    # decode
+    home_prediction = decode(round_regression_result(predictedResultArray[:,0]))
+    away_prediction = decode(round_regression_result(predictedResultArray[:,1]))
+
+    return str(home_prediction) + ":" + str(away_prediction) # return as str (not beautiful, but works)
+
+
+def round_regression_result(val):
+    if val <=1 and val > 0.75:
+        return 1
+    elif val <=0.75 and val >0.25:
+        return 0.5
+    elif val <= 0.25 and val > -0.25:
+        return 0
+    elif val <= -0.25 and val > -0.75:
+        return -0.5
+    else:
+        return -1
+
+def encode(i):
+    switcher = {
+        0: -1,
+        1: -0.5,
+        2: 0,
+        3: 0.5,
+        4: 1,
+    }
+    # 1 be assigned as default value of passed argument (if goals > 5)
+    return switcher.get(i, 1)
+
+def decode(i):
+    switcher = {
+        -1: 0,
+        -0.5: 1,
+        0: 2,
+        0.5: 3,
+        1: 4,
+    }
+    return switcher.get(i, "ERROR! Use Encode Before!")
 
 
 def prepare_matchdata(match,hometeamdata,awayteamdata):

@@ -7,7 +7,7 @@ import App from "./App.vue";
 import '@/assets/scss/white-dashboard.scss';
 import '@/assets/css/nucleo-icons.css';
 import "@/assets/demo/demo.css";
-
+import VueSimpleAlert from "vue-simple-alert";
 
 import GlobalComponents from "./globalComponents";
 import GlobalDirectives from "./globalDirectives";
@@ -36,6 +36,7 @@ Vue.use(GlobalDirectives);
 Vue.use(RTLPlugin);
 Vue.use(SideBar);
 Vue.use(Notify);
+Vue.use(VueSimpleAlert);
 
 new Vue({
   router,
