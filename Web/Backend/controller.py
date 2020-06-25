@@ -11,10 +11,10 @@ from os import path
 
 dbfile = "db/database.sqlite"
 season = "19-20"
-classificationmodelname = "model02_H3_M"
-regressionmodelname= "regression_model_ann"
+classificationmodelname = "classification_model"
+regressionmodelname= "regression_model"
 
-def getSoccerGamesClassification():
+def getSoccerMatchesClassification():
     result_object = {"SoccerGames": []}
 
     if path.exists(dbfile): # only if db-file exists
@@ -33,7 +33,7 @@ def getSoccerGamesClassification():
     return json.dumps(result_object)
 
 
-def getSoccerGamesRegression():
+def getSoccerMatchesRegression():
     result_object = {"SoccerGames": []}
 
     if path.exists(dbfile): # only if db-file exists
@@ -71,10 +71,54 @@ def fetchNewMatches():
 
 
 def retrainClassification():
+    matches = []
+    for match in db.get_matches(dbfile): # for each match in db
+        hometeamdata = db.get_teamhistory(dbfile,match["home-team"],match["date"]) # get history
+        awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
+        prepared_data = ml.prepare_classificationtrainingmatchdata(match,hometeamdata,awayteamdata) # prepare data for model
+
+        matches.append(prepared_data)
+    
+    model = ml.retrain_classification_model(matches) # build&create model
+
+    ml.save_model(model,classificationmodelname)# save model
+
+    # repredict everything!
+    for match in db.get_matches(dbfile):
+        hometeamdata = db.get_teamhistory(dbfile,match["home-team"],match["date"]) # get history
+        awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
+        prepared_data = ml.prepare_matchdata(match,hometeamdata,awayteamdata) # prepare data for model
+
+        predictedClassificationResult = ml.exec_classification_model(model,prepared_data) # run the model
+
+        db.update_matchprediction_classification(dbfile,match["home-team"],match["away-team"],match["date"],predictedClassificationResult)
+
     return "ok"
 
 
 def retrainRegression():
+    matches = []
+    for match in db.get_matches(dbfile): # for each match in db
+        hometeamdata = db.get_teamhistory(dbfile,match["home-team"],match["date"]) # get history
+        awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
+        prepared_data = ml.prepare_regressiontrainingmatchdata(match,hometeamdata,awayteamdata) # prepare data for model
+
+        matches.append(prepared_data)
+    
+    model = ml.retrain_regression_model(matches) # build&create model
+
+    ml.save_model(model,regressionmodelname)# save model
+
+    # repredict everything!
+    for match in db.get_matches(dbfile):
+        hometeamdata = db.get_teamhistory(dbfile,match["home-team"],match["date"]) # get history
+        awayteamdata = db.get_teamhistory(dbfile,match["away-team"],match["date"]) # get history
+        prepared_data = ml.prepare_matchdata(match,hometeamdata,awayteamdata) # prepare data for model
+
+        predictedRegressionResult = ml.exec_regression_model(model,prepared_data) # run the model
+
+        db.update_matchprediction_regression(dbfile,match["home-team"],match["away-team"],match["date"],predictedRegressionResult)
+
     return "ok"
 
 
@@ -86,18 +130,6 @@ def predict_match(classificationmodel,regressionmodel,match):
     predictedRegressionResult = ml.exec_regression_model(regressionmodel,prepared_data) # run the model
 
     return predictedClassificationResult,predictedRegressionResult
-
-
-def repredictMatches():
-    classificationmodel = ml.load_model(classificationmodelname) # load model for classification
-    regressionmodel = ml.load_model(regressionmodelname) # load model for regression
-
-    for match in db.get_matches(dbfile): # for each match
-        predictedClassificationResult,predictedRegressionResult = predict_match(classificationmodel,regressionmodel,match) # get predictions
-        db.update_matchprediction(dbfile,match["hometeam"],match["awayteam"],match["date"],predictedClassificationResult,predictedRegressionResult) # write predictions back to db
-
-    return "ok"
-
 
 # testing:
 def main():

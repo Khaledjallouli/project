@@ -83,16 +83,26 @@ def add_match(file,hometeam,awayteam,date,predicted_classification_result,predic
             "')")
         con.commit()
 
-def update_matchprediction(file,hometeam,awayteam,date,predicted_classification_result,predicted_regression_result):
+def update_matchprediction_classification(file,hometeam,awayteam,date,predicted_classification_result):
      with sqlite3.connect(file) as con:
         cursor = con.cursor()    
         cursor.execute("UPDATE matches SET"
-        "  'predicted-classification-result' = " + predicted_classification_result +
-        ", 'predicted-regression-result' = " + predicted_regression_result +
+        " 'predicted-classification-result' = '" + str(predicted_classification_result) + "'" +
         " WHERE"
-        " 'hometeam' = " + hometeam + " AND" +
-        " 'awayteam' = " + awayteam + " AND" +
-        " 'date' = " + date)
+        " 'hometeam' = '" + hometeam + "' AND" +
+        " 'awayteam' = '" + awayteam + "' AND" +
+        " 'date' = " + str(date))
+        con.commit()
+
+def update_matchprediction_regression(file,hometeam,awayteam,date,predicted_regression_result):
+     with sqlite3.connect(file) as con:
+        cursor = con.cursor()    
+        cursor.execute("UPDATE matches SET"
+        " 'predicted-regression-result' = '" + str(predicted_regression_result) + "'" +
+        " WHERE"
+        " 'hometeam' = '" + hometeam + "' AND" +
+        " 'awayteam' = '" + awayteam + "' AND" +
+        " 'date' = " + str(date))
         con.commit()
 
 #Note: get_match only exists for controller.main (testing) purpose

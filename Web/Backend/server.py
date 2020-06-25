@@ -9,18 +9,18 @@ CORS(app)
 # START OF ROUTES SECTION
 #####
 
-@app.route('/soccerGamesClassification', methods=['GET'])
-def soccerGamesClassification():
+@app.route('/soccerMatchesClassification', methods=['GET'])
+def soccerMatchesClassification():
     return app.response_class(
-        response=c.getSoccerGamesClassification(),
+        response=c.getSoccerMatchesClassification(),
         status=200,
         mimetype='application/json'
     )
 
-@app.route('/soccerGamesRegression', methods=['GET'])
-def soccerGamesRegression():
+@app.route('/soccerMatchesRegression', methods=['GET'])
+def soccerMatchesRegression():
     return app.response_class(
-        response=c.getSoccerGamesRegression(),
+        response=c.getSoccerMatchesRegression(),
         status=200,
         mimetype='application/json'
     )
