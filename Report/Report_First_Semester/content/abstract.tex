@@ -16,7 +16,48 @@
 
 \begin{abstract}
 
-lorem ipsum
+These days Machine Learning, Neural Networks or Data Mining are common buzzwords
+in the world of computer science. But a lot of people do not know what they are actually
+talking about, when using these kind of words. Therefore it makes sense to learn about
+neural networks and machine learning in general during the course of a masters degree in
+information technology. Fortunately there are many data sets online to use for analysis
+to get a basic understanding of the topic at hand. The European Soccer Database from
+Kaggle [6] is such a data set.
+During the team project of the information systems master at the Technische Hochschule
+Ulm it was our task to use the european soccer database for analytics in order to be able
+to predict the outcome of soccer matches.
+From the database we extracted several different features, like amount of goals shot
+by each team, amount of wins, draws and losses for each team as well as shot-accuracy
+and shot-efficiency per team and the overall ball possession of each soccer-team per match.
+Using an algorithm which we adapted for our special data [2] we created a sliding window
+which aggregates the extracted features over the last 10 soccer-games for each match
+in the database in chronological order. Because a lot of data samples in the database
+were incomplete regarding some of the extracted features, we created 5 different versions
+of the sliding window. Each containing a different amount of features and therefore a
+different amount of data samples. This gives us the possibility to test classifiers with
+various different models and later pick the solution that works best. The sliding window
+option 1 uses the least amount of features (13 features) and has the highest number of data
+samples (20823 data samples). Option 2 has 21 features and 7033 data samples, option 3
+uses 29 features and 7033 samples, option 4 contains 25 features and 6996 samples and
+option 5 has the most features (33) and 6996 data samples.
+We used the 5 sliding window options to train and test various classifiers such as a
+Decision Tree, a Multi-Layer Perceptron and various different basic sequential neural nets.
+For the Decision Tree and the Multi-Layer Perceptron we used the scikit-learn API. For
+the basic sequential neural nets we used the Tensorflow/Keras framework, which is state
+of the art when doing data analytics tasks.
+The decision tree using the first sliding window option and a depth of 4 gives us a testaccuracy
+of 52,95\%. The Multi-Layer Perceptron uses the sliding window option 1 aswell
+and has a test-accuracy of 53,45\%. It has 2 hidden layers with 52 and 32 neurons. The
+best version of the Keras Sequential Neural Network was trained with sliding window
+option 3, has 2 hidden layers (21, 21 neurons) and a test-accuracy of 56,25%. It is also the
+best classifier in general we were able to find until now. At first sight model accuracies
+barely over 50\% don’t seem very good, but considering that the home team has a base
+chance of 46\% to win the match and soccer is still a gambling game up to some point
+those accuracies aren’t too bad at all.
+Nevertheless, the team will continue its work on the project striving for better models
+by using additional features and varying the amount of features, adapting the split of
+training- and test-data, trying other kinds of classifiers and tweaking the existing models
+by changing parameters and input functions.
 
 
 \end{abstract}

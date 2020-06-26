@@ -8,15 +8,15 @@ In this phase, we have successfully completed the data preparation phase and our
 Modeling is an iterative process, in which we can apply several modeling techniques to the same problem using the default parameters and then fine-tune them until we satisfy our quality criteria. There is not a single model and a single execution which can satisfactorily answer our questions. For this, we tested several models to find the one that best fits our problem.\newline \newline
 This phase comprises tasks such as select modeling techniques, generate test design, build model and assess model.
 
-
+\section{Predicting the winner}
 %----------------------------------------------------------------------------------------
-\section{Select Modeling Techniques}
+\subsection{Select Modeling Techniques}
 
 As a first step in modeling, we decided to choose Supervised Machine Learning algorithms, to perform multi-class classification because our objective is to predict the final result of a match between two teams, if there is a win by the home team, a draw or a win by the away team. \newline \newline
 Therefore, we have selected Decision Trees and Neural Networks as techniques in order to test its performance and find the most appropriate for our project.
 
 %----------------------------------------------------------------------------------------
-\section{Generate Test Design}
+\subsection{Generate Test Design}
 
 This part refers to the generation of a procedure to test the model quality and validity needs, before building our models. \newline \newline
 For some modeling techniques, we have divided our dataset into training and test sets, the model is built based on the training set, and its quality is estimated based on the test set, which represents 30\% of the dataset. \newline
@@ -27,7 +27,7 @@ To evaluate the models, we used the accuracy results as criteria.
 
 
 %----------------------------------------------------------------------------------------
-\section{Build Models}
+\subsection{Build Models}
 
 The aim of this part is to build several models before comparing the results.\newline
 Most modeling techniques have a number of parameters that can be adjusted to control the modeling process.\newline \newline
@@ -35,7 +35,7 @@ For our Supervised Machine Learning Algorithms, we used scikit-learn API to buil
 The Decision Tree can be modified by adjusting the depth of the tree. For Neural Networks, we can change the number of hidden layers, the neurons per layer and other parameters.
 
 
-\subsection{Decision Tree Classifier}
+\subsubsection{Decision Tree Classifier}
 
 A decision tree is a simple classification representation that learns from the data with a set of if-then-else decision rules.\newline \newline
 % \cite {DecisionTree: scikit-learn}. 
@@ -51,7 +51,7 @@ The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sli
 \end{figure}
 
 
-\subsection{Multi-layer Perceptron}
+\subsubsection{Multi-layer Perceptron}
 
 Multi-layer Perceptron (MLP) is a supervised learning algorithm consisting of three layers: one input layer, one hidden layer, and one output layer. The units in the hidden layer are fully connected to the input layer, and the output layer is fully connected to the hidden layer.\newline \newline %\cite{PythonMachineLearning}
 In our MLP Model, we used the first sliding window with 13 features in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. For the output layer, we have 3 neurons.\newline \newline  
@@ -66,7 +66,7 @@ As we see in the following plot, the graph of the cost function indicating that 
 \end{figure}
 The last step is to evaluate the performance of the model by calculating the accuracy of the prediction. We obtained 53.45\% for the training dataset and 52.77\% for the testing dataset.
 
-\subsection{Keras Sequential Neural Network}
+\subsubsection{Keras Sequential Neural Network}
 
 To build the model, we used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it.\newline%\cite{buildingDLModel}
 The chosen layer type is 'dense'. Dense is a standard layer type that works for most cases. In a dense layer, all the nodes in the previous layer connect to the nodes in the current one.\newline
@@ -209,3 +209,6 @@ The test-accuracies for the models based on sliding window option 1 can be seen 
 \label{table:nn_variation_sliding_05}
 \end{table}
 
+\section{Predicting the final goals}
+\subsection{Regression}
+\subsection{Multi Class Classification}
