@@ -211,4 +211,30 @@ The test-accuracies for the models based on sliding window option 1 can be seen 
 
 \section{Predicting the final goals}
 \subsection{Regression}
+TODO --> Hemi
 \subsection{Multi Class Classification}
+Another idea for predicting the final goals is to use multi class classification. For this matter a common classification model can be used. 
+
+\begin{lstlisting}[language=Python, caption=Python code for multi class classification, label=modelmcc]
+inputs = tf.keras.layers.Input(shape=(21,))
+layer1 = layers.Dense(10, activation="relu", name="layer1")
+layer2 = layers.Dense(20, activation="relu", name="layer2")
+layer3 = layers.Dense(6, activation="softmax", name="layer3")
+b = layer3(layer2(layer1(inputs)))
+
+home-team_1 = b
+away-team_2 = b
+model = tf.keras.models.Model(
+   inputs=inputs, outputs=[home-team_1, away-team_2])
+model.compile(optimizer="Adam", loss='sparse_categorical_crossentropy', metrics=[ "acc"])
+history = model.fit(x, (y_home-team, y_away-team), epochs=100)
+\end{lstlisting}
+
+As the reader can see in listing \ref{modelmcc} the used model has one input layer with the shape of 21 neurons, because there are 21 features. There are 2 hidden layers with 10 and 20 neurons and one output layer with 6 neurons. The 6 neurons are because we are only predicting goals from 0 to 5 and if the goals are greater than 5 (which does not happen very often, as it is described in the Data Preprocessing part) we count them as 5 goals. In line 5 it is shown how the model is created from the defined layers before. This model is used for both predictions (line 7 and 8), the home team score prediction and the away team score prediction. In line 11 is the model compilation with the two output vectors and in line 12 the training with these vectors. So instead of applying the model on only one output vector it is just used for two of them. 
+
+\begin{lstlisting}[language=Python, caption=Python code for multi class classification model evaluation, label=modelmccev]
+model.evaluate(test02,( testLabels_hometeam, testLabels_awayTeam))
+\end{lstlisting}
+
+As the reader can see in listing \ref{modelmccev} the evaluation has to be adjusted in the same way. It is necessary to provide the model with two evaluation vectors as well. The result is a array with 5 values, the whole loss of the model, the loss per team and the accuracy per team. With this model we achieve an accuracy of 30.53\% for the home team and 37.64\% for the away team. 
+
