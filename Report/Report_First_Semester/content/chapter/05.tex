@@ -220,10 +220,10 @@ inputs = tf.keras.layers.Input(shape=(21,))
 layer1 = layers.Dense(10, activation="relu", name="layer1")
 layer2 = layers.Dense(20, activation="relu", name="layer2")
 layer3 = layers.Dense(6, activation="softmax", name="layer3")
-b = layer3(layer2(layer1(inputs)))
+model = layer3(layer2(layer1(inputs)))
 
-home-team_1 = b
-away-team_2 = b
+home-team_1 = model
+away-team_2 = model
 model = tf.keras.models.Model(
    inputs=inputs, outputs=[home-team_1, away-team_2])
 model.compile(optimizer="Adam", loss='sparse_categorical_crossentropy', metrics=[ "acc"])
@@ -237,4 +237,25 @@ model.evaluate(test02,( testLabels_hometeam, testLabels_awayTeam))
 \end{lstlisting}
 
 As the reader can see in listing \ref{modelmccev} the evaluation has to be adjusted in the same way. It is necessary to provide the model with two evaluation vectors as well. The result is a array with 5 values, the whole loss of the model, the loss per team and the accuracy per team. With this model we achieve an accuracy of 30.53\% for the home team and 37.64\% for the away team. 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=1.5]{images/mccloss.PNG}
+\end{center}
+\caption{Multi Class Classification loss graph}
+\label{mccloss}
+\end{figure}
+
+In figure \ref{mccloss} the reader is able to see, that the loss is higher for the home team than the away team. In the beginning the value is decreasing very much and after approximative epoch 10 the value is quite stable. The same shows the accuracy graph in figure \ref{mccacc}. The accuracy for the away team is better than the one for the home team. And it is only increasing in the beginning. Afterwards it is a little bit noisy but the accuracy is not increasing significant in any epoch. 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=1.5]{images/mccacc.PNG}
+\end{center}
+\caption{Multi Class Classification accuracy graph}
+\label{mccacc}
+\end{figure}
+
+After using the own built quality criteria this approach reaches 80\% accuracy. In this point there was no comparison with different models done. This will happen in the next semester. Maybe more hidden layers or more neurons can improve the outcome. Another idea for improving the result is to try the different sliding windows approaches. For this test sliding window 02 was used. 
+
 
