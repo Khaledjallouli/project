@@ -22,10 +22,10 @@ talking about, when using these kind of words. Therefore it makes sense to learn
 neural networks and machine learning in general during the course of a masters degree in
 information technology. Fortunately there are many data sets online to use for analysis
 to get a basic understanding of the topic at hand. The European Soccer Database from
-Kaggle [6] is such a data set.
+Kaggle [6] is such a data set.\newline
 During the team project of the information systems master at the Technische Hochschule
 Ulm it was our task to use the european soccer database for analytics in order to be able
-to predict the outcome of soccer matches.
+to predict the outcome of soccer matches.\newline
 From the database we extracted several different features, like amount of goals shot
 by each team, amount of wins, draws and losses for each team as well as shot-accuracy
 and shot-efficiency per team and the overall ball possession of each soccer-team per match.
@@ -39,12 +39,12 @@ various different models and later pick the solution that works best. The slidin
 option 1 uses the least amount of features (13 features) and has the highest number of data
 samples (20823 data samples). Option 2 has 21 features and 7033 data samples, option 3
 uses 29 features and 7033 samples, option 4 contains 25 features and 6996 samples and
-option 5 has the most features (33) and 6996 data samples.
+option 5 has the most features (33) and 6996 data samples.\newline
 We used the 5 sliding window options to train and test various classifiers such as a
 Decision Tree, a Multi-Layer Perceptron and various different basic sequential neural nets.
 For the Decision Tree and the Multi-Layer Perceptron we used the scikit-learn API. For
 the basic sequential neural nets we used the Tensorflow/Keras framework, which is state
-of the art when doing data analytics tasks.
+of the art when doing data analytics tasks.\newline
 The decision tree using the first sliding window option and a depth of 4 gives us a testaccuracy
 of 52,95\%. The Multi-Layer Perceptron uses the sliding window option 1 aswell
 and has a test-accuracy of 53,45\%. It has 2 hidden layers with 52 and 32 neurons. The
@@ -53,7 +53,9 @@ option 3, has 2 hidden layers (21, 21 neurons) and a test-accuracy of 56,25\%. I
 best classifier in general we were able to find until now. At first sight model accuracies
 barely over 50\% don’t seem very good, but considering that the home team has a base
 chance of 46\% to win the match and soccer is still a gambling game up to some point
-those accuracies aren’t too bad at all.
+those accuracies aren’t too bad at all.\newline
+For the goal prediction part we used two different techniques, regression and multi class classification. Regression is showing here better results with a test accuracy of [WE HAVE TO FILL IN] \%. Nevertheless multi class classification showed a decent accuracy with around 30\%.\newline
+For a good visualization we implemented a homepage for predicting soccer games with an API and a backend. This has different functionalities like retraining the models, showing previous predictions and showing upcoming matches. \newline
 Nevertheless, the team will continue its work on the project striving for better models
 by using additional features and varying the amount of features, adapting the split of
 training- and test-data, trying other kinds of classifiers and tweaking the existing models
