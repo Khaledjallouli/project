@@ -183,7 +183,7 @@ The following fig. shows the number of goals scored by each team in a game, we c
 The next parts describe the standardization and encoding processes.
 
 
-\section {Normalization}
+\subsection {Normalization}
 The goal of normalization is to change the values of numeric columns in the dataset to a common scale, without distorting differences in the ranges of values. The normalization is restricted to the input features and not output features.
 
 Since the input data varies in scale it has to be normalized, except the "home\_team\_goal" and "away\_team\_goal" columns which have to be encoded.
@@ -201,7 +201,7 @@ dataframe[column_names_to_normalize] = df_temp
 \end{lstlisting}
 
 
-\section {Encoding}
+\subsection {Encoding}
 
 The goals scored initially are between 0 and 10.
 To facilitate prediction before starting encoding, we have reduced the maximum number of goals scored in order to reduce the classes. The following figure shows that choosing to have 5 as the maximum number is a good idea because we have a very small number of rows for 6,7,8,9 and 10 goals scored compared to the others.

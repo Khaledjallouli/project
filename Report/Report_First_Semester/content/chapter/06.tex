@@ -1,9 +1,10 @@
 %!TEX root = ../../main.tex
 
 \chapter{Evaluation}
-\section{Predicting the winner}
 In this phase of the CRISP-DM Process we are going to evaluate the models and the features, we previously generated.\newline
-The evaluation criteria for the models and in the same way for the features which are used, is based on the test-accuracy. The highest accuracy we reached jet, have been 56.25\% with the Sliding Window Option 1, which means with the highest amount of features. The more features we have the less training samples are there for our training, so it could be better to train with more samples and less features. But because of the reason that every models are in the same range, which means there is no model which has a much smaller accuracy, it is not possible to tell the one with the highest accuracy the best model or has the best feature selection in every case. If you are using different data or a higher or smaller amount of features it could be possible to reach a better accuracy with another model than the one which reached the highest accuracy in the actual case. The first ranked model is using Keras Sequantial Neural Network, as shown in \autoref{table:coparison_of_classifiers}:
+
+\section{Prediction of the final result}
+In this part, the evaluation criteria for the models and in the same way for the features which are used, is based on the test-accuracy. The highest accuracy we reached jet, have been 56.25\% with the Sliding Window Option 1, which means with the highest amount of features. The more features we have the less training samples are there for our training, so it could be better to train with more samples and less features. But because of the reason that every models are in the same range, which means there is no model which has a much smaller accuracy, it is not possible to tell the one with the highest accuracy the best model or has the best feature selection in every case. If you are using different data or a higher or smaller amount of features it could be possible to reach a better accuracy with another model than the one which reached the highest accuracy in the actual case. The first ranked model is using Keras Sequantial Neural Network, as shown in \autoref{table:coparison_of_classifiers}:
 
 \begin{table}[H]
 \centering
@@ -23,8 +24,69 @@ The evaluation criteria for the models and in the same way for the features whic
 As you can see in the table \autoref{table:coparison_of_classifiers}, too, you can not even tell, that the more features you use, the better the outcome will be. For example with the Multi-layer Perceptron you get a worse accuracy with more features. But for the actual situation we recommend to use the first ranked model for predicting the outcome for football games, but we will maybe use a different model with other features in the future.
 
 \section{Predicting the final goals}
+In this part, we tested different evaluation criteria in order to compare the models. First, we created our own quality criteria to ensure that we can compare regression results and classification results. Second, we used test-accuracy.
 \subsection{Quality Criteria}
---> TODO Khaled
+Our quality criteria is divided into two parts: Rounding the predicted values and calculating the score.
+
+\subsubsection{Round the predicted values}
+
+The main idea of creating our own rounding function is to assign the predicted values of the model to the nearest real class.
+For example, if we predict 0.54, it will be rounded to 0.6 because it is between 0.33 and 0.67.
+0.60 is the encoded value to score 4 goals, as shown in the decoded value column.
+The following table shows the intervals of all possible values that we can predict and the associated decoded value.
+
+\begin{table}[H]
+    \centering
+    \resizebox{12cm}{!}{%
+    \begin{tabular}{|l|l|l|}
+    \hline
+    
+    \textbf{Predicted value Range} & \textbf{Round predicted value} & \textbf{Decoded value} \\ \hline
+    \textbf{ [-1, -0.67[} & -1 & 0 \\ \hline
+    \textbf{ ]-0.67, -0.33]} & -0.60 & 1  \\ \hline
+    \textbf{ ]-0.33, 0]} & -0.20 & 2 \\ \hline
+    \textbf{ ]0, 0.33]} & 0.20 & 3 \\ \hline
+    \textbf{ ]0.33, 0.67]} & 0.60 & 4 \\ \hline
+    \textbf{ ]0.67, 1]} & 1 & 5 \\ \hline
+    \end{tabular}
+    }
+    \caption{Round and Decode predicted values}
+    \label{table:qualitycriteriaround}
+    \end{table}
+The decoding function is used both in the predicted values and in the original values before comparing them and calculating the scores. We have defined this function to facilitate the comparison process.
+
+\subsubsection{Calculate the scores}
+
+To calculate the score, we first calculate the absolute value between the original value 
+and that predicted between the goals scored by the home team and the away team.
+Then, we encode this calculated value which is between 0 and 5 to a value between 0 and 1. 
+0 goal corresponds to a score equal to 1 and 5 goals corresponds to a score equal to 0.
+The following table shows all the possible values.
+
+
+\begin{table}[H]
+    \centering
+    \resizebox{8cm}{!}{%
+    \begin{tabular}{|l|l|}
+    \hline
+    
+    \textbf{Abs (yoriginal - ypred)} & \textbf{Degree difference}  \\ \hline
+    \textbf{0} & 1 \\ \hline
+    \textbf{1} & 0.8  \\ \hline
+    \textbf{2} & 0.6 \\ \hline
+    \textbf{3} & 0.4 \\ \hline
+    \textbf{4} & 0.2 \\ \hline
+    \textbf{5} & 0 \\ \hline
+    \end{tabular}
+    }
+    \caption{Calculate the degree difference}
+    \label{table:qualitycriteriaround}
+\end{table}
+
+After calculating the difference in degree for goals scored for home and away teams, the score is the average of the two columns. The final result will be the average of all the rows in the table which is between 0 and 1.
+
+
+
 \subsection{Comparing the regressors}
 This section highlights the different regressor models created for two different datasets with different features and then these models are compared to find the best model to make predictions on the new data or test data, we have created three different models using tried trial and error to set parameters and hiddenlayers units.\newline 
 In classification tasks, it is easy to calculate sensitivity or specificity of classifier because output is always binary {correct classification, incorrect classification}. So we can count good/bad answers and based on the confusion matrix calculate some measurements. But in regression tasks, the output is a number. So we can't just say is it correct or incorrect but instead we should measure "how far from true solution we are" by either calculating coefiicient of determination Rsquare or by focusing on minimizing the mean squared error also known as loss. That is why in our regression models, we have calculated loss for validation as well as for training.
