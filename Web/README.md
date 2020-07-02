@@ -4,6 +4,8 @@
 
 We used https://app.swaggerhub.com to define the REST API as you can find in RESTful_API_Definition folder.
 
+
+
 ## Frontend:
 
 ### Used Technologie:
@@ -37,6 +39,8 @@ To run the frontend, start a commandline-prompt in the ```Frontend/``` folder. T
 and open the displayed URL in your browser.
 
 > The frontend is dynamic. To get the data you should run the backend first.
+
+
 
 ## Backend 
 
