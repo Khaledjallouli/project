@@ -1,9 +1,76 @@
 %!TEX root = ../../main.tex
 
+preferably fungible
+
 \chapter{Deployment}
+This chapter is about the deployment step. Details about the backend are described first, then the API as interface between the latter and the frontend gets explained and afterwards the implementation of the frontend will be worked through.
+
 \section{Backend}
---> TODO Till
+Here, the overall architecture, structure and functionality of the backend is explained. Afterwards each of its component is described in detail. At the end, the installation and usage of the backend are shown.
+
+\subsection{Overview}
+The backend has the job to integrate several independent functionalities with each other and by that being able to serve the frontend.
+As each of the functionalities is independent of the others, the main idea is to keep them modularized. This not only increases maintainability but also allows for independend development and testing of each module. These moduls and their interaction are shown in fig XYZ \#TODO and are further described in the following.
+IMAGE \#TODO
+
+\subsection{Server}
+The server module consists only of one equally named file and is the entry point of the backend. It's job is to hold a python-specific web server named 'flask'. The only thing except for the flask-part in this module is the access to the controller.
+\newline
+So in this file, every API-route is defined and for each route, an accordingly named function within the controller is called. The return value of it is then returned to the HTTP client, which sent the request.
+
+\subsection{Controller}
+text
+
+\subsection{Database}
+text
+
+\subsection{Fetching}
+text
+
+\subsection{Machine learning}
+text
+
+\subsection{Installation}
+text
+
+
 \section{API}
---> TODO Till
+As the back- \& frontend were developed independent, an API as interface between them was developed. All of the below calls are HTTP GET methods.
+\newline
+In total there are two ways a call is answered by the backend. The first one is the return of a JSON-object, that the frontend has to process. The second one is a simple 'ok' string for actions that the backend has successfully finished. While the latter is self-explaining, the former had to be agreed upon for both fornt- and backend.
+
+\subsection{/soccerGamesClassification}
+As shown in \ref{lst:jsonsoccerGamesClassification}, this route returns a JSON-object named 'SoccerMatches' containing all soccer matches, with their respective dates, names of both teams, the predicted result and the actual result (if available). Every of those attributes is of type string. For the teamnames this definitely makes sense, but as JSON lacks a type for date, it was also chosen to be a string in the format of 'DD/MM/YYYY'. Again, both front- and backend had to make sure to use the same formatting for this string. The predicted Result is actually a single character (namely 'D' for draw, 'H' for home team win and 'A' for away team win), but again, JSON doesn't have a dedicated type for it. For the actual result of the match it would also be possible to create two integers, one goal-counter for each team, but this way the backend would just concatenate both numbers with a colon in between and pass this to the frontend.
+
+\begin{lstlisting}[language=JSON,label={lst:jsonsoccerGamesClassification}, caption=JSON structure of API call on /soccerGamesClassification]
+{
+    "SoccerMatches": [
+        {
+            "date":<string>,
+            "homeTeam":<string>,
+            "awayTeam":<string>,
+            "predictedResult":<string>,
+            "actualResult":<string>
+        },...
+    ]
+}
+\end{lstlisting}
+
+\subsection{/soccerGamesRegression}
+This route returns the exact same JSON-object as the previous one and as already shown in \ref{lst:jsonsoccerGamesClassification}. The only difference is the field content of the predicted result: Instead of the previous single character, this time the string has the same format as the actual result with the structure of \lstinline[columns=fixed]{<predicted home team goals>:<predicted away team goals}.
+
+\subsection{/retrainClassification}
+As the backend is able to create a newly trained model, this feature has to be accessed from the frontend. It does so, by sending a GET request to this route and waiting for it to return 'ok'. When this happens, the backend has finished creating a new model to use for classicification.
+
+\subsection{/retrainRegression}
+Closely related to the previous \lstinline[columns=fixed]{/retrainClassification} route, the only difference is the model, which is newly created by the backend; Instead of the model for classification, this one overwrites the model used for regression.
+
+\subsection{/fetchNewMatches}
+With a GET call on this route, the backend is commanded to download a new list of matches, both historic and upcoming ones. After the download, it has to integrate them into the database for further usage.
+
+\#TODO insert space
+
+After reading about all the routes, a reader could possibly argue, that there is no route for (re-)execution of the prediction for all matches in the database. This is possible due to the fact, that whenever the backend either fetches new matches or retrains a model, it (re-)executes both models on every match in the database. This may not be as efficient as a dedicated route for each model, but it is just as effective. Additionally, this prevents locks, as everything is ran sequentially. One more reason is the inefficiency introduced by working through all matches in the database two times - once for each model.
+
 \section{Frontend}
 --> TODO Khaled
