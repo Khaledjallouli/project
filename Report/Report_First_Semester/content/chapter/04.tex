@@ -15,7 +15,7 @@ Since the bookkeeper odds are highly correlated, as has been pointed out in \aut
 
 
 \section {Slliding Windows or Data Options}
-
+This part defines five different sliding windows which are used to predict the final results and the scored goals.
 \subsection {Option 1}
 For the first sliding window or option, data on shoton, shotoff and possession are not necessary and therefore are dropped. Moreover, rows without odds are dropped as well. The resulting data is saved as a CSV file:
 
@@ -39,6 +39,7 @@ This CSV file consists now of 22592 rows each representing one football match in
 \label{fig:matches_all_csv}
 \end{figure}
 
+
 This CSV file was then used for the first sliding window. The code for it \cite{sliding01} expects a CSV file and processes it row by row. For every match the outcome of the game based on scored goals is calculated. Moreover, statistics on how each of the two opponents performed in the previous ten games are generated:
 
 \begin{figure}[H]
@@ -48,8 +49,6 @@ This CSV file was then used for the first sliding window. The code for it \cite{
 \caption{Sliding Window Option 1}
 \label{fig:sliding_window_option1}
 \end{figure}
-
-As an example we can see in row 0 that the home team won, which is indicated by a capital "H". The odds that the home team wins were 1.36, 4.50 for a draw and odds of 9.0 that the away team wins. In the last 10 matches the home team won 5 times, finished 3 matches with a draw, lost 2 times and scored 14 goals. Opposing teams were able to score 10 goals. Subsequent columns contain the equivalent statistics for the opposing/away team. The first sliding window reduces the total dataset to 20823 rows and generates 13 features. Furthermore, now 3 distinguishable classes (H = home team wins, A = away team wins, D = draw) are available.
 
 
 \subsection {Option 2}
@@ -111,12 +110,30 @@ Using Pandas Profiling all sliding windows or options were profiled again. Here 
 \label{fig:profiling_option3}
 \end{figure}
 
-Apart from one variable, which holds the classes respectively the outcome H, A, or D of a football match, all features/columns are numerical and no values (cells) are missing. As expected x-shots and x-shots\_on\_target are highly 
+All features/columns are numerical and no values (cells) are missing. As expected x-shots and x-shots\_on\_target are highly 
 correlated. Interestingly zero values are marked as warnings. However, in this context they are fine and still usable. Without having domain knowledge and purely relying on tools, one might be inclined to drop these values and lose valuable information. Another interesting information found in Pandas profiles is the total size in memory. 1.8 MiB shows that the data for option 3 is little and definitely small enough to fit into RAM or GPU memory. This information is valuable, as will be shown later.
 \newline
 Since the profiles for the other options are similar to the one described above, they will not be explained.
 
-\section {Normalization}
+
+\section {Prediction of the final result}
+
+The prediction of the final result is based on 3 distinguishable classes (H = home team wins, A = away team wins, D = draw).
+
+In the following example, we can see in row 0 that the home team won, which is indicated by a capital "H". The odds that the home team wins were 3.50, 3.30 for a draw and odds of 2.10 that the away team wins. In the last 10 matches the home team won 1 time, finished 3 matches with a draw, lost 6 times and scored 11 goals. Opposing teams were able to win 10 games. Subsequent columns contain the equivalent statistics for the opposing/away team. The second sliding window reduces the total dataset to 7033 rows and generates 21 features.
+
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.55]{results_sliding_window_option2.png}
+\end{center}
+\caption{Results Sliding Window Option 2}
+\label{fig:results_sliding_window_option2}
+\end{figure}
+
+The last part of the data preparation is to normalize the dataset by rescaling it to make all the elements lie between 0 and 1 thus bringing all the values of numeric columns in the dataset to a common scale. Almost all ML algorithm requires data in numerical form. For that, we'll go through the encoding methods that are necessary for the machine to interpret the data(more specifically categorical data) and learn from it.
+
+\subsection {Normalization}
 Since the input data varies in scale it has to be normalized, except the "result" column which has to be encoded. Normalization is the process which normalizes all input data avoiding negative effects in regards to decisions of a neuron. 
 The following lines of code normalize the data in a dataframe:
 
@@ -132,7 +149,8 @@ dataframe[column_names_to_normalize] = df_temp
 \end{lstlisting}
 
 
-\section {Encoding}
+
+\subsection {Encoding}
 
 The classes H,A,D respectively the outcome of football match which shall be predicted, have to be encoded before they can be used. Using sklearn this can be achieved with only a few lines of code:
 
@@ -143,6 +161,93 @@ le = preprocessing.LabelEncoder()
 le.fit([ "H", "A", "D"])
 dataframe.loc[:,['result']]=le.transform(dataframe['result'])
 \end{lstlisting}
+
+
+
+\section {Prediction of the scored goals}
+
+This part differs from the previous one by changing the "result" column to two columns: "home\_team\_goal" and "away\_team\_goal". It means, we are not predicting the winner or draw but we predict the final scored goals. The scored goals are between 0 and 10 for each team.
+
+
+The following fig. shows the number of goals scored by each team in a game, we can see in row 0 that the home team scored 2 goals and the away team scored 1 goal. The features are based on the last 10 matches as described in the previous sections.
+
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.55]{goals_sliding_window_option2.png}
+\end{center}
+\caption{Scored Goals Sliding Window Option 2}
+\label{fig:scored_sliding_window_option2}
+\end{figure}
+
+The next parts describe the standardization and encoding processes.
+
+
+\subsection {Normalization}
+The goal of normalization is to change the values of numeric columns in the dataset to a common scale, without distorting differences in the ranges of values. The normalization is restricted to the input features and not output features.
+
+Since the input data varies in scale it has to be normalized, except the "home\_team\_goal" and "away\_team\_goal" columns which have to be encoded.
+The following lines of code normalize the data in a dataframe:
+
+\begin{lstlisting}[language=Python, caption=Scored goals Python code for normalization]
+from sklearn import preprocessing
+
+column_names_to_not_normalize = ['home_team_goal','away_team_goal']
+column_names_to_normalize = [x for x in list(dataframe) if x not in column_names_to_not_normalize ]
+x = dataframe[column_names_to_normalize].values
+x_scaled = preprocessing.normalize(x)
+df_temp = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = dataframe.index)
+dataframe[column_names_to_normalize] = df_temp
+\end{lstlisting}
+
+
+\subsection {Encoding}
+
+The goals scored initially are between 0 and 10.
+To facilitate prediction before starting encoding, we have reduced the maximum number of goals scored in order to reduce the classes. The following figure shows that choosing to have 5 as the maximum number is a good idea because we have a very small number of rows for 6,7,8,9 and 10 goals scored compared to the others.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.6]{goals_counts.png}
+\end{center}
+\caption{The initial number of rows per each scored goal(s)}
+\label{figure:goals_counts}
+\end{figure}
+
+
+The second step is to encode 0 goals to -1, 1 goal tp -0.6, 2 goals to -0.2, 3 goals to 0.2, 4 goals to 0.6 and 5 or more goals to 1.
+The following figure \autoref{figure:dataPrep} describes the encoding step.\newline
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.6]{datapreprocessing_regression.png}
+\end{center}
+\caption{Encode and Decode functions}
+\label{figure:dataPrep}
+\end{figure}
+
+
+
+The encode function can be used with the following lines of code:
+
+\begin{lstlisting}[language=Python, caption=Scored goals Python code for encoding classes]
+dataframe['home_team_goal'] = dataframe.apply(lambda row: encode(row['home_team_goal']), axis=1)
+dataframe['away_team_goal'] = dataframe.apply(lambda row: encode(row['away_team_goal']), axis=1)
+\end{lstlisting}
+
+
+After executing the encode function, we have the following result.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=.6]{encoded_val.png}
+\end{center}
+\caption{Encoding results}
+\label{figure:encoding}
+\end{figure}
+
+
+The decoding function is useful after executing the encoding function in order to have the real scored goals but it keeps predicting 5 as the maximum scored goals (not 10 as it was).
+
 
 
 \section {Functions and Input Data For Neural Networks}

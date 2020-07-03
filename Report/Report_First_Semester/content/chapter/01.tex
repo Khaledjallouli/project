@@ -53,14 +53,15 @@ As first step we have to set the goals of the project which are already describe
 \item Data Understanding \newline
 Before we can start to create a model or select features we have to understand the Dataset. For this matter it is necessary to understand the structure of the set including the different columns and what they indicate. Additional it is important how many data the set includes and which types of value. It is important to learn also something about soccer and what are important facts about a game. 
 \item Data Preparation \newline
- Before it is possible to use the Dataset in a neuronal network it is necessary to prepare the data. For this matter as first step there has to be a feature selection. So one has to decide which columns are important for the later prediction. After we dropped the unnecessary columns it is important to prepare the resulting dataset. The records which have empty attributes have to be deleted or filled with specific values. Additionally the data has to be sorted and aggregated. At the end it has to be split into test and training data. 
- \item Modeling \newline
- The resulting dataset from the step before should be ready to be used for different models. In this step we will prepare different models to find a decent one. Additionally it is necessary to define a measurable goal how good the model can get.   
+Before it is possible to use the Dataset in a neuronal network it is necessary to prepare the data. For this matter as first step there has to be a feature selection. So one has to decide which columns are important for the later prediction. After we dropped the unnecessary columns it is important to prepare the resulting dataset. The records which have empty attributes have to be deleted or filled with specific values. Additionally the data has to be sorted and aggregated. At the end it has to be split into test and training data. 
+\item Modeling \newline
+The resulting dataset from the step before should be ready to be used for different models. In this step we will prepare different models to find a decent one. Additionally it is necessary to define a measurable goal how good the model can get.   
 \item Evaluation \newline
 In the end of this semester we will make a evaluation of the accomplished goals and if it is possible to increase the accuracy in the following semester.  
 \item Deployment \newline
-----> TODO Till
+As the idea of the project to have a product to show off at the end, this has to be implemented along the way. The finished product should have the ability to predict matches, using the beforehand implemented model(s). It should also list historic games with the prediction of the model, so the user is able to compare prediction versus reality.
+
 \end{itemize}
 
-The steps `Data Preperation' and `Modeling' will repeat as long as the resulting accuracy is not getting any better or we are satisfied with the resulting one. For all the steps it is necessary to do a lot of research to find the right techniques to do the tasks in a proper way. 
-----> TODO Till
+The steps `Data Preparation' and `Modeling' will repeat as long as the resulting accuracy is not getting any better or we are satisfied with the resulting one. For all the steps it is necessary to do a lot of research to find the right techniques to do the tasks in a proper way.  \newline
+To be able deploy a product after the 'Data Preparation' and 'Modeling' loop is finished, an architecture and fitting software has to be developed, which makes use of all the previous steps.

@@ -1,3 +1,16 @@
+# server, controller
 Flask==1.1.2
 Flask-Cors==3.0.8
+
+# database
+#sqlite3== # already included in python (since v2.5)
+
+# machine learning
+numpy==1.18.2
+matplotlib==3.2.1
+pandas==1.0.3
+tensorflow==2.2.0rc2
+sklearn==0.0
+
+# fetching
 bs4==0.0.1
