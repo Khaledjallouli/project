@@ -1,0 +1,2194 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "accelerator": "GPU",
+    "colab": {
+      "name": "Regression_Model_Sliding03_ANN.ipynb",
+      "provenance": [],
+      "collapsed_sections": []
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.7.3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "EMQmP-Bknt5P",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Regression\n",
+        "Predict the final goals scored per each team."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab_type": "code",
+        "id": "FtJth4hT577a",
+        "colab": {}
+      },
+      "source": [
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "%matplotlib inline\n",
+        "import pandas as pd\n",
+        "pd.set_option('display.max_columns', 999)\n",
+        "\n",
+        "from sklearn import preprocessing\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "\n",
+        "import tensorflow as tf\n",
+        "from tensorflow.estimator import inputs\n",
+        "from tensorflow import feature_column\n",
+        "from tensorflow.keras import layers\n",
+        "from tensorflow.keras import regularizers\n",
+        "from tensorflow import keras\n",
+        "from tensorflow.keras.callbacks import EarlyStopping\n",
+        "\n",
+        "from tensorflow.keras.models import load_model\n",
+        "\n",
+        "\n",
+        "import tensorflow_docs as tfdocs\n",
+        "import tensorflow_docs.modeling\n",
+        "import tensorflow_docs.plots\n",
+        "\n",
+        "from  IPython import display\n",
+        "from matplotlib import pyplot as plt\n",
+        "\n",
+        "import numpy as np\n",
+        "import math\n",
+        "\n",
+        "import pathlib\n",
+        "import shutil\n",
+        "import tempfile"
+      ],
+      "execution_count": 29,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nVI7Xp89n15I",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 292
+        },
+        "outputId": "d5585abd-1128-46ea-b96e-912b1273d9d9"
+      },
+      "source": [
+        "pip install git+https://github.com/tensorflow/docs"
+      ],
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Collecting git+https://github.com/tensorflow/docs\n",
+            "  Cloning https://github.com/tensorflow/docs to /tmp/pip-req-build-lj7vuyz9\n",
+            "  Running command git clone -q https://github.com/tensorflow/docs /tmp/pip-req-build-lj7vuyz9\n",
+            "Requirement already satisfied (use --upgrade to upgrade): tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641- from git+https://github.com/tensorflow/docs in /usr/local/lib/python3.6/dist-packages\n",
+            "Requirement already satisfied: astor in /usr/local/lib/python3.6/dist-packages (from tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (0.8.1)\n",
+            "Requirement already satisfied: absl-py in /usr/local/lib/python3.6/dist-packages (from tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (0.9.0)\n",
+            "Requirement already satisfied: protobuf in /usr/local/lib/python3.6/dist-packages (from tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (3.10.0)\n",
+            "Requirement already satisfied: pyyaml in /usr/local/lib/python3.6/dist-packages (from tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (3.13)\n",
+            "Requirement already satisfied: six in /usr/local/lib/python3.6/dist-packages (from absl-py->tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (1.12.0)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.6/dist-packages (from protobuf->tensorflow-docs===0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641-) (47.3.1)\n",
+            "Building wheels for collected packages: tensorflow-docs\n",
+            "  Building wheel for tensorflow-docs (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for tensorflow-docs: filename=tensorflow_docs-0.0.0dfd9739e4bdcce166dc6326afcde41af9a5f8641_-cp36-none-any.whl size=119874 sha256=b446704ed45305fa4793f6e03ac9e6453d14b20852c9da5c0dfde78d517f737b\n",
+            "  Stored in directory: /tmp/pip-ephem-wheel-cache-1hs5y4fr/wheels/eb/1b/35/fce87697be00d2fc63e0b4b395b0d9c7e391a10e98d9a0d97f\n",
+            "Successfully built tensorflow-docs\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "pmP557n8nt5X",
+        "colab_type": "text"
+      },
+      "source": [
+        "## Data Preprocessing\n",
+        "    1. Normalization\n",
+        "    2. Data encoding: The goals [0,10] => [-1,1]. If Goal > 10 => 1"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "u_NuYqrJnt5Y",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df03 = pd.read_csv('https://raw.githubusercontent.com/Khaledjallouli/project/master/data/data_regression_goals/sliding03_goals.csv', sep=',', index_col=0)"
+      ],
+      "execution_count": 30,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "MFm2Qfk2nt5c",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 473
+        },
+        "outputId": "8dba007b-361c-469c-9921-86329f9f230b"
+      },
+      "source": [
+        "df03"
+      ],
+      "execution_count": 31,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>home_team_goal</th>\n",
+              "      <th>away_team_goal</th>\n",
+              "      <th>odds-home</th>\n",
+              "      <th>odds-draw</th>\n",
+              "      <th>odds-away</th>\n",
+              "      <th>home-wins</th>\n",
+              "      <th>home-draws</th>\n",
+              "      <th>home-losses</th>\n",
+              "      <th>home-goals</th>\n",
+              "      <th>home-opposition-goals</th>\n",
+              "      <th>home-shots</th>\n",
+              "      <th>home-shots_on_target</th>\n",
+              "      <th>home-opposition_shots</th>\n",
+              "      <th>home-opposition_shots_on_target</th>\n",
+              "      <th>away-wins</th>\n",
+              "      <th>away-draws</th>\n",
+              "      <th>away-losses</th>\n",
+              "      <th>away-goals</th>\n",
+              "      <th>away-opposition-goals</th>\n",
+              "      <th>away-shots</th>\n",
+              "      <th>away-shots_on_target</th>\n",
+              "      <th>away-opposition_shots</th>\n",
+              "      <th>away-opposition_shots_on_target</th>\n",
+              "      <th>home_shot_accuracy</th>\n",
+              "      <th>home_shot_efficiency</th>\n",
+              "      <th>home_opposition_shot_accuracy</th>\n",
+              "      <th>home_opposition_shot_efficiency</th>\n",
+              "      <th>away_shot_accuracy</th>\n",
+              "      <th>away_shot_efficiency</th>\n",
+              "      <th>away_opposition_shot_accuracy</th>\n",
+              "      <th>away_opposition_shot_efficiency</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3.50</td>\n",
+              "      <td>3.30</td>\n",
+              "      <td>2.10</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>6</td>\n",
+              "      <td>11</td>\n",
+              "      <td>16</td>\n",
+              "      <td>137</td>\n",
+              "      <td>67</td>\n",
+              "      <td>117</td>\n",
+              "      <td>53</td>\n",
+              "      <td>8</td>\n",
+              "      <td>2</td>\n",
+              "      <td>0</td>\n",
+              "      <td>15</td>\n",
+              "      <td>6</td>\n",
+              "      <td>161</td>\n",
+              "      <td>78</td>\n",
+              "      <td>72</td>\n",
+              "      <td>30</td>\n",
+              "      <td>0.489051</td>\n",
+              "      <td>0.164179</td>\n",
+              "      <td>0.452991</td>\n",
+              "      <td>0.301887</td>\n",
+              "      <td>0.484472</td>\n",
+              "      <td>0.192308</td>\n",
+              "      <td>0.416667</td>\n",
+              "      <td>0.200000</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>2</td>\n",
+              "      <td>2</td>\n",
+              "      <td>2.50</td>\n",
+              "      <td>3.30</td>\n",
+              "      <td>2.88</td>\n",
+              "      <td>3</td>\n",
+              "      <td>1</td>\n",
+              "      <td>6</td>\n",
+              "      <td>8</td>\n",
+              "      <td>16</td>\n",
+              "      <td>134</td>\n",
+              "      <td>64</td>\n",
+              "      <td>151</td>\n",
+              "      <td>77</td>\n",
+              "      <td>3</td>\n",
+              "      <td>3</td>\n",
+              "      <td>4</td>\n",
+              "      <td>11</td>\n",
+              "      <td>18</td>\n",
+              "      <td>104</td>\n",
+              "      <td>44</td>\n",
+              "      <td>87</td>\n",
+              "      <td>36</td>\n",
+              "      <td>0.477612</td>\n",
+              "      <td>0.125000</td>\n",
+              "      <td>0.509934</td>\n",
+              "      <td>0.207792</td>\n",
+              "      <td>0.423077</td>\n",
+              "      <td>0.250000</td>\n",
+              "      <td>0.413793</td>\n",
+              "      <td>0.500000</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>1</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1.91</td>\n",
+              "      <td>3.40</td>\n",
+              "      <td>4.20</td>\n",
+              "      <td>4</td>\n",
+              "      <td>2</td>\n",
+              "      <td>4</td>\n",
+              "      <td>10</td>\n",
+              "      <td>15</td>\n",
+              "      <td>120</td>\n",
+              "      <td>58</td>\n",
+              "      <td>124</td>\n",
+              "      <td>56</td>\n",
+              "      <td>2</td>\n",
+              "      <td>2</td>\n",
+              "      <td>6</td>\n",
+              "      <td>11</td>\n",
+              "      <td>15</td>\n",
+              "      <td>134</td>\n",
+              "      <td>59</td>\n",
+              "      <td>100</td>\n",
+              "      <td>46</td>\n",
+              "      <td>0.483333</td>\n",
+              "      <td>0.172414</td>\n",
+              "      <td>0.451613</td>\n",
+              "      <td>0.267857</td>\n",
+              "      <td>0.440299</td>\n",
+              "      <td>0.186441</td>\n",
+              "      <td>0.460000</td>\n",
+              "      <td>0.326087</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3.25</td>\n",
+              "      <td>3.25</td>\n",
+              "      <td>2.30</td>\n",
+              "      <td>5</td>\n",
+              "      <td>2</td>\n",
+              "      <td>3</td>\n",
+              "      <td>22</td>\n",
+              "      <td>12</td>\n",
+              "      <td>177</td>\n",
+              "      <td>82</td>\n",
+              "      <td>74</td>\n",
+              "      <td>37</td>\n",
+              "      <td>6</td>\n",
+              "      <td>3</td>\n",
+              "      <td>1</td>\n",
+              "      <td>19</td>\n",
+              "      <td>8</td>\n",
+              "      <td>169</td>\n",
+              "      <td>95</td>\n",
+              "      <td>113</td>\n",
+              "      <td>58</td>\n",
+              "      <td>0.463277</td>\n",
+              "      <td>0.268293</td>\n",
+              "      <td>0.500000</td>\n",
+              "      <td>0.324324</td>\n",
+              "      <td>0.562130</td>\n",
+              "      <td>0.200000</td>\n",
+              "      <td>0.513274</td>\n",
+              "      <td>0.137931</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>3</td>\n",
+              "      <td>0</td>\n",
+              "      <td>1.20</td>\n",
+              "      <td>6.00</td>\n",
+              "      <td>19.00</td>\n",
+              "      <td>7</td>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "      <td>15</td>\n",
+              "      <td>8</td>\n",
+              "      <td>161</td>\n",
+              "      <td>72</td>\n",
+              "      <td>74</td>\n",
+              "      <td>31</td>\n",
+              "      <td>3</td>\n",
+              "      <td>2</td>\n",
+              "      <td>5</td>\n",
+              "      <td>10</td>\n",
+              "      <td>17</td>\n",
+              "      <td>143</td>\n",
+              "      <td>69</td>\n",
+              "      <td>134</td>\n",
+              "      <td>69</td>\n",
+              "      <td>0.447205</td>\n",
+              "      <td>0.208333</td>\n",
+              "      <td>0.418919</td>\n",
+              "      <td>0.258065</td>\n",
+              "      <td>0.482517</td>\n",
+              "      <td>0.144928</td>\n",
+              "      <td>0.514925</td>\n",
+              "      <td>0.246377</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7028</th>\n",
+              "      <td>2</td>\n",
+              "      <td>1</td>\n",
+              "      <td>5.00</td>\n",
+              "      <td>3.80</td>\n",
+              "      <td>1.70</td>\n",
+              "      <td>4</td>\n",
+              "      <td>2</td>\n",
+              "      <td>4</td>\n",
+              "      <td>10</td>\n",
+              "      <td>12</td>\n",
+              "      <td>80</td>\n",
+              "      <td>43</td>\n",
+              "      <td>117</td>\n",
+              "      <td>60</td>\n",
+              "      <td>2</td>\n",
+              "      <td>4</td>\n",
+              "      <td>4</td>\n",
+              "      <td>10</td>\n",
+              "      <td>21</td>\n",
+              "      <td>119</td>\n",
+              "      <td>58</td>\n",
+              "      <td>112</td>\n",
+              "      <td>65</td>\n",
+              "      <td>0.537500</td>\n",
+              "      <td>0.232558</td>\n",
+              "      <td>0.512821</td>\n",
+              "      <td>0.200000</td>\n",
+              "      <td>0.487395</td>\n",
+              "      <td>0.172414</td>\n",
+              "      <td>0.580357</td>\n",
+              "      <td>0.323077</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7029</th>\n",
+              "      <td>4</td>\n",
+              "      <td>2</td>\n",
+              "      <td>2.00</td>\n",
+              "      <td>3.60</td>\n",
+              "      <td>3.70</td>\n",
+              "      <td>3</td>\n",
+              "      <td>2</td>\n",
+              "      <td>5</td>\n",
+              "      <td>9</td>\n",
+              "      <td>21</td>\n",
+              "      <td>89</td>\n",
+              "      <td>47</td>\n",
+              "      <td>92</td>\n",
+              "      <td>46</td>\n",
+              "      <td>1</td>\n",
+              "      <td>4</td>\n",
+              "      <td>5</td>\n",
+              "      <td>7</td>\n",
+              "      <td>21</td>\n",
+              "      <td>104</td>\n",
+              "      <td>55</td>\n",
+              "      <td>63</td>\n",
+              "      <td>26</td>\n",
+              "      <td>0.528090</td>\n",
+              "      <td>0.191489</td>\n",
+              "      <td>0.500000</td>\n",
+              "      <td>0.456522</td>\n",
+              "      <td>0.528846</td>\n",
+              "      <td>0.127273</td>\n",
+              "      <td>0.412698</td>\n",
+              "      <td>0.807692</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7030</th>\n",
+              "      <td>4</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1.80</td>\n",
+              "      <td>3.75</td>\n",
+              "      <td>4.50</td>\n",
+              "      <td>3</td>\n",
+              "      <td>3</td>\n",
+              "      <td>4</td>\n",
+              "      <td>8</td>\n",
+              "      <td>8</td>\n",
+              "      <td>122</td>\n",
+              "      <td>59</td>\n",
+              "      <td>92</td>\n",
+              "      <td>50</td>\n",
+              "      <td>5</td>\n",
+              "      <td>2</td>\n",
+              "      <td>3</td>\n",
+              "      <td>15</td>\n",
+              "      <td>9</td>\n",
+              "      <td>84</td>\n",
+              "      <td>43</td>\n",
+              "      <td>118</td>\n",
+              "      <td>56</td>\n",
+              "      <td>0.483607</td>\n",
+              "      <td>0.135593</td>\n",
+              "      <td>0.543478</td>\n",
+              "      <td>0.160000</td>\n",
+              "      <td>0.511905</td>\n",
+              "      <td>0.348837</td>\n",
+              "      <td>0.474576</td>\n",
+              "      <td>0.160714</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7031</th>\n",
+              "      <td>3</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1.33</td>\n",
+              "      <td>5.25</td>\n",
+              "      <td>9.00</td>\n",
+              "      <td>2</td>\n",
+              "      <td>3</td>\n",
+              "      <td>5</td>\n",
+              "      <td>12</td>\n",
+              "      <td>14</td>\n",
+              "      <td>124</td>\n",
+              "      <td>62</td>\n",
+              "      <td>99</td>\n",
+              "      <td>50</td>\n",
+              "      <td>3</td>\n",
+              "      <td>3</td>\n",
+              "      <td>4</td>\n",
+              "      <td>11</td>\n",
+              "      <td>17</td>\n",
+              "      <td>103</td>\n",
+              "      <td>53</td>\n",
+              "      <td>122</td>\n",
+              "      <td>54</td>\n",
+              "      <td>0.500000</td>\n",
+              "      <td>0.193548</td>\n",
+              "      <td>0.505051</td>\n",
+              "      <td>0.280000</td>\n",
+              "      <td>0.514563</td>\n",
+              "      <td>0.207547</td>\n",
+              "      <td>0.442623</td>\n",
+              "      <td>0.314815</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7032</th>\n",
+              "      <td>3</td>\n",
+              "      <td>1</td>\n",
+              "      <td>1.67</td>\n",
+              "      <td>4.20</td>\n",
+              "      <td>5.25</td>\n",
+              "      <td>6</td>\n",
+              "      <td>1</td>\n",
+              "      <td>3</td>\n",
+              "      <td>10</td>\n",
+              "      <td>8</td>\n",
+              "      <td>105</td>\n",
+              "      <td>65</td>\n",
+              "      <td>126</td>\n",
+              "      <td>54</td>\n",
+              "      <td>3</td>\n",
+              "      <td>2</td>\n",
+              "      <td>5</td>\n",
+              "      <td>13</td>\n",
+              "      <td>19</td>\n",
+              "      <td>114</td>\n",
+              "      <td>63</td>\n",
+              "      <td>106</td>\n",
+              "      <td>46</td>\n",
+              "      <td>0.619048</td>\n",
+              "      <td>0.153846</td>\n",
+              "      <td>0.428571</td>\n",
+              "      <td>0.148148</td>\n",
+              "      <td>0.552632</td>\n",
+              "      <td>0.206349</td>\n",
+              "      <td>0.433962</td>\n",
+              "      <td>0.413043</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>7033 rows × 31 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      home_team_goal  away_team_goal  odds-home  odds-draw  odds-away  \\\n",
+              "0                  2               1       3.50       3.30       2.10   \n",
+              "1                  2               2       2.50       3.30       2.88   \n",
+              "2                  1               2       1.91       3.40       4.20   \n",
+              "3                  2               1       3.25       3.25       2.30   \n",
+              "4                  3               0       1.20       6.00      19.00   \n",
+              "...              ...             ...        ...        ...        ...   \n",
+              "7028               2               1       5.00       3.80       1.70   \n",
+              "7029               4               2       2.00       3.60       3.70   \n",
+              "7030               4               1       1.80       3.75       4.50   \n",
+              "7031               3               1       1.33       5.25       9.00   \n",
+              "7032               3               1       1.67       4.20       5.25   \n",
+              "\n",
+              "      home-wins  home-draws  home-losses  home-goals  home-opposition-goals  \\\n",
+              "0             1           3            6          11                     16   \n",
+              "1             3           1            6           8                     16   \n",
+              "2             4           2            4          10                     15   \n",
+              "3             5           2            3          22                     12   \n",
+              "4             7           2            1          15                      8   \n",
+              "...         ...         ...          ...         ...                    ...   \n",
+              "7028          4           2            4          10                     12   \n",
+              "7029          3           2            5           9                     21   \n",
+              "7030          3           3            4           8                      8   \n",
+              "7031          2           3            5          12                     14   \n",
+              "7032          6           1            3          10                      8   \n",
+              "\n",
+              "      home-shots  home-shots_on_target  home-opposition_shots  \\\n",
+              "0            137                    67                    117   \n",
+              "1            134                    64                    151   \n",
+              "2            120                    58                    124   \n",
+              "3            177                    82                     74   \n",
+              "4            161                    72                     74   \n",
+              "...          ...                   ...                    ...   \n",
+              "7028          80                    43                    117   \n",
+              "7029          89                    47                     92   \n",
+              "7030         122                    59                     92   \n",
+              "7031         124                    62                     99   \n",
+              "7032         105                    65                    126   \n",
+              "\n",
+              "      home-opposition_shots_on_target  away-wins  away-draws  away-losses  \\\n",
+              "0                                  53          8           2            0   \n",
+              "1                                  77          3           3            4   \n",
+              "2                                  56          2           2            6   \n",
+              "3                                  37          6           3            1   \n",
+              "4                                  31          3           2            5   \n",
+              "...                               ...        ...         ...          ...   \n",
+              "7028                               60          2           4            4   \n",
+              "7029                               46          1           4            5   \n",
+              "7030                               50          5           2            3   \n",
+              "7031                               50          3           3            4   \n",
+              "7032                               54          3           2            5   \n",
+              "\n",
+              "      away-goals  away-opposition-goals  away-shots  away-shots_on_target  \\\n",
+              "0             15                      6         161                    78   \n",
+              "1             11                     18         104                    44   \n",
+              "2             11                     15         134                    59   \n",
+              "3             19                      8         169                    95   \n",
+              "4             10                     17         143                    69   \n",
+              "...          ...                    ...         ...                   ...   \n",
+              "7028          10                     21         119                    58   \n",
+              "7029           7                     21         104                    55   \n",
+              "7030          15                      9          84                    43   \n",
+              "7031          11                     17         103                    53   \n",
+              "7032          13                     19         114                    63   \n",
+              "\n",
+              "      away-opposition_shots  away-opposition_shots_on_target  \\\n",
+              "0                        72                               30   \n",
+              "1                        87                               36   \n",
+              "2                       100                               46   \n",
+              "3                       113                               58   \n",
+              "4                       134                               69   \n",
+              "...                     ...                              ...   \n",
+              "7028                    112                               65   \n",
+              "7029                     63                               26   \n",
+              "7030                    118                               56   \n",
+              "7031                    122                               54   \n",
+              "7032                    106                               46   \n",
+              "\n",
+              "      home_shot_accuracy  home_shot_efficiency  home_opposition_shot_accuracy  \\\n",
+              "0               0.489051              0.164179                       0.452991   \n",
+              "1               0.477612              0.125000                       0.509934   \n",
+              "2               0.483333              0.172414                       0.451613   \n",
+              "3               0.463277              0.268293                       0.500000   \n",
+              "4               0.447205              0.208333                       0.418919   \n",
+              "...                  ...                   ...                            ...   \n",
+              "7028            0.537500              0.232558                       0.512821   \n",
+              "7029            0.528090              0.191489                       0.500000   \n",
+              "7030            0.483607              0.135593                       0.543478   \n",
+              "7031            0.500000              0.193548                       0.505051   \n",
+              "7032            0.619048              0.153846                       0.428571   \n",
+              "\n",
+              "      home_opposition_shot_efficiency  away_shot_accuracy  \\\n",
+              "0                            0.301887            0.484472   \n",
+              "1                            0.207792            0.423077   \n",
+              "2                            0.267857            0.440299   \n",
+              "3                            0.324324            0.562130   \n",
+              "4                            0.258065            0.482517   \n",
+              "...                               ...                 ...   \n",
+              "7028                         0.200000            0.487395   \n",
+              "7029                         0.456522            0.528846   \n",
+              "7030                         0.160000            0.511905   \n",
+              "7031                         0.280000            0.514563   \n",
+              "7032                         0.148148            0.552632   \n",
+              "\n",
+              "      away_shot_efficiency  away_opposition_shot_accuracy  \\\n",
+              "0                 0.192308                       0.416667   \n",
+              "1                 0.250000                       0.413793   \n",
+              "2                 0.186441                       0.460000   \n",
+              "3                 0.200000                       0.513274   \n",
+              "4                 0.144928                       0.514925   \n",
+              "...                    ...                            ...   \n",
+              "7028              0.172414                       0.580357   \n",
+              "7029              0.127273                       0.412698   \n",
+              "7030              0.348837                       0.474576   \n",
+              "7031              0.207547                       0.442623   \n",
+              "7032              0.206349                       0.433962   \n",
+              "\n",
+              "      away_opposition_shot_efficiency  \n",
+              "0                            0.200000  \n",
+              "1                            0.500000  \n",
+              "2                            0.326087  \n",
+              "3                            0.137931  \n",
+              "4                            0.246377  \n",
+              "...                               ...  \n",
+              "7028                         0.323077  \n",
+              "7029                         0.807692  \n",
+              "7030                         0.160714  \n",
+              "7031                         0.314815  \n",
+              "7032                         0.413043  \n",
+              "\n",
+              "[7033 rows x 31 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 31
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "tzti9zrknt5h",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 238
+        },
+        "outputId": "69862b6f-7402-4bd4-f637-dc9c3db9b7f4"
+      },
+      "source": [
+        "byhomegoal = df03.groupby('home_team_goal')\n",
+        "byhomegoal.size().sort_values(ascending=False)"
+      ],
+      "execution_count": 32,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "home_team_goal\n",
+              "1     2251\n",
+              "2     1732\n",
+              "0     1589\n",
+              "3      885\n",
+              "4      378\n",
+              "5      132\n",
+              "6       43\n",
+              "7       13\n",
+              "8        7\n",
+              "9        2\n",
+              "10       1\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 32
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "1V2WCPxmnt5m",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 221
+        },
+        "outputId": "1d2cabcc-02dc-4977-fee0-7edd44809044"
+      },
+      "source": [
+        "byawaygoal = df03.groupby('away_team_goal')\n",
+        "byawaygoal.size().sort_values(ascending=False)"
+      ],
+      "execution_count": 33,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "away_team_goal\n",
+              "1    2381\n",
+              "0    2362\n",
+              "2    1401\n",
+              "3     613\n",
+              "4     193\n",
+              "5      52\n",
+              "6      23\n",
+              "8       5\n",
+              "7       2\n",
+              "9       1\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 33
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "O6MockV_nt5p",
+        "colab_type": "text"
+      },
+      "source": [
+        "### =>The two previous cells show that we can keep 6 classes: [0.5].\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "uwHnhYEynt5t",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def get_X_and_y(dataframe):\n",
+        "    X = dataframe.drop(columns=['home_team_goal','away_team_goal']).values\n",
+        "    y = dataframe[['home_team_goal','away_team_goal']].values\n",
+        "    return X,y"
+      ],
+      "execution_count": 34,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "EyNjI6jPnt5w",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def encode(i):\n",
+        "    switcher = {\n",
+        "        0: -1,\n",
+        "        1: -0.6,\n",
+        "        2: -0.2,\n",
+        "        3: 0.2,\n",
+        "        4: 0.6,\n",
+        "        5: 1,\n",
+        "    }\n",
+        "    # 1 be assigned as default value of passed argument (if goals > 5)\n",
+        "    return switcher.get(i, 1)\n",
+        "\n",
+        "def decode(i):\n",
+        "    switcher = {\n",
+        "          -1: 0,\n",
+        "        -0.6: 1,\n",
+        "        -0.2: 2,\n",
+        "         0.2: 3,\n",
+        "         0.6: 4,\n",
+        "           1: 5,\n",
+        "    }\n",
+        "    return switcher.get(i, \"ERROR! Use Encode Before!\")"
+      ],
+      "execution_count": 35,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "yOw4-355nt5y",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def normalize_try(dataframe):\n",
+        "    highestValue = 0;\n",
+        "    ds = np.full((dataframe.shape[0], dataframe.shape[1]), 0)\n",
+        "    for i in range(dataframe.shape[0]):\n",
+        "        for j in range(dataframe.shape[1]):\n",
+        "            if highestValue < dataframe[i][j]:\n",
+        "                highestValue = dataframe[i][j]\n",
+        "    \n",
+        "    for i in range(dataframe.shape[0]):\n",
+        "        for j in range(dataframe.shape[1]):\n",
+        "                dataframe[i][j] = (dataframe[i][j]/highestValue)\n",
+        "    \n",
+        "    return dataframe\n",
+        "\n",
+        "def normalize(dataframe):\n",
+        "    column_names_to_not_normalize = ['home_team_goal','away_team_goal']\n",
+        "    column_names_to_normalize = [x for x in list(dataframe) if x not in column_names_to_not_normalize ]\n",
+        "    x = dataframe[column_names_to_normalize].values\n",
+        "    x_scaled = preprocessing.normalize(x)\n",
+        "    std_scale = preprocessing.MinMaxScaler().fit(x)\n",
+        "    x_train_norm = x\n",
+        "    df_temp = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = dataframe.index)\n",
+        "    dataframe[column_names_to_normalize] = df_temp\n",
+        "    \n",
+        "    dataframe['home_team_goal'] = dataframe.apply(lambda row: encode(row['home_team_goal']), axis=1)\n",
+        "    dataframe['away_team_goal'] = dataframe.apply(lambda row: encode(row['away_team_goal']), axis=1)\n",
+        "    \n",
+        "    return dataframe"
+      ],
+      "execution_count": 36,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3PmG9M4ent52",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 51
+        },
+        "outputId": "fdffa28b-1ba3-4d8c-d007-9561baea3d93"
+      },
+      "source": [
+        "n03 = normalize(df03)\n",
+        "\n",
+        "train02, test02 = train_test_split(n03, test_size=0.1, shuffle=False)\n",
+        "print(len(train02), 'train examples')\n",
+        "print(len(test02), 'test examples')\n",
+        "\n",
+        "\n",
+        "train_X02,train_y02 = get_X_and_y(train02)\n",
+        "\n",
+        "test_X02,test_y02 = get_X_and_y(test02)"
+      ],
+      "execution_count": 37,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "6329 train examples\n",
+            "704 test examples\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "tTAm_MXlnt54",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 473
+        },
+        "outputId": "bac4a858-f6cc-4978-bce0-63c74a054a3c"
+      },
+      "source": [
+        "n03"
+      ],
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>home_team_goal</th>\n",
+              "      <th>away_team_goal</th>\n",
+              "      <th>odds-home</th>\n",
+              "      <th>odds-draw</th>\n",
+              "      <th>odds-away</th>\n",
+              "      <th>home-wins</th>\n",
+              "      <th>home-draws</th>\n",
+              "      <th>home-losses</th>\n",
+              "      <th>home-goals</th>\n",
+              "      <th>home-opposition-goals</th>\n",
+              "      <th>home-shots</th>\n",
+              "      <th>home-shots_on_target</th>\n",
+              "      <th>home-opposition_shots</th>\n",
+              "      <th>home-opposition_shots_on_target</th>\n",
+              "      <th>away-wins</th>\n",
+              "      <th>away-draws</th>\n",
+              "      <th>away-losses</th>\n",
+              "      <th>away-goals</th>\n",
+              "      <th>away-opposition-goals</th>\n",
+              "      <th>away-shots</th>\n",
+              "      <th>away-shots_on_target</th>\n",
+              "      <th>away-opposition_shots</th>\n",
+              "      <th>away-opposition_shots_on_target</th>\n",
+              "      <th>home_shot_accuracy</th>\n",
+              "      <th>home_shot_efficiency</th>\n",
+              "      <th>home_opposition_shot_accuracy</th>\n",
+              "      <th>home_opposition_shot_efficiency</th>\n",
+              "      <th>away_shot_accuracy</th>\n",
+              "      <th>away_shot_efficiency</th>\n",
+              "      <th>away_opposition_shot_accuracy</th>\n",
+              "      <th>away_opposition_shot_efficiency</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.012482</td>\n",
+              "      <td>0.011769</td>\n",
+              "      <td>0.007489</td>\n",
+              "      <td>0.003566</td>\n",
+              "      <td>0.010699</td>\n",
+              "      <td>0.021398</td>\n",
+              "      <td>0.039229</td>\n",
+              "      <td>0.057061</td>\n",
+              "      <td>0.488583</td>\n",
+              "      <td>0.238942</td>\n",
+              "      <td>0.417257</td>\n",
+              "      <td>0.189014</td>\n",
+              "      <td>0.028530</td>\n",
+              "      <td>0.007133</td>\n",
+              "      <td>0.000000</td>\n",
+              "      <td>0.053495</td>\n",
+              "      <td>0.021398</td>\n",
+              "      <td>0.574174</td>\n",
+              "      <td>0.278171</td>\n",
+              "      <td>0.256774</td>\n",
+              "      <td>0.106989</td>\n",
+              "      <td>0.001744</td>\n",
+              "      <td>0.000586</td>\n",
+              "      <td>0.001616</td>\n",
+              "      <td>0.001077</td>\n",
+              "      <td>0.001728</td>\n",
+              "      <td>0.000686</td>\n",
+              "      <td>0.001486</td>\n",
+              "      <td>0.000713</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>0.009236</td>\n",
+              "      <td>0.012191</td>\n",
+              "      <td>0.010640</td>\n",
+              "      <td>0.011083</td>\n",
+              "      <td>0.003694</td>\n",
+              "      <td>0.022166</td>\n",
+              "      <td>0.029555</td>\n",
+              "      <td>0.059109</td>\n",
+              "      <td>0.495039</td>\n",
+              "      <td>0.236437</td>\n",
+              "      <td>0.557843</td>\n",
+              "      <td>0.284463</td>\n",
+              "      <td>0.011083</td>\n",
+              "      <td>0.011083</td>\n",
+              "      <td>0.014777</td>\n",
+              "      <td>0.040638</td>\n",
+              "      <td>0.066498</td>\n",
+              "      <td>0.384210</td>\n",
+              "      <td>0.162550</td>\n",
+              "      <td>0.321406</td>\n",
+              "      <td>0.132996</td>\n",
+              "      <td>0.001764</td>\n",
+              "      <td>0.000462</td>\n",
+              "      <td>0.001884</td>\n",
+              "      <td>0.000768</td>\n",
+              "      <td>0.001563</td>\n",
+              "      <td>0.000924</td>\n",
+              "      <td>0.001529</td>\n",
+              "      <td>0.001847</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>0.007188</td>\n",
+              "      <td>0.012795</td>\n",
+              "      <td>0.015805</td>\n",
+              "      <td>0.015053</td>\n",
+              "      <td>0.007526</td>\n",
+              "      <td>0.015053</td>\n",
+              "      <td>0.037632</td>\n",
+              "      <td>0.056448</td>\n",
+              "      <td>0.451581</td>\n",
+              "      <td>0.218264</td>\n",
+              "      <td>0.466634</td>\n",
+              "      <td>0.210738</td>\n",
+              "      <td>0.007526</td>\n",
+              "      <td>0.007526</td>\n",
+              "      <td>0.022579</td>\n",
+              "      <td>0.041395</td>\n",
+              "      <td>0.056448</td>\n",
+              "      <td>0.504266</td>\n",
+              "      <td>0.222028</td>\n",
+              "      <td>0.376318</td>\n",
+              "      <td>0.173106</td>\n",
+              "      <td>0.001819</td>\n",
+              "      <td>0.000649</td>\n",
+              "      <td>0.001699</td>\n",
+              "      <td>0.001008</td>\n",
+              "      <td>0.001657</td>\n",
+              "      <td>0.000702</td>\n",
+              "      <td>0.001731</td>\n",
+              "      <td>0.001227</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.010289</td>\n",
+              "      <td>0.010289</td>\n",
+              "      <td>0.007281</td>\n",
+              "      <td>0.015829</td>\n",
+              "      <td>0.006331</td>\n",
+              "      <td>0.009497</td>\n",
+              "      <td>0.069646</td>\n",
+              "      <td>0.037989</td>\n",
+              "      <td>0.560335</td>\n",
+              "      <td>0.259590</td>\n",
+              "      <td>0.234264</td>\n",
+              "      <td>0.117132</td>\n",
+              "      <td>0.018994</td>\n",
+              "      <td>0.009497</td>\n",
+              "      <td>0.003166</td>\n",
+              "      <td>0.060149</td>\n",
+              "      <td>0.025326</td>\n",
+              "      <td>0.535009</td>\n",
+              "      <td>0.300745</td>\n",
+              "      <td>0.357728</td>\n",
+              "      <td>0.183613</td>\n",
+              "      <td>0.001467</td>\n",
+              "      <td>0.000849</td>\n",
+              "      <td>0.001583</td>\n",
+              "      <td>0.001027</td>\n",
+              "      <td>0.001780</td>\n",
+              "      <td>0.000633</td>\n",
+              "      <td>0.001625</td>\n",
+              "      <td>0.000437</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0.2</td>\n",
+              "      <td>-1.0</td>\n",
+              "      <td>0.004077</td>\n",
+              "      <td>0.020384</td>\n",
+              "      <td>0.064550</td>\n",
+              "      <td>0.023782</td>\n",
+              "      <td>0.006795</td>\n",
+              "      <td>0.003397</td>\n",
+              "      <td>0.050961</td>\n",
+              "      <td>0.027179</td>\n",
+              "      <td>0.546979</td>\n",
+              "      <td>0.244612</td>\n",
+              "      <td>0.251406</td>\n",
+              "      <td>0.105319</td>\n",
+              "      <td>0.010192</td>\n",
+              "      <td>0.006795</td>\n",
+              "      <td>0.016987</td>\n",
+              "      <td>0.033974</td>\n",
+              "      <td>0.057756</td>\n",
+              "      <td>0.485826</td>\n",
+              "      <td>0.234419</td>\n",
+              "      <td>0.455249</td>\n",
+              "      <td>0.234419</td>\n",
+              "      <td>0.001519</td>\n",
+              "      <td>0.000708</td>\n",
+              "      <td>0.001423</td>\n",
+              "      <td>0.000877</td>\n",
+              "      <td>0.001639</td>\n",
+              "      <td>0.000492</td>\n",
+              "      <td>0.001749</td>\n",
+              "      <td>0.000837</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>...</th>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "      <td>...</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7028</th>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.020289</td>\n",
+              "      <td>0.015420</td>\n",
+              "      <td>0.006898</td>\n",
+              "      <td>0.016231</td>\n",
+              "      <td>0.008116</td>\n",
+              "      <td>0.016231</td>\n",
+              "      <td>0.040578</td>\n",
+              "      <td>0.048693</td>\n",
+              "      <td>0.324623</td>\n",
+              "      <td>0.174485</td>\n",
+              "      <td>0.474761</td>\n",
+              "      <td>0.243467</td>\n",
+              "      <td>0.008116</td>\n",
+              "      <td>0.016231</td>\n",
+              "      <td>0.016231</td>\n",
+              "      <td>0.040578</td>\n",
+              "      <td>0.085213</td>\n",
+              "      <td>0.482876</td>\n",
+              "      <td>0.235351</td>\n",
+              "      <td>0.454472</td>\n",
+              "      <td>0.263756</td>\n",
+              "      <td>0.002181</td>\n",
+              "      <td>0.000944</td>\n",
+              "      <td>0.002081</td>\n",
+              "      <td>0.000812</td>\n",
+              "      <td>0.001978</td>\n",
+              "      <td>0.000700</td>\n",
+              "      <td>0.002355</td>\n",
+              "      <td>0.001311</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7029</th>\n",
+              "      <td>0.6</td>\n",
+              "      <td>-0.2</td>\n",
+              "      <td>0.009960</td>\n",
+              "      <td>0.017928</td>\n",
+              "      <td>0.018426</td>\n",
+              "      <td>0.014940</td>\n",
+              "      <td>0.009960</td>\n",
+              "      <td>0.024900</td>\n",
+              "      <td>0.044821</td>\n",
+              "      <td>0.104582</td>\n",
+              "      <td>0.443228</td>\n",
+              "      <td>0.234064</td>\n",
+              "      <td>0.458168</td>\n",
+              "      <td>0.229084</td>\n",
+              "      <td>0.004980</td>\n",
+              "      <td>0.019920</td>\n",
+              "      <td>0.024900</td>\n",
+              "      <td>0.034861</td>\n",
+              "      <td>0.104582</td>\n",
+              "      <td>0.517929</td>\n",
+              "      <td>0.273905</td>\n",
+              "      <td>0.313745</td>\n",
+              "      <td>0.129482</td>\n",
+              "      <td>0.002630</td>\n",
+              "      <td>0.000954</td>\n",
+              "      <td>0.002490</td>\n",
+              "      <td>0.002274</td>\n",
+              "      <td>0.002634</td>\n",
+              "      <td>0.000634</td>\n",
+              "      <td>0.002055</td>\n",
+              "      <td>0.004022</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7030</th>\n",
+              "      <td>0.6</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.007617</td>\n",
+              "      <td>0.015870</td>\n",
+              "      <td>0.019043</td>\n",
+              "      <td>0.012696</td>\n",
+              "      <td>0.012696</td>\n",
+              "      <td>0.016927</td>\n",
+              "      <td>0.033855</td>\n",
+              "      <td>0.033855</td>\n",
+              "      <td>0.516288</td>\n",
+              "      <td>0.249680</td>\n",
+              "      <td>0.389332</td>\n",
+              "      <td>0.211593</td>\n",
+              "      <td>0.021159</td>\n",
+              "      <td>0.008464</td>\n",
+              "      <td>0.012696</td>\n",
+              "      <td>0.063478</td>\n",
+              "      <td>0.038087</td>\n",
+              "      <td>0.355477</td>\n",
+              "      <td>0.181970</td>\n",
+              "      <td>0.499360</td>\n",
+              "      <td>0.236985</td>\n",
+              "      <td>0.002047</td>\n",
+              "      <td>0.000574</td>\n",
+              "      <td>0.002300</td>\n",
+              "      <td>0.000677</td>\n",
+              "      <td>0.002166</td>\n",
+              "      <td>0.001476</td>\n",
+              "      <td>0.002008</td>\n",
+              "      <td>0.000680</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7031</th>\n",
+              "      <td>0.2</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.005271</td>\n",
+              "      <td>0.020806</td>\n",
+              "      <td>0.035667</td>\n",
+              "      <td>0.007926</td>\n",
+              "      <td>0.011889</td>\n",
+              "      <td>0.019815</td>\n",
+              "      <td>0.047556</td>\n",
+              "      <td>0.055482</td>\n",
+              "      <td>0.491412</td>\n",
+              "      <td>0.245706</td>\n",
+              "      <td>0.392337</td>\n",
+              "      <td>0.198150</td>\n",
+              "      <td>0.011889</td>\n",
+              "      <td>0.011889</td>\n",
+              "      <td>0.015852</td>\n",
+              "      <td>0.043593</td>\n",
+              "      <td>0.067371</td>\n",
+              "      <td>0.408189</td>\n",
+              "      <td>0.210039</td>\n",
+              "      <td>0.483486</td>\n",
+              "      <td>0.214002</td>\n",
+              "      <td>0.001981</td>\n",
+              "      <td>0.000767</td>\n",
+              "      <td>0.002002</td>\n",
+              "      <td>0.001110</td>\n",
+              "      <td>0.002039</td>\n",
+              "      <td>0.000823</td>\n",
+              "      <td>0.001754</td>\n",
+              "      <td>0.001248</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>7032</th>\n",
+              "      <td>0.2</td>\n",
+              "      <td>-0.6</td>\n",
+              "      <td>0.006541</td>\n",
+              "      <td>0.016450</td>\n",
+              "      <td>0.020563</td>\n",
+              "      <td>0.023500</td>\n",
+              "      <td>0.003917</td>\n",
+              "      <td>0.011750</td>\n",
+              "      <td>0.039167</td>\n",
+              "      <td>0.031334</td>\n",
+              "      <td>0.411255</td>\n",
+              "      <td>0.254586</td>\n",
+              "      <td>0.493506</td>\n",
+              "      <td>0.211503</td>\n",
+              "      <td>0.011750</td>\n",
+              "      <td>0.007833</td>\n",
+              "      <td>0.019584</td>\n",
+              "      <td>0.050917</td>\n",
+              "      <td>0.074418</td>\n",
+              "      <td>0.446505</td>\n",
+              "      <td>0.246753</td>\n",
+              "      <td>0.415172</td>\n",
+              "      <td>0.180169</td>\n",
+              "      <td>0.002425</td>\n",
+              "      <td>0.000603</td>\n",
+              "      <td>0.001679</td>\n",
+              "      <td>0.000580</td>\n",
+              "      <td>0.002164</td>\n",
+              "      <td>0.000808</td>\n",
+              "      <td>0.001700</td>\n",
+              "      <td>0.001618</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "<p>7033 rows × 31 columns</p>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "      home_team_goal  away_team_goal  odds-home  odds-draw  odds-away  \\\n",
+              "0               -0.2            -0.6   0.012482   0.011769   0.007489   \n",
+              "1               -0.2            -0.2   0.009236   0.012191   0.010640   \n",
+              "2               -0.6            -0.2   0.007188   0.012795   0.015805   \n",
+              "3               -0.2            -0.6   0.010289   0.010289   0.007281   \n",
+              "4                0.2            -1.0   0.004077   0.020384   0.064550   \n",
+              "...              ...             ...        ...        ...        ...   \n",
+              "7028            -0.2            -0.6   0.020289   0.015420   0.006898   \n",
+              "7029             0.6            -0.2   0.009960   0.017928   0.018426   \n",
+              "7030             0.6            -0.6   0.007617   0.015870   0.019043   \n",
+              "7031             0.2            -0.6   0.005271   0.020806   0.035667   \n",
+              "7032             0.2            -0.6   0.006541   0.016450   0.020563   \n",
+              "\n",
+              "      home-wins  home-draws  home-losses  home-goals  home-opposition-goals  \\\n",
+              "0      0.003566    0.010699     0.021398    0.039229               0.057061   \n",
+              "1      0.011083    0.003694     0.022166    0.029555               0.059109   \n",
+              "2      0.015053    0.007526     0.015053    0.037632               0.056448   \n",
+              "3      0.015829    0.006331     0.009497    0.069646               0.037989   \n",
+              "4      0.023782    0.006795     0.003397    0.050961               0.027179   \n",
+              "...         ...         ...          ...         ...                    ...   \n",
+              "7028   0.016231    0.008116     0.016231    0.040578               0.048693   \n",
+              "7029   0.014940    0.009960     0.024900    0.044821               0.104582   \n",
+              "7030   0.012696    0.012696     0.016927    0.033855               0.033855   \n",
+              "7031   0.007926    0.011889     0.019815    0.047556               0.055482   \n",
+              "7032   0.023500    0.003917     0.011750    0.039167               0.031334   \n",
+              "\n",
+              "      home-shots  home-shots_on_target  home-opposition_shots  \\\n",
+              "0       0.488583              0.238942               0.417257   \n",
+              "1       0.495039              0.236437               0.557843   \n",
+              "2       0.451581              0.218264               0.466634   \n",
+              "3       0.560335              0.259590               0.234264   \n",
+              "4       0.546979              0.244612               0.251406   \n",
+              "...          ...                   ...                    ...   \n",
+              "7028    0.324623              0.174485               0.474761   \n",
+              "7029    0.443228              0.234064               0.458168   \n",
+              "7030    0.516288              0.249680               0.389332   \n",
+              "7031    0.491412              0.245706               0.392337   \n",
+              "7032    0.411255              0.254586               0.493506   \n",
+              "\n",
+              "      home-opposition_shots_on_target  away-wins  away-draws  away-losses  \\\n",
+              "0                            0.189014   0.028530    0.007133     0.000000   \n",
+              "1                            0.284463   0.011083    0.011083     0.014777   \n",
+              "2                            0.210738   0.007526    0.007526     0.022579   \n",
+              "3                            0.117132   0.018994    0.009497     0.003166   \n",
+              "4                            0.105319   0.010192    0.006795     0.016987   \n",
+              "...                               ...        ...         ...          ...   \n",
+              "7028                         0.243467   0.008116    0.016231     0.016231   \n",
+              "7029                         0.229084   0.004980    0.019920     0.024900   \n",
+              "7030                         0.211593   0.021159    0.008464     0.012696   \n",
+              "7031                         0.198150   0.011889    0.011889     0.015852   \n",
+              "7032                         0.211503   0.011750    0.007833     0.019584   \n",
+              "\n",
+              "      away-goals  away-opposition-goals  away-shots  away-shots_on_target  \\\n",
+              "0       0.053495               0.021398    0.574174              0.278171   \n",
+              "1       0.040638               0.066498    0.384210              0.162550   \n",
+              "2       0.041395               0.056448    0.504266              0.222028   \n",
+              "3       0.060149               0.025326    0.535009              0.300745   \n",
+              "4       0.033974               0.057756    0.485826              0.234419   \n",
+              "...          ...                    ...         ...                   ...   \n",
+              "7028    0.040578               0.085213    0.482876              0.235351   \n",
+              "7029    0.034861               0.104582    0.517929              0.273905   \n",
+              "7030    0.063478               0.038087    0.355477              0.181970   \n",
+              "7031    0.043593               0.067371    0.408189              0.210039   \n",
+              "7032    0.050917               0.074418    0.446505              0.246753   \n",
+              "\n",
+              "      away-opposition_shots  away-opposition_shots_on_target  \\\n",
+              "0                  0.256774                         0.106989   \n",
+              "1                  0.321406                         0.132996   \n",
+              "2                  0.376318                         0.173106   \n",
+              "3                  0.357728                         0.183613   \n",
+              "4                  0.455249                         0.234419   \n",
+              "...                     ...                              ...   \n",
+              "7028               0.454472                         0.263756   \n",
+              "7029               0.313745                         0.129482   \n",
+              "7030               0.499360                         0.236985   \n",
+              "7031               0.483486                         0.214002   \n",
+              "7032               0.415172                         0.180169   \n",
+              "\n",
+              "      home_shot_accuracy  home_shot_efficiency  home_opposition_shot_accuracy  \\\n",
+              "0               0.001744              0.000586                       0.001616   \n",
+              "1               0.001764              0.000462                       0.001884   \n",
+              "2               0.001819              0.000649                       0.001699   \n",
+              "3               0.001467              0.000849                       0.001583   \n",
+              "4               0.001519              0.000708                       0.001423   \n",
+              "...                  ...                   ...                            ...   \n",
+              "7028            0.002181              0.000944                       0.002081   \n",
+              "7029            0.002630              0.000954                       0.002490   \n",
+              "7030            0.002047              0.000574                       0.002300   \n",
+              "7031            0.001981              0.000767                       0.002002   \n",
+              "7032            0.002425              0.000603                       0.001679   \n",
+              "\n",
+              "      home_opposition_shot_efficiency  away_shot_accuracy  \\\n",
+              "0                            0.001077            0.001728   \n",
+              "1                            0.000768            0.001563   \n",
+              "2                            0.001008            0.001657   \n",
+              "3                            0.001027            0.001780   \n",
+              "4                            0.000877            0.001639   \n",
+              "...                               ...                 ...   \n",
+              "7028                         0.000812            0.001978   \n",
+              "7029                         0.002274            0.002634   \n",
+              "7030                         0.000677            0.002166   \n",
+              "7031                         0.001110            0.002039   \n",
+              "7032                         0.000580            0.002164   \n",
+              "\n",
+              "      away_shot_efficiency  away_opposition_shot_accuracy  \\\n",
+              "0                 0.000686                       0.001486   \n",
+              "1                 0.000924                       0.001529   \n",
+              "2                 0.000702                       0.001731   \n",
+              "3                 0.000633                       0.001625   \n",
+              "4                 0.000492                       0.001749   \n",
+              "...                    ...                            ...   \n",
+              "7028              0.000700                       0.002355   \n",
+              "7029              0.000634                       0.002055   \n",
+              "7030              0.001476                       0.002008   \n",
+              "7031              0.000823                       0.001754   \n",
+              "7032              0.000808                       0.001700   \n",
+              "\n",
+              "      away_opposition_shot_efficiency  \n",
+              "0                            0.000713  \n",
+              "1                            0.001847  \n",
+              "2                            0.001227  \n",
+              "3                            0.000437  \n",
+              "4                            0.000837  \n",
+              "...                               ...  \n",
+              "7028                         0.001311  \n",
+              "7029                         0.004022  \n",
+              "7030                         0.000680  \n",
+              "7031                         0.001248  \n",
+              "7032                         0.001618  \n",
+              "\n",
+              "[7033 rows x 31 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 11
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "44kHTmIWnt57",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 153
+        },
+        "outputId": "a70cc623-0bdc-45e2-edba-1021a6a67489"
+      },
+      "source": [
+        "# verif the classes\n",
+        "byhomegoal = df03.groupby('home_team_goal')\n",
+        "byhomegoal.size().sort_values(ascending=False)"
+      ],
+      "execution_count": 38,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "home_team_goal\n",
+              "-0.6    2251\n",
+              "-0.2    1732\n",
+              "-1.0    1589\n",
+              " 0.2     885\n",
+              " 0.6     378\n",
+              " 1.0     198\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 38
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LrUTbaq5nt5-",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 153
+        },
+        "outputId": "2d251cdf-cd94-497c-a426-21f66510443b"
+      },
+      "source": [
+        "byawaygoal = df03.groupby('away_team_goal')\n",
+        "byawaygoal.size().sort_values(ascending=False)"
+      ],
+      "execution_count": 39,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "away_team_goal\n",
+              "-0.6    2381\n",
+              "-1.0    2362\n",
+              "-0.2    1401\n",
+              " 0.2     613\n",
+              " 0.6     193\n",
+              " 1.0      83\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 39
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "x-12xzP9nt6F",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def round_pred(val):\n",
+        "    if val <=1 and val > 0.67:\n",
+        "        return 1\n",
+        "    elif val <=0.67 and val >0.33:\n",
+        "        return 0.60\n",
+        "    elif val <= 0.33 and val > 0:\n",
+        "        return 0.20\n",
+        "    elif val <= 0 and val > -0.33:\n",
+        "        return -0.20\n",
+        "    elif val<=-0.33 and val> -0.67:\n",
+        "        return -0.60\n",
+        "    else:\n",
+        "        return -1"
+      ],
+      "execution_count": 40,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mIwYgXYent6L",
+        "colab_type": "text"
+      },
+      "source": [
+        "### Build the model\n",
+        "\n",
+        "https://www.tensorflow.org/tutorials/keras/regression\n",
+        "The mean_squared_error (mse) and mean_absolute_error (mae) are our loss functions – i.e. an estimate of how accurate the neural network is in predicting the test data. We can see that with the validation_split set to 0.2, 80% of the training data is used to test the model, while the remaining 20% is used for testing purposes."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QN2xrrDOnt6L",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def build_model():\n",
+        "  model= tf.keras.models.Sequential()\n",
+        "  model.add(tf.keras.layers.Dense(units=21, activation='relu', input_shape=(train_X02.shape[1],)))\n",
+        "  model.add(tf.keras.layers.Dense(units=30, activation='relu'))\n",
+        "  model.add(tf.keras.layers.Dense(units=20, activation='relu'))\n",
+        "  model.add(tf.keras.layers.Dense(units=10, activation='relu'))\n",
+        "  model.add(tf.keras.layers.Dense(units=2))\n",
+        "  \n",
+        "  optimizer = tf.keras.optimizers.RMSprop(0.001)\n",
+        "\n",
+        "  model.compile(loss='mse',\n",
+        "                optimizer=optimizer,\n",
+        "                metrics=['mae', 'mse','accuracy'])\n",
+        "  return model"
+      ],
+      "execution_count": 41,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "yY5_C13Knt6O",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 374
+        },
+        "outputId": "9afd2975-0cbf-440b-cf12-ca800c026011"
+      },
+      "source": [
+        "model = build_model()\n",
+        "\n",
+        "EPOCHS = 1000\n",
+        "\n",
+        "history = model.fit(\n",
+        "  train_X02, train_y02,\n",
+        "  epochs=EPOCHS, validation_split = 0.2, verbose=0, batch_size=32,\n",
+        "  callbacks=[tfdocs.modeling.EpochDots()])\n"
+      ],
+      "execution_count": 42,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "\n",
+            "Epoch: 0, accuracy:0.7138,  loss:0.2838,  mae:0.4426,  mse:0.2838,  val_accuracy:0.7022,  val_loss:0.2252,  val_mae:0.3757,  val_mse:0.2252,  \n",
+            "....................................................................................................\n",
+            "Epoch: 100, accuracy:0.7203,  loss:0.2002,  mae:0.3564,  mse:0.2002,  val_accuracy:0.6785,  val_loss:0.2051,  val_mae:0.3593,  val_mse:0.2051,  \n",
+            "....................................................................................................\n",
+            "Epoch: 200, accuracy:0.7227,  loss:0.1971,  mae:0.3534,  mse:0.1971,  val_accuracy:0.6619,  val_loss:0.2083,  val_mae:0.3588,  val_mse:0.2083,  \n",
+            "....................................................................................................\n",
+            "Epoch: 300, accuracy:0.7156,  loss:0.1946,  mae:0.3506,  mse:0.1946,  val_accuracy:0.6801,  val_loss:0.2159,  val_mae:0.3701,  val_mse:0.2159,  \n",
+            "....................................................................................................\n",
+            "Epoch: 400, accuracy:0.7182,  loss:0.1918,  mae:0.3480,  mse:0.1918,  val_accuracy:0.6856,  val_loss:0.2116,  val_mae:0.3601,  val_mse:0.2116,  \n",
+            "....................................................................................................\n",
+            "Epoch: 500, accuracy:0.7239,  loss:0.1884,  mae:0.3449,  mse:0.1884,  val_accuracy:0.6485,  val_loss:0.2135,  val_mae:0.3649,  val_mse:0.2135,  \n",
+            "....................................................................................................\n",
+            "Epoch: 600, accuracy:0.7255,  loss:0.1848,  mae:0.3416,  mse:0.1848,  val_accuracy:0.6611,  val_loss:0.2150,  val_mae:0.3632,  val_mse:0.2150,  \n",
+            "....................................................................................................\n",
+            "Epoch: 700, accuracy:0.7282,  loss:0.1818,  mae:0.3391,  mse:0.1818,  val_accuracy:0.6224,  val_loss:0.2193,  val_mae:0.3680,  val_mse:0.2193,  \n",
+            "....................................................................................................\n",
+            "Epoch: 800, accuracy:0.7261,  loss:0.1804,  mae:0.3375,  mse:0.1804,  val_accuracy:0.6651,  val_loss:0.2213,  val_mae:0.3702,  val_mse:0.2213,  \n",
+            "....................................................................................................\n",
+            "Epoch: 900, accuracy:0.7310,  loss:0.1775,  mae:0.3347,  mse:0.1775,  val_accuracy:0.6619,  val_loss:0.2241,  val_mae:0.3714,  val_mse:0.2241,  \n",
+            "...................................................................................................."
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "83LeFNq3t5Sc",
+        "colab_type": "text"
+      },
+      "source": [
+        "From the output, we can see that the more epochs are run, the lower our MSE and MAE become, indicating improvement in accuracy across each iteration of our model."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "vJgyJ8M_un_V",
+        "colab_type": "text"
+      },
+      "source": [
+        "**keras is calculating both the training loss and validation loss, i.e. the deviation between the predicted y and actual y as measured by the mean squared error**\n",
+        "Let’s see our respective losses plot on using graph\n",
+        "**Testing loss is decreasing, however Validation loss is still high**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "PiGi9AjHuh9b",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 312
+        },
+        "outputId": "d094aefa-fa8f-4d68-eb55-ad2becaa4576"
+      },
+      "source": [
+        "print(history.history.keys())\n",
+        "# \"Loss\"\n",
+        "plt.plot(history.history['loss'])\n",
+        "plt.plot(history.history['val_loss'])\n",
+        "plt.title('model loss')\n",
+        "plt.ylabel('loss')\n",
+        "plt.xlabel('epoch')\n",
+        "plt.legend(['train', 'validation'], loc='upper left')\n",
+        "plt.show()"
+      ],
+      "execution_count": 43,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "dict_keys(['loss', 'mae', 'mse', 'accuracy', 'val_loss', 'val_mae', 'val_mse', 'val_accuracy'])\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "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\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": [],
+            "needs_background": "light"
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GfxJO7idvOZv",
+        "colab_type": "text"
+      },
+      "source": [
+        "**PREDICTIONS**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "P5SQrswant6Q",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "y_train_pred = model.predict(train_X02)\n",
+        "y_test_pred = model.predict(test_X02)\n"
+      ],
+      "execution_count": 44,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "A5EFi3vgnt6S",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 136
+        },
+        "outputId": "ec0e3d0c-f7bf-41a4-dc71-419d30f48d66"
+      },
+      "source": [
+        "y_train_pred"
+      ],
+      "execution_count": 45,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[-0.42819673, -0.5125487 ],\n",
+              "       [-0.23876342, -0.7825487 ],\n",
+              "       [-0.4865145 , -0.5707284 ],\n",
+              "       ...,\n",
+              "       [-0.35329562, -0.5183987 ],\n",
+              "       [-0.54812974, -0.27550668],\n",
+              "       [-0.1773323 , -0.6648084 ]], dtype=float32)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 45
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KMkrw0csnt6V",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 136
+        },
+        "outputId": "362c2c71-dddf-4c3a-8e30-19b96c44182d"
+      },
+      "source": [
+        "train_y02"
+      ],
+      "execution_count": 46,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[-0.2, -0.6],\n",
+              "       [-0.2, -0.2],\n",
+              "       [-0.6, -0.2],\n",
+              "       ...,\n",
+              "       [-0.2,  0.6],\n",
+              "       [-1. ,  0.2],\n",
+              "       [-0.2, -1. ]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 46
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "eSbwBNq3nt6X",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "# Train: Round and decode predicted value\n",
+        "ypredhome_train = np.array([round_pred(val) for val in y_train_pred[:,0]])\n",
+        "ypredhome_train = np.array([decode(val) for val in ypredhome_train])\n",
+        "\n",
+        "ypredaway_train = np.array([round_pred(val) for val in y_train_pred[:,1]])\n",
+        "ypredaway_train = np.array([decode(val) for val in ypredaway_train])\n",
+        "\n",
+        "#decode the goals\n",
+        "yorighome_train = np.array([decode(val) for val in train_y02[:,0]])\n",
+        "yorigaway_train = np.array([decode(val) for val in train_y02[:,1]])"
+      ],
+      "execution_count": 47,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "HVw4jylYnt6a",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "# Test: Round and decode predicted value\n",
+        "ypredhome_test = np.array([round_pred(val) for val in y_test_pred[:,0]])\n",
+        "ypredhome_test = np.array([decode(val) for val in ypredhome_test])\n",
+        "\n",
+        "ypredaway_test = np.array([round_pred(val) for val in y_test_pred[:,1]])\n",
+        "ypredaway_test = np.array([decode(val) for val in ypredaway_test])\n",
+        "\n",
+        "#decode the goals\n",
+        "yorighome_test = np.array([decode(val) for val in test_y02[:,0]])\n",
+        "yorigaway_test = np.array([decode(val) for val in test_y02[:,1]])"
+      ],
+      "execution_count": 48,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "z3g8v3Zh_VSB",
+        "colab_type": "text"
+      },
+      "source": [
+        "**QUALITY MODEL**"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9yCvA3Rpnt6d",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "def degree_diff(yoriginal,ypred):\n",
+        "    val = abs(yoriginal - ypred)\n",
+        "    switcher = {\n",
+        "        0: 1, # yoriginal = ypred\n",
+        "        1: 0.8, # diff of 1. Exple original 1 predicted 2 => 0.75\n",
+        "        2: 0.6,\n",
+        "        3: 0.4,\n",
+        "        4: 0.2, # diff of 4. Exple original 0 predicted 4\n",
+        "        5: 0\n",
+        "    }\n",
+        "    return switcher.get(val, 0)"
+      ],
+      "execution_count": 49,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Vj9AbU8Cnt6g",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "13268668-1488-4279-8a07-7a2508f0ba1a"
+      },
+      "source": [
+        "quality_model_home_goals=0\n",
+        "\n",
+        "for valorg,valpred in zip(yorighome_train,ypredhome_train):\n",
+        "    quality_model_home_goals += degree_diff(valorg,valpred)\n",
+        "    \n",
+        "quality_model_home_goals = quality_model_home_goals / len(yorighome_train)\n",
+        "print (\"Quality model home goals TRAIN\", quality_model_home_goals)"
+      ],
+      "execution_count": 50,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Quality model home goals TRAIN 0.8258808658556337\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "HvwDg6D6nt6j",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "7937a0ce-96e6-496c-fae4-1fc9821149f4"
+      },
+      "source": [
+        "quality_model_away_goals=0\n",
+        "\n",
+        "for valorg,valpred in zip(yorigaway_train,ypredaway_train):\n",
+        "    quality_model_away_goals += degree_diff(valorg,valpred)\n",
+        "    \n",
+        "quality_model_away_goals = quality_model_away_goals / len(yorigaway_train)\n",
+        "print (\"Quality model away goals TRAIN\", quality_model_away_goals)"
+      ],
+      "execution_count": 51,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Quality model away goals TRAIN 0.8385842945173501\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "A6hm7M-Znt6l",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "333377ac-51e7-479e-efc7-fae086995e7e"
+      },
+      "source": [
+        "#TO DO : Improve the final quality\n",
+        "\n",
+        "#final_quality = (quality_model_home_goals**2 + quality_model_away_goals**2)/4\n",
+        "final_quality = (quality_model_home_goals + quality_model_away_goals)/2\n",
+        "final_quality"
+      ],
+      "execution_count": 52,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.8322325801864918"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 52
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mK3kS3fbnt6p",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "7a5616a2-56c2-435f-d695-00d5b006d542"
+      },
+      "source": [
+        "quality_model_home_goals_test=0\n",
+        "\n",
+        "for valorg,valpred in zip(yorighome_test,ypredhome_test):\n",
+        "    quality_model_home_goals_test += degree_diff(valorg,valpred)\n",
+        "    \n",
+        "quality_model_home_goals_test = quality_model_home_goals_test / len(yorighome_test)\n",
+        "print (\"Quality model home goals TEST\", quality_model_home_goals_test)"
+      ],
+      "execution_count": 53,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Quality model home goals TEST 0.8008522727272755\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qgeEMNJQnt6t",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "dab0f1e3-1df1-493f-fcad-baca5aa5b29d"
+      },
+      "source": [
+        "quality_model_away_goals_test=0\n",
+        "\n",
+        "for valorg,valpred in zip(yorigaway_test,ypredaway_test):\n",
+        "    quality_model_away_goals_test += degree_diff(valorg,valpred)\n",
+        "    \n",
+        "quality_model_away_goals_test = quality_model_away_goals_test / len(yorigaway_test)\n",
+        "print (\"Quality model away goals TEST\", quality_model_away_goals_test)"
+      ],
+      "execution_count": 54,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Quality model away goals TEST 0.8258522727272747\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "iXokS5Ntnt6v",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "2c9f0f69-19c2-4de0-e7bb-5f35fe7f947d"
+      },
+      "source": [
+        "#TO DO : Improve the final quality\n",
+        "\n",
+        "#final_quality = (quality_model_home_goals**2 + quality_model_away_goals**2)/4\n",
+        "final_quality_test = (quality_model_home_goals_test + quality_model_away_goals_test)/2\n",
+        "final_quality_test"
+      ],
+      "execution_count": 55,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.8133522727272751"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 55
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "aof63nTgnt6x",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}

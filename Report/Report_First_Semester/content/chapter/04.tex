@@ -148,6 +148,8 @@ df_temp = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = data
 dataframe[column_names_to_normalize] = df_temp
 \end{lstlisting}
 
+This apporach we used for the models and the results, which you are able to read in the following chapters. At the end of this project phase, however, it turned out that the normalization was not optimally solved. The ratio between columns that belong together, like the odds, must be preserved. The first tests with three subgroups have led to first successes. This approach should be continued in the next project phase. It is important to think about the relationship between the different columns and to group them into respective normalization groups. 
+
 
 
 \subsection {Encoding}
