@@ -93,9 +93,9 @@ This section describes the techniques used for the design and implementation of 
 The frontend is the conversion of the data served from the backend to a graphical interface,
 through the use of HTML, CSS, and JavaScript, so that users can view and interact with that data.
 
-We developed our frontend using Vue.js as a JavaScript framework for building user interfaces.
-We used Bootstrap 4 to ensure responsive web design. Responsive web design is an approach to make web pages render well on a variety of devices and windows or screen sizes \cite{responsive:2011}. 
-We also used Vue-Axios which is an HTTP client library to establish the connection with the backend based on HTTP requests. 
+The frontend is developed by using Vue.js as a JavaScript framework for building user interfaces.
+Additionally Bootstrap 4 is used to ensure responsive web design. Responsive web design is an approach to make web pages render well on a variety of devices and windows or screen sizes \cite{responsive:2011}. 
+Vue-Axios which is an HTTP client library to establish the connection is used with the backend based on HTTP requests. 
 
 \subsection{Implementation}
 Vue.js features architecture focuses on declarative rendering and component composition.
@@ -103,9 +103,9 @@ Vue.js features architecture focuses on declarative rendering and component comp
 Vue components extend basic HTML elements to encapsulate reusable code \cite{vue:2020}.
 At a high level, components are custom elements to which the Vue's compiler attaches behavior. 
 In Vue, a component is essentially an instance of Vue with predefined options.
-In our interface, we use SoccerGame.vue as a component that defines the implementation of the different attributes of a soccer game.
+In the interface, SoccerGame.vue is used as a component that defines the implementation of the different attributes of a soccer game.
 
-Our frontend contains two pages: A result prediction and goal prediction pages. Each of them 
+The frontend contains two pages: A result prediction and goal prediction pages. Each of them 
 receives HTTP GET requests from the backend which contains the functionalites to be executed and the data to be displayed.
 
 \subsection{Results prediction}
