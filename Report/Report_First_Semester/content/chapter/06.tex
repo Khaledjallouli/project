@@ -4,7 +4,7 @@
 In this phase of the CRISP-DM Process we are going to evaluate the models and the features, we previously generated.\newline
 
 \section{Prediction of the final result}
-In this part, the evaluation criteria for the models and in the same way for the features which are used, is based on the test-accuracy. The highest accuracy we reached jet, have been 56.25\% with the Sliding Window Option 1, which means with the highest amount of features. The more features we have the less training samples are there for our training, so it could be better to train with more samples and less features. But because of the reason that every models are in the same range, which means there is no model which has a much smaller accuracy, it is not possible to tell the one with the highest accuracy the best model or has the best feature selection in every case. If you are using different data or a higher or smaller amount of features it could be possible to reach a better accuracy with another model than the one which reached the highest accuracy in the actual case. The first ranked model is using Keras Sequantial Neural Network, as shown in \autoref{table:coparison_of_classifiers}:
+In this part, the evaluation criteria for the models and in the same way for the features which are used, is based on the test-accuracy. The highest accuracy jet, have been 56.25\% with the Sliding Window Option 1, which means with the highest amount of features. The more features, the less training samples are there for the training, so it could be better to train with more samples and less features. But because of the reason that every models are in the same range, which means there is no model which has a much smaller accuracy, it is not possible to tell the one with the highest accuracy the best model or has the best feature selection in every case. If you are using different data or a higher or smaller amount of features it could be possible to reach a better accuracy with another model than the one which reached the highest accuracy in the actual case. The first ranked model is using Keras Sequantial Neural Network, as shown in \autoref{table:coparison_of_classifiers}:
 
 \begin{table}[H]
 \centering
@@ -21,19 +21,19 @@ In this part, the evaluation criteria for the models and in the same way for the
 \label{table:coparison_of_classifiers}
 \end{table}
 
-As you can see in the table \autoref{table:coparison_of_classifiers}, too, you can not even tell, that the more features you use, the better the outcome will be. For example with the Multi-layer Perceptron you get a worse accuracy with more features. But for the actual situation we recommend to use the first ranked model for predicting the outcome for football games, but we will maybe use a different model with other features in the future.
+As the reader can see in the table \autoref{table:coparison_of_classifiers}, too. It is not even possible to tell, that the more features, the better the outcome will be. For example with the Multi-layer Perceptron one gets a worse accuracy with more features. But for the actual situation we recommend to use the first ranked model for predicting the outcome for football games, but in the future a different model with other features could be better.
 
 \section{Predicting the final goals}
-In this part, we tested different evaluation criteria in order to compare the models. First, we created our own quality criteria to ensure that we can compare regression results and classification results. Second, we used test-accuracy.
+In this part, different evaluation criteria in order to compare the models are descibed. First, a own quality criteria was created to ensure that there is a possibility to compare regression results and classification results. Second, test-accuracy was used.
 \subsection{Quality Criteria}
-Our quality criteria is divided into two parts: Rounding the predicted values and calculating the score.
+The self made quality criteria is divided into two parts: Rounding the predicted values and calculating the score.
 
 \subsubsection{Round the predicted values}
 
-The main idea of creating our own rounding function is to assign the predicted values of the model to the nearest real class.
-For example, if we predict 0.54, it will be rounded to 0.6 because it is between 0.33 and 0.67.
+The main idea of creating a rounding function is to assign the predicted values of the model to the nearest real class.
+For example, if one predicts 0.54, it will be rounded to 0.6 because it is between 0.33 and 0.67.
 0.60 is the encoded value to score 4 goals, as shown in the decoded value column.
-The following table shows the intervals of all possible values that we can predict and the associated decoded value.
+The following table shows the intervals of all possible values that can be predicted and the associated decoded value.
 
 \begin{table}[H]
     \centering
@@ -53,13 +53,13 @@ The following table shows the intervals of all possible values that we can predi
     \caption{Round and Decode predicted values}
     \label{table:qualitycriteriaround}
     \end{table}
-The decoding function is used both in the predicted values and in the original values before comparing them and calculating the scores. We have defined this function to facilitate the comparison process.
+The decoding function is used both in the predicted values and in the original values before comparing them and calculating the scores. This function is defined to facilitate the comparison process.
 
 \subsubsection{Calculate the scores}
 
-To calculate the score, we first calculate the absolute value between the original value 
-and that predicted between the goals scored by the home team and the away team.
-Then, we encode this calculated value which is between 0 and 5 to a value between 0 and 1. 
+To calculate the score, at first the absolute value between the original value 
+and that predicted between the goals scored by the home team and the away team is calculated.
+Then, this calculated value which is between 0 and 5 to a value between 0 and 1 has to be encoded. 
 0 goal corresponds to a score equal to 1 and 5 goals corresponds to a score equal to 0.
 The following table shows all the possible values.
 
@@ -86,8 +86,8 @@ The following table shows all the possible values.
 After calculating the difference in degree for goals scored for home and away teams, the score is the average of the two columns. The final result will be the average of all the rows in the table which is between 0 and 1.
 
 \subsection{Comparing the regressors}
-This section highlights the different regressor models created for two different datasets with different features and then these models are compared to find the best model to make predictions on the new data or test data, we have created three different models using tried trial and error to set parameters and hiddenlayers units.\newline 
-In classification tasks, it is easy to calculate sensitivity or specificity of classifier because output is always binary {correct classification, incorrect classification}. So we can count good/bad answers and based on the confusion matrix calculate some measurements. But in regression tasks, the output is a number. So we can't just say is it correct or incorrect but instead we should measure "how far from true solution we are" by either calculating coefiicient of determination Rsquare or by focusing on minimizing the mean squared error also known as loss. That is why in our regression models, we have calculated loss for validation as well as for training.
+This section highlights the different regressor models created for two different datasets with different features and then these models are compared to find the best model to make predictions on the new data or test data, three different models using tried trial and error to set parameters and hiddenlayers units are created.\newline 
+In classification tasks, it is easy to calculate sensitivity or specificity of classifier because output is always binary {correct classification, incorrect classification}. So it is possible to count good/bad answers and based on the confusion matrix calculate some measurements. But in regression tasks, the output is a number. So it is not possible to just say is it correct or incorrect but instead it is necessary to measure "how far from true solution is it" by either calculating coefficient of determination Rsquare or by focusing on minimizing the mean squared error also known as loss. That is why in the regression models, the loss for validation as well as for training is calculated.
 \subsubsection{Performance of Machine Learning regressors}
 Multioutput regressor(Gradient Bossting Regressor)\newline
 The final training accuracy Final is 20.59\%, training accuracy home team goals is 17.10\% and training accuracy away team goals: 24.08\% \newline
@@ -110,8 +110,9 @@ The final test accuracy for gradient booster is 15.20\% , test accuracy for home
 The r square value of the model must be in between 0 and 1 and as close to 1 is the better.\newline
 As observed, none of the regressor model using machine learning algorithms has provided us the satisfactory accuracy to use it in backend of our website. Hence, we have decided to use deep learning with tensorflow and keras to perform regression.\newline
 \subsubsection{Performance of Deep Learning regressors}
-We have created three different artificial neural networks using sequential model of scikit. For all the three models, input units have been taken equal to features that is 21 units and as we are predicting two outputs- Home Team Goals and Away Team Goals, the output layers are having 2 units or neurons. For the dataset sliding02, we have used 3 hidden layers from which first hidden layer has 30 units which makes the neural network densely connected with 20 units in the second hidden layer and 10 in the third hidden layer. While training the model, we have observed the validation accuracy of 68 percent and Training accuracy of 70 percent. For second model, we have used three hidden layers with 21 units in first hidden layer making the artificial neural network as fullyconnected, 10 units in second hidden layer and 5 in third hidden layer which give us validation accuracy of 66 percent and training accuracy of 72 percent. And the third model have 4 hidden layers with 21 units in first hidden layer layer, 14 units in second hidden layer, 12 units in third hidden layer and 10 units in last hidden layer which give us validation accuracy of 56 percent and training accuracy of 69 percent.\newline
-Similarly, similar experiments have been made with dataset sliding03 as well. For all the models we have also evaluated the quality for each team and for both training dataset and test dataset using the quality criteria defined in the above section. The evaluated qualities for all three models for dataset sliding02 and sliding03 have displayed in the respective tables \autoref{table:qualitymodelregression1} and \autoref{table:qualitymodelregression2} where QM is abbreviation of Quality Model, HG is abbreviation of Home goals and AG is abbreviation of Away goals\newline
+Three different artificial neural networks using sequential model of scikit are created. For all the three models, input units have been taken equal to features that is 21 units and as the models are predicting two outputs- Home Team Goals and Away Team Goals, the output layers are having 2 units or neurons. For the dataset sliding02, 3 hidden layers are used from which first hidden layer has 30 units which makes the neural network densely connected with 20 units in the second hidden layer and 10 in the third hidden layer. While training the model, the validation accuracy of 68 percent and Training accuracy of 70 percent was the result. For second model, three hidden layers with 21 units in first hidden layer making the artificial neural network as fullyconnected, 10 units in second hidden layer and 5 in third hidden layer are used which results in validation accuracy of 66 percent and training accuracy of 72 percent. 
+And the third model has 4 hidden layers with 21 units in first hidden layer layer, 14 units in second hidden layer, 12 units in third hidden layer and 10 units in last hidden layer which results in validation accuracy of 56 percent and training accuracy of 69 percent.\newline
+Similarly, similar experiments have been made with dataset sliding03 as well. For all the models the evaluation of the quality for each team and for both training dataset and test dataset using the quality criteria defined in the above section is done. The evaluated qualities for all three models for dataset sliding02 and sliding03 are displayed in the respective tables \autoref{table:qualitymodelregression1} and \autoref{table:qualitymodelregression2} where QM is abbreviation of Quality Model, HG is abbreviation of Home goals and AG is abbreviation of Away goals\newline
 
 \begin{table}
 \centering
@@ -153,9 +154,9 @@ Models
 \label{table:qualitymodelregression2}
 \end{table}
 
-We have used first model from dataset sliding02 as our best model as the  validation and training accuracy of this model is better than the other models with a percentage of 68 percent and 72 percent respectively,ideally the validation accuracy must be slightly better than the training accuracy to prevent overfitting of the model. Because if the training loss is higher than validation loss then there are chances of overfitting and if the training loss is very less than validation loss then there are chances of underfitting.But still the validation accuracy is quite lower than the training accuracy.\newline
-Also, as our approach is to minimize the mse that is mean squared error in order to get predictions on test data as close to actual data, this model provides us with minimum training mse of 0.19 and validation mse of 0.21. Hence, we are considering it as our best model.\newline
-Using quality criteria defined, we have observed a final quality of performance for model 1 for Training data is 83 percent and for test data it is 82 percent.One important point is that the quality evaluation for all the models are showing almost similar values to each other which is not an ideal solution, so there are lot of scope of impovement in the project.\newline
+The first model from dataset sliding02 is the best model during the tests as the  validation and training accuracy of this model is better than the other models with a percentage of 68 percent and 72 percent respectively, ideally the validation accuracy must be slightly better than the training accuracy to prevent overfitting of the model. Because if the training loss is higher than validation loss then there are chances of overfitting and if the training loss is very less than validation loss then there are chances of underfitting. But still the validation accuracy is quite lower than the training accuracy.\newline
+Also, one goal is to minimize the mse that is mean squared error in order to get predictions on test data as close to actual data, this model provides the minimum training mse of 0.19 and validation mse of 0.21. So it can be considered as the best model.\newline
+Using quality criteria defined, a final quality of performance for model 1 for Training data is 83 percent and for test data it is 82 percent. One important point is, that the quality evaluation for all the models are showing almost similar values to each other. This is not an ideal solution, so there are lot of scope of improvement in the project.\newline
 
 \subsection{Comparing Regression with Multi Class Classification}
-As it is described before the Multi Class Classification has still many possibilities to improve, so in this point we only compare the actual model with the best regression model. For this we will use our own Quality Criteria, but as it is described in the part `Quality Criteria', this has some disadvantages and has to be improved in the future. Because of this, the test accuracy is also used for the comparison. For the Multi Class Classification approach we are reaching a test accuracy of 30.54\% for the away team and 37.64\% for the home team, which makes an average of 34.09\%. With the regression model we are reaching a test accuracy of 46.68\%. Using our quality criteria we are reaching and average of  80.38\% (77.30\% for the home team and 83.47\% for the away team) with the Multi Class Classification and an average of 82\%(82\% for the home team and 83\% for the away team) with the regression approach. Because of the better results with the regression model the team decided to use this model for the homepage. After improving the regression and the Multi Class Classification this could change. 
+As it is described before the Multi Class Classification has still many possibilities to improve, so in this point we only compare the actual model with the best regression model. For this we will use the self made Quality Criteria, but as it is described in the part `Quality Criteria', this has some disadvantages and has to be improved in the future. Because of this, the test accuracy is also used for the comparison. For the Multi Class Classification approach the model is reaching a test accuracy of 30.54\% for the away team and 37.64\% for the home team, which makes an average of 34.09\%. The regression model is reaching a test accuracy of 46.68\%. Using the self made quality criteria the model even reaches and average of  80.38\% (77.30\% for the home team and 83.47\% for the away team) with the Multi Class Classification and an average of 82\%(82\% for the home team and 83\% for the away team) with the regression approach. Because of the better results with the regression model the team decided to use this model for the homepage. After improving the regression and the Multi Class Classification this could change. 
