@@ -37,8 +37,7 @@ The Decision Tree can be modified by adjusting the depth of the tree. For Neural
 
 \subsubsection{Decision Tree Classifier}
 
-A decision tree is a simple classification representation that learns from the data with a set of if-then-else decision rules.\newline \newline
-% \cite {DecisionTree: scikit-learn}. 
+A decision tree is a simple classification representation that learns from the data with a set of if-then-else decision rules \cite{DecisionTree: scikit-learn}. \newline 
 Using the decision tree algorithm, we start at the root of the tree and divide the data on the feature that results in the largest information gain. We can then repeat this procedure until the leaves are pure.\newline \newline
 In our project, we set the depth of the tree to four.\newline
 The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sliding window option as a dataset, as shown in the following Figure.
@@ -53,7 +52,7 @@ The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sli
 
 \subsubsection{Multi-layer Perceptron}
 
-Multi-layer Perceptron (MLP) is a supervised learning algorithm consisting of three layers: one input layer, one hidden layer, and one output layer. The units in the hidden layer are fully connected to the input layer, and the output layer is fully connected to the hidden layer.\newline \newline %\cite{PythonMachineLearning}
+Multi-layer Perceptron (MLP) is a supervised learning algorithm consisting of three layers: one input layer, one hidden layer, and one output layer. The units in the hidden layer are fully connected to the input layer, and the output layer is fully connected to the hidden layer\cite{PythonMachineLearning}. \newline
 In our MLP Model, we used the first sliding window with 13 features in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. For the output layer, we have 3 neurons.\newline \newline  
 To be able to solve our problem, we used the sigmoid activation function(logistic) for the hidden layers and the softmax activation function for the output layer. We also used a stochastic gradient descent optimizer as a solver. \newline 
 As we see in the following plot, the graph of the cost function indicating that the training algorithm converged after the 90th epoch. \newline
@@ -68,7 +67,7 @@ The last step is to evaluate the performance of the model by calculating the acc
 
 \subsubsection{Keras Sequential Neural Network}
 
-To build the model, we used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it.\newline%\cite{buildingDLModel}
+To build the model, we used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it \cite{buildingDLModel}.\newline
 The chosen layer type is 'dense'. Dense is a standard layer type that works for most cases. In a dense layer, all the nodes in the previous layer connect to the nodes in the current one.\newline
 As activation function for the hidden layers 'Rectified Linear Activation' (ReLU) was used and 'Softmax' for the output layer. Softmax sums the output up to 1 so that the output can be interpreted as probabilities. The model will then make its prediction according to the option which has a higher probability.\newline \newline
 The first layer needs an input shape. The input shape specifies the number of rows and columns in the input.\newline
@@ -227,8 +226,8 @@ The following figure \autoref{figure:regression} describes the encoding done on 
 First, there are five different machine learning regression algorithms to build models and then compared their results in term of test accuracy in the evaluation part.\newline \newline
 In the project plain multiperceptron model as deep learning artificial neural network algorithm with keras have been used. One can create Keras models and evaluate them with scikit-learn. This library is good at evaluating models and allows to use powerful data preparation and model evaluation schemes with very few lines of code.
 \subsubsection{Multi Output Regressors}
-First one is Multioutput regression which consists of fitting one regressor per target. This is a simple strategy for extending regressors that do not natively support multi-target regression. Multioutput regressor can be created using Gradient Boosting regressor and support vector machines to make predictions on test data %\cite{scikit-learn}\newline
-Gradient Booster works on boosting or improving the week learner predictions and involve a loss function to be optimized, a week learner to make predictions and an additive model to add weak learners to minimize the loss function. It builds an additive model in a forward stage-wise fashion; it allows for the optimization of random distinguishable loss functions. We have kept random state parameter as zero in our model to avoid change in  the random seed given to each tree estimator at each boosting iteration %\cite{scikit-learn:GradientBoostingRegressor}\newline 
+First one is Multioutput regression which consists of fitting one regressor per target. This is a simple strategy for extending regressors that do not natively support multi-target regression. Multioutput regressor can be created using Gradient Boosting regressor and support vector machines to make predictions on test data \cite{scikit-learn}.\newline
+Gradient Booster works on boosting or improving the week learner predictions and involve a loss function to be optimized, a week learner to make predictions and an additive model to add weak learners to minimize the loss function. It builds an additive model in a forward stage-wise fashion; it allows for the optimization of random distinguishable loss functions. We have kept random state parameter as zero in our model to avoid change in  the random seed given to each tree estimator at each boosting iteration \cite{scikit-learn:GradientBoostingRegressor}.\newline 
 Second multioutput regressor used is support vector regressor which uses the same principle as for classification and it relies on kernel functions. For a first try Support Vector Regression (SVR) for a regression problem with two outputs has been tested. This means that Y train data has two values for each sample. Since SVR can only produce a single output, we have used the MultiOutputRegressor from Scikit.
 \subsection{Decision Tree Regressor}
 The decision tree is used to predict simultaneously the noisy x and y observations of a circle given a single underlying feature. As a result, it learns local linear regressions approximating the circle. Decision tree regression observes features of an object and trains a model in the structure of a tree to predict data in the future to produce meaningful continuous output. Continuous output means that the output/result is not discrete, i.e., it is not represented just by a discrete, known set of numbers or values.In our model we have used random state as 0,max depth equals to 1 and mean square error as criterion.\newline
@@ -236,13 +235,13 @@ The decision tree is used to predict simultaneously the noisy x and y observatio
 A random forest is an ensemble model that consists of many decision trees. Predictions are made by averaging the predictions of each decision tree. It is a forest that is a collection of trees. This makes random forests a strong modeling technique that’s much more powerful than a single decision tree. Also, Random forest is a bagging technique and not a boosting technique. The trees in random forests are run in parallel. There is no interaction between these trees while building the trees. We have krpt random state as zero while fitting model to the training data.\newline
 \subsection{MLP Regressor}
 It is Multi-layer Perceptron regressor. This model optimizes the squared-loss using Adam or stochastic gradient descent. Both optimizers are used to update weights for better predictions. Adam is an optimization algorithm that can be used instead of the classical stochastic gradient descent procedure to update network weights iterative based in training data. We have created MLP model two times using two different optimizers which are Adam and (Stochastic Gradient Descent)SGD.\newline
-\subsubsection{using Adam Optimizer }
+\subsubsection{Adam Optimizer }
 Adam is an optimization algorithm that can be used to update network weights iterative based in training data. We have used three hidden layers of size 100 units, 30 units and 11 units respectively. Adam provides combined benefits of Adaptive Gradient Algorithm and Root Mean Square Propagation. Rather than using the parameter learning rates based on the average first moment (the mean) as in RMSProp, Adam use the average of the second moments of the gradients (the uncentered variance).\newline
-\subsubsection{using Stochastic Gradient Descent Optimizer }
+\subsubsection{Stochastic Gradient Descent Optimizer }
 Stochastic gradient descent maintains a single learning rate (termed alpha) for all weight updates and the learning rate does not change during training. A learning rate is maintained for each network weight (parameter) and separately adapted as learning unfolds. It is a classical optimization algorithm. We have used three hidden layers of size 50 units, 20 units and 11 units respectively. Activation is kept as relu and learning rate as constant.\newline
 \subsection{Regression using Keras Deep Learning }
 This part describes the usage of deep learning techniques and keras deep learning library that wraps the efficient numerical libraries Theano and TensorFlow to do regression or we can say to predict the number of goals for each teams. It includes the following common main steps- Import the dataset, preprocessing of dataset, baseline model building, making predictions, evaluate models on the basis of quality criteria and parameter tuning 
-%\cite{tensorflow:tutorial} %\cite{tensorflow:keras}.\newline
+\cite{tensorflow:tutorial} \cite{tensorflow:keras}.\newline
 \subsubsection{Data Preprocessing}
 In data preprocessing section, normalization has performed on input features data values and data encoding has performed. But, now there is a little change in the encoding section where the data has to be encoded; -1 as no goal and 1 as 5 or more goals rather than 10 or more goals.\newline
 The following figure \autoref{figure:dataPrep} describes the encoding done on output data values in preprocessing step where 0 goal encoded to -1, 1 goal encoded to -0.6, 2 goals encoded to -0.2, 3 goals encoded to 0.2, 4 goals encoded to 0.6, and 5 or more goals encoded to 1.\newline
@@ -251,7 +250,7 @@ The following figure \autoref{figure:dataPrep} describes the encoding done on ou
 \includegraphics[scale=.6]{datapreprocessing_regression.png}
 \end{center}
 \caption{Updated Data Preprocessing for regression }
-\label{figure:dataPrep}
+\label{figure:dataPrep1}
 \end{figure}
 \subsubsection{Develop a Baseline Neural Network Model}
 In this section the reader is able to read about creation a baseline neural network model for the regression problem. It is possible to create Keras models and evaluate them with scikit-learn which allows to excels at evaluating models and to use powerful data preparation and model evaluation schemes with very few lines of code.\newline
