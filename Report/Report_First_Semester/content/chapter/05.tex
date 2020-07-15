@@ -12,33 +12,32 @@ This phase comprises tasks such as select modeling techniques, generate test des
 %----------------------------------------------------------------------------------------
 \subsection{Select Modeling Techniques}
 
-As a first step in modeling, we decided to choose Supervised Machine Learning algorithms, to perform multi-class classification because our objective is to predict the final result of a match between two teams, if there is a win by the home team, a draw or a win by the away team. \newline \newline
+As a first step in modeling, we have decided to choose Supervised Machine Learning algorithms, to perform multi-class classification because our objective is to predict the final result of a match between two teams, if there is a win by the home team, a draw or a win by the away team. \newline \newline
 Therefore, we have selected Decision Trees and Neural Networks as techniques in order to test its performance and find the most appropriate for our project.
 
 %----------------------------------------------------------------------------------------
 \subsection{Generate Test Design}
 
-This part refers to the generation of a procedure to test the model quality and validity needs, before building our models. \newline \newline
+We have described the generation of a procedure to test the model quality and validity needs before building our models in this section. \newline \newline
 For some modeling techniques, we have divided our dataset into training and test sets, the model is built based on the training set, and its quality is estimated based on the test set, which represents 30\% of the dataset. \newline
 We also took care to not shuffle the dataset as we need to keep the last 10 matches of the sliding windows dataset in the correct order. \newline 
 For others, we only used 5\% for test set, a small amount because we wanted to keep as much data as possible for training and validation. The remaining 95\% are divided into 80\% training and 20\% validation datasets.\newline \newline
-For training the models, we used automated stop as a strategy, after the training loss did not improve more than 0.0001 for 10 consecutive epochs or the model exceeds 1000 training epochs.\newline \newline
-To evaluate the models, we used the accuracy results as criteria.
-
+For training the models, we have used automated stop as a strategy, after the training loss did not improve more than 0.0001 for 10 consecutive epochs or the model exceeds 1000 training epochs.\newline 
+We have used the accuracy results as criteria for the models evaluation.
 
 %----------------------------------------------------------------------------------------
 \subsection{Build Models}
 
-The aim of this part is to build several models before comparing the results.\newline
+This part describes the methodilogy we have used to build several models before comparing the final results.\newline
 Most modeling techniques have a number of parameters that can be adjusted to control the modeling process.\newline \newline
-For our Supervised Machine Learning Algorithms, we used scikit-learn API to build a Decision Tree and Multi-Layer Perceptron neural network. We also used the TensorFlow/Keras framework to build basic sequential neural networks.\newline \newline
-The Decision Tree can be modified by adjusting the depth of the tree. For Neural Networks, we can change the number of hidden layers, the neurons per layer and other parameters.
+For our Supervised Machine Learning Algorithms, we have used scikit-learn API to build a Decision Tree and Multi-Layer Perceptron neural network. We have also used the TensorFlow/Keras framework to build basic sequential neural networks.\newline \newline
+The point to be noted is that the Decision Tree can be modified by adjusting the depth of the tree. For Neural Networks,  the number of hidden layers, the neurons per layer and other parameters can be changed as per the experiment requirement.
 
 
 \subsubsection{Decision Tree Classifier}
 
-A decision tree is a simple classification representation that learns from the data with a set of if-then-else decision rules \cite{DecisionTree: scikit-learn}. \newline 
-Using the decision tree algorithm, we start at the root of the tree and divide the data on the feature that results in the largest information gain. We can then repeat this procedure until the leaves are pure.\newline \newline
+We have used decision tree classifiers to create one of the many models which is a simple classification representation that learns from the data with a set of if-then-else decision rules \cite{DecisionTree: scikit-learn}. \newline 
+Using the decision tree algorithm, we have started with(at) the root of the tree and divide the data on the feature that resulted in the largest information gain. This procedure can be repeated until the leaves are pure.\newline \newline
 In our project, we set the depth of the tree to four.\newline
 The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sliding window option as a dataset, as shown in the following Figure.
 \begin{figure}[H]
@@ -53,9 +52,9 @@ The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sli
 \subsubsection{Multi-layer Perceptron}
 
 Multi-layer Perceptron (MLP) is a supervised learning algorithm consisting of three layers: one input layer, one hidden layer, and one output layer. The units in the hidden layer are fully connected to the input layer, and the output layer is fully connected to the hidden layer\cite{PythonMachineLearning}. \newline
-In our MLP Model, we used the first sliding window with 13 features in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. For the output layer, we have 3 neurons.\newline \newline  
-To be able to solve our problem, we used the sigmoid activation function(logistic) for the hidden layers and the softmax activation function for the output layer. We also used a stochastic gradient descent optimizer as a solver. \newline 
-As we see in the following plot, the graph of the cost function indicating that the training algorithm converged after the 90th epoch. \newline
+In our MLP Model, we have used the first sliding window with 13 features in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. For the output layer, we have used 3 neurons.\newline \newline 
+To be able to solve our problem, we have used the sigmoid activation function(logistic) for the hidden layers and the softmax activation function for the output layer. We have also used a stochastic gradient descent optimizer as a solver. \newline 
+As we see in the following plot, the graph of the cost function indicating that the training algorithm get converged after the 90th epoch. \newline
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=.7]{MLPcostfunction.png}
@@ -63,11 +62,11 @@ As we see in the following plot, the graph of the cost function indicating that 
 \caption{MLP Cost function}
 \label{fig:MLPcostfunction}
 \end{figure}
-The last step is to evaluate the performance of the model by calculating the accuracy of the prediction. We obtained 53.45\% for the training dataset and 52.77\% for the testing dataset.
+In the last step, performance of the model is evaluated by calculating the accuracy of the prediction. We have obtained 53.45\% for the training dataset and 52.77\% for the testing dataset.
 
 \subsubsection{Keras Sequential Neural Network}
 
-To build the model, we used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it \cite{buildingDLModel}.\newline
+To build the atificial neural network model, we have used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it \cite{buildingDLModel}.\newline
 The chosen layer type is 'dense'. Dense is a standard layer type that works for most cases. In a dense layer, all the nodes in the previous layer connect to the nodes in the current one.\newline
 As activation function for the hidden layers 'Rectified Linear Activation' (ReLU) was used and 'Softmax' for the output layer. Softmax sums the output up to 1 so that the output can be interpreted as probabilities. The model will then make its prediction according to the option which has a higher probability.\newline \newline
 The first layer needs an input shape. The input shape specifies the number of rows and columns in the input.\newline
@@ -80,11 +79,11 @@ model = tf.keras.Sequential([
   layers.Dense(3, activation='softmax')
 ])
 \end{lstlisting}
-To compile the model, we chose Adam as an optimizer. The Adam Optimizer adjusts the learning rate throughout the training.\newline
+To compile the model, we have chosen 'Adam' as an optimizer. The Adam Optimizer adjusts the learning rate throughout the training.\newline
 The learning rate determines the speed at which the optimal weights for the model are calculated.\newline
-For the loss function, we chose $sparse\_categorical\_crossentropy$. It is one of the most common choices for classification. A lower score indicates that the model is performing better.\newline \newline
+For the loss function, we have selected $sparse\_categorical\_crossentropy$. It is one of the most common choices for classification. The better model performance can be indicated by a lower score.\newline \newline
 Weight regularization is a regularization technique that provides an approach to reduce over-fitting of a deep learning neural network model on training data and to improve the performance of the model on new data.\newline
-By default, no regularizer is used in layers. For this, we made some models with the addition of the L2 regularization, which is the sum of the squared weights.\newline \newline
+By default, no regularizer is used in layers. For this, we have developed some models with the addition of the L2 regularization, which is the sum of the squared weights.\newline \newline
 In other models, we have added dropout, which is another regularization technique for neural networks, to avoid over-fitting in neural networks. Additionally we combined both regularization techniques in one model. \autoref{table:colab_nn} shows the test-accuracies of the models in comparison.
 
 The evolution of the loss-function of the generated models over time can be seen in \autoref{fig:ModelCompare}.
@@ -114,7 +113,7 @@ The evolution of the loss-function of the generated models over time can be seen
 \end{table}
 
 To get a better feeling for the impact the number of hidden layers and the amount of neurons within each hidden layer have on the overall performance of the model, we conducted a series of tests.\newline
-We tested each sliding window option with a varying amount of hidden layers (\textbf{H1}-\textbf{H4}) and a varying number of neurons per layer (\textbf{H}igh, \textbf{M}edium, \textbf{L}ow and \textbf{F}unnel).\newline
+We have tested each sliding window option with a varying amount of hidden layers (\textbf{H1}-\textbf{H4}) and a varying number of neurons per layer (\textbf{H}igh, \textbf{M}edium, \textbf{L}ow and \textbf{F}unnel).\newline
 The architectures of the neural nets can be found in \autoref{section:appendix_a}.\newline
 
 The test-accuracies for the models based on sliding window option 1 can be seen in \autoref{table:nn_variation_sliding_01}.
@@ -302,7 +301,7 @@ Finally, the evaluation of models has been performed using Quality criteria expl
 \end{table}
 
 \subsection{Multi Class Classification}
-Another idea for predicting the final goals is to use multi class classification. For this matter a common classification model can be used. 
+Another idea to predict the final goals is to use multi class classification. For this matter, we have used a common classification model.
 
 \begin{lstlisting}[language=Python, caption=Python code for multi class classification, label=modelmcc]
 inputs = tf.keras.layers.Input(shape=(21,))
@@ -319,13 +318,13 @@ model.compile(optimizer="Adam", loss='sparse_categorical_crossentropy', metrics=
 history = model.fit(x, (y_home-team, y_away-team), epochs=100)
 \end{lstlisting}
 
-As the reader can see in listing \ref{modelmcc} the used model has one input layer with the shape of 21 neurons, because there are 21 features. There are 2 hidden layers with 10 and 20 neurons and one output layer with 6 neurons. The 6 neurons are because we are only predicting goals from 0 to 5 and if the goals are greater than 5 (which does not happen very often, as it is described in the Data Preprocessing part) we count them as 5 goals. In line 5 it is shown how the model is created from the defined layers before. This model is used for both predictions (line 7 and 8), the home team score prediction and the away team score prediction. In line 11 is the model compilation with the two output vectors and in line 12 the training with these vectors. So instead of applying the model on only one output vector it is just used for two of them. 
+As the reader can see in listing \ref{modelmcc} the used model has one input layer with the shape of 21 neurons, because there are 21 features. There are 2 hidden layers with 10 and 20 neurons and one output layer with 6 neurons. The 6 neurons are because we have only predicted goals from 0 to 5 and if the goals are greater than 5 (which does not happen very often, as it is described in the Data Preprocessing part) we have counted them as 5 goals. In line 5 it is shown how the model is created from the defined layers before. This model is used for both predictions (line 7 and 8), the home team score prediction and the away team score prediction. In line 11 is the model compilation with the two output vectors and in line 12 the training with these vectors. So instead of applying the model on only one output vector it is just used for two of them. 
 
 \begin{lstlisting}[language=Python, caption=Python code for multi class classification model evaluation, label=modelmccev]
 model.evaluate(test02,( testLabels_hometeam, testLabels_awayTeam))
 \end{lstlisting}
 
-As the reader can see in listing \ref{modelmccev} the evaluation has to be adjusted in the same way. It is necessary to provide the model with two evaluation vectors as well. The result is a array with 5 values, the whole loss of the model, the loss per team and the accuracy per team. With this model we achieve an accuracy of 30.53\% for the home team and 37.64\% for the away team. 
+As the reader can see in listing \ref{modelmccev} the evaluation has to be adjusted in the same way. It is necessary to provide the model with two evaluation vectors as well. The result is a array with 5 values, the whole loss of the model, the loss per team and the accuracy per team. With this model we have achieved an accuracy of 30.53\% for the home team and 37.64\% for the away team. 
 
 \begin{figure}[H]
 \begin{center}
@@ -335,7 +334,7 @@ As the reader can see in listing \ref{modelmccev} the evaluation has to be adjus
 \label{mccloss}
 \end{figure}
 
-In figure \ref{mccloss} the reader is able to see, that the loss is higher for the home team than the away team. In the beginning the value is decreasing very much and after approximative epoch 10 the value is quite stable. The same shows the accuracy graph in figure \ref{mccacc}. The accuracy for the away team is better than the one for the home team. And it is only increasing in the beginning. Afterwards it is a little bit noisy but the accuracy is not increasing significant in any epoch. 
+In figure \ref{mccloss} the reader is able to see, that the loss is higher for the home team than the away team. In the beginning the value seems to be decreasing and after approximative epoch 10 the value observed to be quite stable. The same has shown in the accuracy graph in figure \ref{mccacc}. The accuracy for the away team is observed to be better than the one for the home team. And it is only increasing in the beginning. Afterwards it is a little bit noisy but the accuracy is not increasing significant in any epoch. 
 
 \begin{figure}[H]
 \begin{center}
@@ -345,6 +344,6 @@ In figure \ref{mccloss} the reader is able to see, that the loss is higher for t
 \label{mccacc}
 \end{figure}
 
-After using the own built quality criteria this approach reaches 80\% accuracy. In this point there was no comparison with different models done. This will happen in the next semester. Maybe more hidden layers or more neurons can improve the outcome. Another idea for improving the result is to try the different sliding windows approaches. For this test sliding window 02 was used. 
+We have used our self created quality criteria for this problem and have reached accuracy of 80\% using the same quality criteria. No comparison with different models has been done at this point. This would be considered as future work to happen in the next semester. Outcome might be improved using more hidden layers or more neurons or by trying different parameters. Another idea for improving the result is to try the different sliding windows approaches. For this test sliding window 02 has been used by us. 
 
 
