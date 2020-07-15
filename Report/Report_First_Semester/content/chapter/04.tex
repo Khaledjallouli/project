@@ -2,8 +2,8 @@
 
 \chapter{Data Preprocessing}
 
-Based on \cite{football-predictor} five sliding windows for match data were implemented. The idea of these sliding windows is to deliver match data in historical order and to aggregate data on a team's performance during the last 10 games.
-First the relevant data was extracted in chronological order with the following SQL statement:
+Based on \cite{football-predictor}, five sliding windows for match data were implemented. The idea of these sliding windows is to deliver match data in historical order and to aggregate data on a team's performance during the last 10 games.
+First, the relevant data was extracted in chronological order with the following SQL statement:
 
 \begin{lstlisting}[language=SQL, caption=SQL code for Sliding Window]
 SELECT id, country_id, league_id, season, date, home_team_api_id, away_team_api_id, home_team_goal, away_team_goal, B365H, B365D, B365A, shoton, shotoff, possession
@@ -100,7 +100,7 @@ The last option is based on option 3 and additionally includes ball possession s
 
 \section {Data Profiling Part 2}
 
-Using Pandas Profiling all sliding windows or options were profiled again. Here is and excerpt of the profile for option 3:
+Using Pandas Profiling all sliding windows or options were profiled again. Here is an excerpt of the profile for option 3:
 
 \begin{figure}[H]
 \begin{center}
@@ -110,8 +110,8 @@ Using Pandas Profiling all sliding windows or options were profiled again. Here 
 \label{fig:profiling_option3}
 \end{figure}
 
-All features/columns are numerical and no values (cells) are missing. As expected x-shots and x-shots\_on\_target are highly 
-correlated. Interestingly zero values are marked as warnings. However, in this context they are fine and still usable. Without having domain knowledge and purely relying on tools, one might be inclined to drop these values and lose valuable information. Another interesting information found in Pandas profiles is the total size in memory. 1.8 MiB shows that the data for option 3 is little and definitely small enough to fit into RAM or GPU memory. This information is valuable, as will be shown later.
+All features/columns are numerical and no values (cells) are missing. As expected, x-shots and x-shots\_on\_target are highly 
+correlated. Interestingly, values of zero are marked as warnings. However, in this context they are fine and still usable. Without having domain knowledge and purely relying on tools, one might be inclined to drop these values and lose valuable information. Another interesting information found in Pandas profiles is the total size in memory. 1.8 MiB shows that the data for option 3 is little and definitely small enough to fit into RAM or GPU memory. This information is valuable, as will be shown later.
 \newline
 Since the profiles for the other options are similar to the one described above, they will not be explained.
 
@@ -120,7 +120,7 @@ Since the profiles for the other options are similar to the one described above,
 
 The prediction of the final result is based on 3 distinguishable classes (H = home team wins, A = away team wins, D = draw).
 
-In the following example, we can see in row 0 that the home team won, which is indicated by a capital "H". The odds that the home team wins were 3.50, 3.30 for a draw and odds of 2.10 that the away team wins. In the last 10 matches the home team won 1 time, finished 3 matches with a draw, lost 6 times and scored 11 goals. Opposing teams were able to win 10 games. Subsequent columns contain the equivalent statistics for the opposing/away team. The second sliding window reduces the total dataset to 7033 rows and generates 21 features.
+In the following example it is shown, that in row 0 the home team won, which is indicated by a capital "H". The odds that the home team wins were 3.50, 3.30 for a draw and odds of 2.10 that the away team wins. In the last 10 matches the home team won 1 time, finished 3 matches with a draw, lost 6 times and scored 11 goals. Opposing teams were able to win 10 games. Subsequent columns contain the equivalent statistics for the opposing/away team. The second sliding window reduces the total dataset to 7033 rows and generates 21 features.
 
 
 \begin{figure}[H]
@@ -131,7 +131,7 @@ In the following example, we can see in row 0 that the home team won, which is i
 \label{fig:results_sliding_window_option2}
 \end{figure}
 
-The last part of the data preparation is to normalize the dataset by rescaling it to make all the elements lie between 0 and 1 thus bringing all the values of numeric columns in the dataset to a common scale. Almost all ML algorithm requires data in numerical form. For that, we'll go through the encoding methods that are necessary for the machine to interpret the data(more specifically categorical data) and learn from it.
+The last part of the data preparation is to normalize the dataset by rescaling it to make all the elements lie between 0 and 1 - thus bringing all the values of numeric columns in the dataset to a common scale. Almost all machine learning algorithms require data in numerical form. In order to do so, the encoding methods, which are necessary for the machine to interpret the data (more specifically categorical data) and learn from it are explained.
 
 \subsection {Normalization}
 Since the input data varies in scale it has to be normalized, except the "result" column which has to be encoded. Normalization is the process which normalizes all input data avoiding negative effects in regards to decisions of a neuron. 
@@ -148,13 +148,12 @@ df_temp = pd.DataFrame(x_scaled, columns=column_names_to_normalize, index = data
 dataframe[column_names_to_normalize] = df_temp
 \end{lstlisting}
 
-This apporach we used for the models and the results, which you are able to read in the following chapters. At the end of this project phase, however, it turned out that the normalization was not optimally solved. The ratio between columns that belong together, like the odds, must be preserved. The first tests with three subgroups have led to first successes. This approach should be continued in the next project phase. It is important to think about the relationship between the different columns and to group them into respective normalization groups. 
-
+This apporach was used for the models and the results, which are described in the following chapters. Towards the end of both project phases, however, it turned out that the normalization was not optimally solved. First, the ratio between columns that belong together, like the odds, must be preserved. The first tests with three subgroups have led to first successes. This approach was continued in the second project phase. It is important to think about the relationship between the different columns and to group them into respective normalization groups. Towards the end of the second project phase however, it was noticed, that due to malfunctioning normalization, the models only predict two classes, instead of three (home-win, away-win, draw). This problem was then also solved by fixing normalization.
 
 
 \subsection {Encoding}
 
-The classes H,A,D respectively the outcome of football match which shall be predicted, have to be encoded before they can be used. Using sklearn this can be achieved with only a few lines of code:
+The classes H,A,D representing the outcome of football match which shall be predicted, have to be encoded before they can be used. Using sklearn this can be achieved with only a few lines of code:
 
 \begin{lstlisting}[language=Python, caption=Python code for encoding classes]
 from sklearn import preprocessing
@@ -168,10 +167,10 @@ dataframe.loc[:,['result']]=le.transform(dataframe['result'])
 
 \section {Prediction of the scored goals}
 
-This part differs from the previous one by changing the "result" column to two columns: "home\_team\_goal" and "away\_team\_goal". It means, we are not predicting the winner or draw but we predict the final scored goals. The scored goals are between 0 and 10 for each team.
+This part differs from the previous one by changing the "result" column to two columns: "home\_team\_goal" and "away\_team\_goal". It means, not the winner or draw is predicted but the final scored goals. The scored goals are between 0 and 10 for each team.
 
 
-The following fig. shows the number of goals scored by each team in a game, we can see in row 0 that the home team scored 2 goals and the away team scored 1 goal. The features are based on the last 10 matches as described in the previous sections.
+The following fig. shows the number of goals scored by each team in a game. It is shown, that in row 0 that the home team scored 2 goals and the away team scored 1 goal. The features are based on the last 10 matches as described in the previous sections.
 
 
 \begin{figure}[H]
@@ -206,7 +205,7 @@ dataframe[column_names_to_normalize] = df_temp
 \subsection {Encoding}
 
 The goals scored initially are between 0 and 10.
-To facilitate prediction before starting encoding, we have reduced the maximum number of goals scored in order to reduce the classes. The following figure shows that choosing to have 5 as the maximum number is a good idea because we have a very small number of rows for 6,7,8,9 and 10 goals scored compared to the others.
+To facilitate prediction before starting encoding, we have reduced the maximum number of goals scored in order to reduce the classes. The following figure shows that choosing to have 5 as the maximum number is a good idea because there is a very small number of rows for 6,7,8,9 and 10 goals scored compared to the others.
 
 \begin{figure}[H]
 \begin{center}
@@ -237,7 +236,7 @@ dataframe['away_team_goal'] = dataframe.apply(lambda row: encode(row['away_team_
 \end{lstlisting}
 
 
-After executing the encode function, we have the following result.
+Executing the encode function results in the following:
 
 \begin{figure}[H]
 \begin{center}

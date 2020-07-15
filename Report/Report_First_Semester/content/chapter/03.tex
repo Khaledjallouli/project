@@ -3,7 +3,7 @@
 \chapter{Feature Selection and Extraction}
 \label{chap:feature_selection_and_extraction}
 %Martin
-As stated in \autoref{chap:data_understanding} the preoject team agreed with the product owners, to focus on the features of soccer matches and their outcomes in this first phase of the project. Features like the number of scored goals per match/ team or the amount of won, lost or draw matches per team could be calculated directly out of the data at hand. Those features build the base dataset for the analyses we want to pursue. In detail, these are: Odds for the home-team winning, odds for a draw, odds for the away-team winning, amount of wins, draws and losses for the home-team, amount of wins, draws and losses for the away-team, amount of scored and received goals of the home-team and amount of scored and received goals for the away-team. In total there are 13 features in the base dataset.
+As stated in \autoref{chap:data_understanding} the project team agreed with the product owners to focus on the features of soccer matches and their outcomes in this first phase of the project. Features like the number of scored goals per match and team or the amount of won, lost or draw matches per team could be calculated directly out of the data at hand. Those features build the base dataset for the analyses wanted. In detail, these are: Odds for the home-team winning, odds for a draw, odds for the away-team winning, amount of wins, draws and losses for the home-team, amount of wins, draws and losses for the away-team, amount of scored and received goals of the home-team and amount of scored and received goals for the away-team. In total there are 13 features in the base dataset.
 \newline
 As said before, features about the ball possession or shot-statistics are stored as XML-documents within the database. After consultation with the product owners the team agreed to extract these values out of the XML-documents to get some additional features. The structure of these XML-documents looks like this:
 \\
@@ -63,6 +63,6 @@ The shoton and shotoff values can be aggregated per match and team to get featur
 \newline
 The additional features after the extraction are: home/away-shots, home/away-shots-on-target, home/away-shot-accuracy, home/away-shot-efficiency. The dataset counts 21 features in total now.
 \\
-The values for ball-possession are given in percent for each half-time and if necessary for the overtime aswell. This way, the total amount of ball-possession in minutes per team can be summed up quite easily for the whole match.
+The values for ball-possession are given in percentage for each half-time and if necessary for the overtime aswell. This way, the total amount of ball-possession in minutes per team can be summed up quite easily for the whole match.
 \newline
-After the extraction the following features are added to the base dataset: home-possession and away-possession. The features add up to 23 in total now.
+After the extraction the following features are added to the base dataset: home-possession and away-possession. The features now add up to 23 in total.
