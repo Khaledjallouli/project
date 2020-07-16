@@ -4,41 +4,40 @@
 \label{cha:Modelling}
 
 %----------------------------------------------------------------------------------------
-In this phase, we have successfully completed the data preparation phase and our five sliding windows are ready to use. \newline \newline
-Modeling is an iterative process, in which we can apply several modeling techniques to the same problem using the default parameters and then fine-tune them until we satisfy our quality criteria. There is not a single model and a single execution which can satisfactorily answer our questions. For this, we tested several models to find the one that best fits our problem.\newline \newline
+Modeling is an iterative process, in which it is possible to apply several modeling techniques to the same problem using the default parameters and then fine-tune them until it satisfies the quality criteria. There is not a single model and a single execution which can satisfactorily answer the questions. For this, several models were tested to find the one that best fits the problem.\newline \newline
 This phase comprises tasks such as select modeling techniques, generate test design, build model and assess model.
 
 \section{Predicting the winner}
 %----------------------------------------------------------------------------------------
 \subsection{Select Modeling Techniques}
 
-As a first step in modeling, we have decided to choose Supervised Machine Learning algorithms, to perform multi-class classification because our objective is to predict the final result of a match between two teams, if there is a win by the home team, a draw or a win by the away team. \newline \newline
-Therefore, we have selected Decision Trees and Neural Networks as techniques in order to test its performance and find the most appropriate for our project.
+As a first step in modeling, Supervised Machine Learning algorithms were tested, to perform multi-class classification. The objective is to predict the final result of a match between two teams, if there is a win by the home team, a draw or a win by the away team. \newline \newline
+Therefore, Decision Trees and Neural Networks were selected as techniques in order to test its performance and find the most appropriate for the project.
 
 %----------------------------------------------------------------------------------------
 \subsection{Generate Test Design}
 
-We have described the generation of a procedure to test the model quality and validity needs before building our models in this section. \newline \newline
-For some modeling techniques, we have divided our dataset into training and test sets, the model is built based on the training set, and its quality is estimated based on the test set, which represents 30\% of the dataset. \newline
-We also took care to not shuffle the dataset as we need to keep the last 10 matches of the sliding windows dataset in the correct order. \newline 
-For others, we only used 5\% for test set, a small amount because we wanted to keep as much data as possible for training and validation. The remaining 95\% are divided into 80\% training and 20\% validation datasets.\newline \newline
-For training the models, we have used automated stop as a strategy, after the training loss did not improve more than 0.0001 for 10 consecutive epochs or the model exceeds 1000 training epochs.\newline 
-We have used the accuracy results as criteria for the models evaluation.
+The reader can find the description of the generation of a procedure to test the model quality and validity needs before building the models in this section. \newline \newline
+For some modeling techniques, the dataset is divided into training and test sets, the model is built based on the training set, and its quality is estimated based on the test set, which represents 30\% of the dataset. \newline
+One important part is not to shuffle the dataset, because keeping the history of the data is very important. \newline 
+For others, 5\% for test set were used, a small amount because  as much data as possible for training and validation should be kept for training. The remaining 95\% are divided into 80\% training and 20\% validation datasets.\newline \newline
+For training the models, automated stop as a strategy was used, after the training loss did not improve more than 0.0001 for 10 consecutive epochs or the model exceeds 1000 training epochs.\newline 
+The accuracy results were used as criteria for the models evaluation.
 
 %----------------------------------------------------------------------------------------
 \subsection{Build Models}
 
-This part describes the methodilogy we have used to build several models before comparing the final results.\newline
+This part describes the used methodology to build several models before comparing the final results.\newline
 Most modeling techniques have a number of parameters that can be adjusted to control the modeling process.\newline \newline
-For our Supervised Machine Learning Algorithms, we have used scikit-learn API to build a Decision Tree and Multi-Layer Perceptron neural network. We have also used the TensorFlow/Keras framework to build basic sequential neural networks.\newline \newline
+For the Supervised Machine Learning Algorithms, scikit-learn API was used to build a Decision Tree and Multi-Layer Perceptron neural network. TensorFlow/Keras framework is used to build basic sequential neural networks.\newline \newline
 The point to be noted is that the Decision Tree can be modified by adjusting the depth of the tree. For Neural Networks,  the number of hidden layers, the neurons per layer and other parameters can be changed as per the experiment requirement.
 
 
 \subsubsection{Decision Tree Classifier}
 
-We have used decision tree classifiers to create one of the many models which is a simple classification representation that learns from the data with a set of if-then-else decision rules \cite{DecisionTree:scikit-learn}. \newline 
-Using the decision tree algorithm, we have started with(at) the root of the tree and divide the data on the feature that resulted in the largest information gain. This procedure can be repeated until the leaves are pure.\newline \newline
-In our project, we set the depth of the tree to four.\newline
+Decision tree classifiers is used to create one of the many models which is a simple classification representation that learns from the data with a set of if-then-else decision rules \cite{DecisionTree:scikit-learn}. \newline 
+Using the decision tree algorithm, the start is at the root of the tree and data has to be divided on the feature that resulted in the largest information gain. This procedure can be repeated until the leaves are pure.\newline \newline
+In the project, the depth of the tree is four.\newline
 The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sliding window option as a dataset, as shown in the following Figure.
 \begin{figure}[H]
 \begin{center}
@@ -52,9 +51,9 @@ The Decision Tree Classifier achieved an accuracy of 52.95\% using the first sli
 \subsubsection{Multi-layer Perceptron}
 
 Multi-layer Perceptron (MLP) is a supervised learning algorithm consisting of three layers: one input layer, one hidden layer, and one output layer. The units in the hidden layer are fully connected to the input layer, and the output layer is fully connected to the hidden layer\cite{PythonMachineLearning}. \newline
-In our MLP Model, we have used the first sliding window with 13 features in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. For the output layer, we have used 3 neurons.\newline \newline 
-To be able to solve our problem, we have used the sigmoid activation function(logistic) for the hidden layers and the softmax activation function for the output layer. We have also used a stochastic gradient descent optimizer as a solver. \newline 
-As we see in the following plot, the graph of the cost function indicating that the training algorithm get converged after the 90th epoch. \newline
+In the MLP Model, the first sliding window with 13 features is used in the input layer, two hidden layers, 52 neurons in the first one and 32 neurons in the second one. The output layer has 3 neurons.\newline \newline 
+To be able to solve the problem, the sigmoid activation function(logistic) is used for the hidden layers and the softmax activation function for the output layer. The stochastic gradient descent optimizer as a solver is also part of the used algorithm. \newline 
+As the reader can see in the following plot, the graph of the cost function indicating that the training algorithm get converged after the 90th epoch. \newline
 \begin{figure}[H]
 \begin{center}
 \includegraphics[scale=.7]{MLPcostfunction.png}
@@ -62,15 +61,15 @@ As we see in the following plot, the graph of the cost function indicating that 
 \caption{MLP Cost function}
 \label{fig:MLPcostfunction}
 \end{figure}
-In the last step, performance of the model is evaluated by calculating the accuracy of the prediction. We have obtained 53.45\% for the training dataset and 52.77\% for the testing dataset.
+In the last step, performance of the model is evaluated by calculating the accuracy of the prediction. The algorithm has obtained 53.45\% for the training dataset and 52.77\% for the testing dataset.
 
 \subsubsection{Keras Sequential Neural Network}
 
-To build the atificial neural network model, we have used Sequential as a model type. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it \cite{buildingDLModel}.\newline
+To build the atificial neural network model, Sequential as a model type is used. Sequential is the easiest way to create a model in Keras. It allows to build a model layer by layer. Each layer has weights that correspond to the layer that follows it \cite{buildingDLModel}.\newline
 The chosen layer type is 'dense'. Dense is a standard layer type that works for most cases. In a dense layer, all the nodes in the previous layer connect to the nodes in the current one.\newline
 As activation function for the hidden layers 'Rectified Linear Activation' (ReLU) was used and 'Softmax' for the output layer. Softmax sums the output up to 1 so that the output can be interpreted as probabilities. The model will then make its prediction according to the option which has a higher probability.\newline \newline
 The first layer needs an input shape. The input shape specifies the number of rows and columns in the input.\newline
-The last layer is the output layer. It has three nodes - one for each option: Home Win, Draw or Away Win, which is for our prediction, as shown in the following line of codes.\newline \newline
+The last layer is the output layer. It has three nodes - one for each option: Home Win, Draw or Away Win, which is for the prediction, as shown in the following line of codes.\newline \newline
 \begin{lstlisting}[language=Python, caption=Python code for simple Keras Sequantial Model Instantiation]
 model = tf.keras.Sequential([ 
   layers.Dense(13, activation='relu',input\_shape=(train\_X.shape[1],)), 
@@ -79,12 +78,12 @@ model = tf.keras.Sequential([
   layers.Dense(3, activation='softmax')
 ])
 \end{lstlisting}
-To compile the model, we have chosen 'Adam' as an optimizer. The Adam Optimizer adjusts the learning rate throughout the training.\newline
+To compile the model, 'Adam' as an optimizer is used. The Adam Optimizer adjusts the learning rate throughout the training.\newline
 The learning rate determines the speed at which the optimal weights for the model are calculated.\newline
-For the loss function, we have selected $sparse\_categorical\_crossentropy$. It is one of the most common choices for classification. The better model performance can be indicated by a lower score.\newline \newline
+For the loss function, $sparse\_categorical\_crossentropy$ is used. It is one of the most common choices for classification. The better model performance can be indicated by a lower score.\newline \newline
 Weight regularization is a regularization technique that provides an approach to reduce over-fitting of a deep learning neural network model on training data and to improve the performance of the model on new data.\newline
-By default, no regularizer is used in layers. For this, we have developed some models with the addition of the L2 regularization, which is the sum of the squared weights.\newline \newline
-In other models, we have added dropout, which is another regularization technique for neural networks, to avoid over-fitting in neural networks. Additionally we combined both regularization techniques in one model. \autoref{table:colab_nn} shows the test-accuracies of the models in comparison.
+By default, no regularizer is used in layers. For this, some models with the addition of the L2 regularization are developed, which is the sum of the squared weights.\newline \newline
+In other models, dropout is added, which is another regularization technique for neural networks, to avoid over-fitting in neural networks. Additionally there are some tests with combining both regularization techniques in one model. \autoref{table:colab_nn} shows the test-accuracies of the models in comparison.
 
 The evolution of the loss-function of the generated models over time can be seen in \autoref{fig:ModelCompare}.
 
@@ -112,8 +111,8 @@ The evolution of the loss-function of the generated models over time can be seen
 \label{table:colab_nn}
 \end{table}
 
-To get a better feeling for the impact the number of hidden layers and the amount of neurons within each hidden layer have on the overall performance of the model, we conducted a series of tests.\newline
-We have tested each sliding window option with a varying amount of hidden layers (\textbf{H1}-\textbf{H4}) and a varying number of neurons per layer (\textbf{H}igh, \textbf{M}edium, \textbf{L}ow and \textbf{F}unnel).\newline
+To get a better feeling for the impact the number of hidden layers and the amount of neurons within each hidden layer have on the overall performance of the model, it is conducted a series of tests.\newline
+The tests are consisting of each sliding window option with a varying amount of hidden layers (\textbf{H1}-\textbf{H4}) and a varying number of neurons per layer (\textbf{H}igh, \textbf{M}edium, \textbf{L}ow and \textbf{F}unnel).\newline
 The architectures of the neural nets can be found in \autoref{section:appendix_a}.\newline
 
 The test-accuracies for the models based on sliding window option 1 can be seen in \autoref{table:nn_variation_sliding_01}.
@@ -210,7 +209,7 @@ The test-accuracies for the models based on sliding window option 1 can be seen 
 \subsection{Regression}
 Regression is used in a problem when the output variable is a real or continuous value, such as "number of goals" in this project. Machine learning regression algorithms are used i.e. multi-output regressor, decision tree regressor, random forest regressor, mlp regressors and Deep Learning multi perceptron neural networks with Keras to perform regression in this project to predict the number of goals scored per each team. Keras is a deep learning library that wraps the efficient numerical libraries Theano and TensorFlow. Main steps involved in the regression are-load a CSV dataset and make it available to Keras, preprocessing, create a neural network models with Keras for a regression problem, apply quality criteria to the models, tune the network topology of models with Keras and selection of the best model among all for making predictions of new data. 
 \subsection{Data Preprocessing part}
-At first the common data preprocessing to our dataset Sliding02goals to normalize the data values is applied.\newline
+At first the common data preprocessing to the dataset Sliding02goals to normalize the data values is applied.\newline
 The goal of normalization is to change the values of numeric columns in the dataset to a common scale, without distorting differences in the ranges of values. The normalization is restricted to the input features and not output features.\newline
 Secondly, data encoding for all the goals in the range of -1 to 1 where -1 means no goal and 1 is for 10 or more goals has been done. 
 The following figure \autoref{figure:regression} describes the encoding done on output data values in preprocessing
@@ -226,10 +225,10 @@ First, there are five different machine learning regression algorithms to build 
 In the project plain multiperceptron model as deep learning artificial neural network algorithm with keras have been used. One can create Keras models and evaluate them with scikit-learn. This library is good at evaluating models and allows to use powerful data preparation and model evaluation schemes with very few lines of code.
 \subsubsection{Multi Output Regressors}
 First one is Multioutput regression which consists of fitting one regressor per target. This is a simple strategy for extending regressors that do not natively support multi-target regression. Multioutput regressor can be created using Gradient Boosting regressor and support vector machines to make predictions on test data \cite{scikit-learn}.\newline
-Gradient Booster works on boosting or improving the week learner predictions and involve a loss function to be optimized, a week learner to make predictions and an additive model to add weak learners to minimize the loss function. It builds an additive model in a forward stage-wise fashion; it allows for the optimization of random distinguishable loss functions. We have kept random state parameter as zero in our model to avoid change in  the random seed given to each tree estimator at each boosting iteration \cite{scikit-learn:GradientBoostingRegressor}.\newline 
+Gradient Booster works on boosting or improving the week learner predictions and involve a loss function to be optimized, a week learner to make predictions and an additive model to add weak learners to minimize the loss function. It builds an additive model in a forward stage-wise fashion; it allows for the optimization of random distinguishable loss functions. We have kept random state parameter as zero in the model to avoid change in  the random seed given to each tree estimator at each boosting iteration \cite{scikit-learn:GradientBoostingRegressor}.\newline 
 Second multioutput regressor used is support vector regressor which uses the same principle as for classification and it relies on kernel functions. For a first try Support Vector Regression (SVR) for a regression problem with two outputs has been tested. This means that Y train data has two values for each sample. Since SVR can only produce a single output, we have used the MultiOutputRegressor from Scikit.
 \subsection{Decision Tree Regressor}
-The decision tree is used to predict simultaneously the noisy x and y observations of a circle given a single underlying feature. As a result, it learns local linear regressions approximating the circle. Decision tree regression observes features of an object and trains a model in the structure of a tree to predict data in the future to produce meaningful continuous output. Continuous output means that the output/result is not discrete, i.e., it is not represented just by a discrete, known set of numbers or values.In our model we have used random state as 0,max depth equals to 1 and mean square error as criterion.\newline
+The decision tree is used to predict simultaneously the noisy x and y observations of a circle given a single underlying feature. As a result, it learns local linear regressions approximating the circle. Decision tree regression observes features of an object and trains a model in the structure of a tree to predict data in the future to produce meaningful continuous output. Continuous output means that the output/result is not discrete, i.e., it is not represented just by a discrete, known set of numbers or values. In the model we have used random state as 0,max depth equals to 1 and mean square error as criterion.\newline
 \subsection{Random Forest Regressor}
 A random forest is an ensemble model that consists of many decision trees. Predictions are made by averaging the predictions of each decision tree. It is a forest that is a collection of trees. This makes random forests a strong modeling technique that’s much more powerful than a single decision tree. Also, Random forest is a bagging technique and not a boosting technique. The trees in random forests are run in parallel. There is no interaction between these trees while building the trees. We have krpt random state as zero while fitting model to the training data.\newline
 \subsection{MLP Regressor}
@@ -254,7 +253,7 @@ The following figure \autoref{figure:dataPrep} describes the encoding done on ou
 \subsubsection{Develop a Baseline Neural Network Model}
 In this section the reader is able to read about creation a baseline neural network model for the regression problem. It is possible to create Keras models and evaluate them with scikit-learn which allows to excels at evaluating models and to use powerful data preparation and model evaluation schemes with very few lines of code.\newline
 Below th reader can find the definition of the function to create the baseline model to be evaluated. It is a simple model that has a densely connected hidden layer with the higher number of neurons as input attributes (30). The network uses good practices such as the rectifier activation function for the hidden layer. No activation function is used for the output layers because it is a regression problem and we are interested in predicting numerical values directly without transform.\newline
-Also, the mean squared error and mean absolute errors are our loss functions which is an estimate of how accurate the neural network is in predicting the test data. We can also used 20 percent of training data for validation and 80\% of the training data is used to test the model, while the remaining 20\% is used for testing purposes.\newline
+Also, the mean squared error and mean absolute errors are the loss functions which is an estimate of how accurate the neural network is in predicting the test data. We can also used 20 percent of training data for validation and 80\% of the training data is used to test the model, while the remaining 20\% is used for testing purposes.\newline
 The baseline artificial neural network model for regression in shown in the following figure \autoref{figure:ANNmodel} \newline
 \begin{figure}[H]
 \begin{center}
@@ -265,7 +264,7 @@ The baseline artificial neural network model for regression in shown in the foll
 \end{figure}
 \subsubsection{Train Model}
 The model has trained for 1000 epochs by keeping validation split of 0.2 and the training and validation accuracy is recorded in the history object.
-The more epochs are run, the lower our MSE and MAE become, indicating improvement in accuracy across each iteration of the model.\newline
+The more epochs are run, the lower the MSE and MAE become, indicating improvement in accuracy across each iteration of the model.\newline
 Keras is calculating both the training loss and validation loss, i.e. the deviation between the predicted y and actual y as measured by the mean squared error. Let’s see the respective losses plot using graph which compare the validation loss and training loss in following figure \autoref{figure:modelLoss} \newline
 \begin{figure}[H]
 \begin{center}
@@ -344,6 +343,6 @@ In figure \ref{mccloss} the reader is able to see, that the loss is higher for t
 \label{mccacc}
 \end{figure}
 
-We have used our self created quality criteria for this problem and have reached accuracy of 80\% using the same quality criteria. No comparison with different models has been done at this point. This would be considered as future work to happen in the next semester. Outcome might be improved using more hidden layers or more neurons or by trying different parameters. Another idea for improving the result is to try the different sliding windows approaches. For this test sliding window 02 has been used by us. 
+We have used the self created quality criteria for this problem and have reached accuracy of 80\% using the same quality criteria. No comparison with different models has been done at this point. This would be considered as future work to happen in the next semester. Outcome might be improved using more hidden layers or more neurons or by trying different parameters. Another idea for improving the result is to try the different sliding windows approaches. For this test sliding window 02 has been used by us. 
 
 
