@@ -29,7 +29,7 @@ The accuracy results were used as criteria for the models evaluation.
 
 This part describes the used methodology to build several models before comparing the final results.\newline
 Most modeling techniques have a number of parameters that can be adjusted to control the modeling process.\newline \newline
-For the Supervised Machine Learning Algorithms, scikit-learn API was used to build a Decision Tree and Multi-Layer Perceptron neural network. TensorFlow/Keras framework is used to build basic sequential neural networks.\newline \newline
+For the Supervised Machine Learning Algorithms, Scikit-learn API was used to build a Decision Tree and Multi-Layer Perceptron neural network. TensorFlow/Keras framework is used to build basic sequential neural networks.\newline \newline
 The point to be noted is that the Decision Tree can be modified by adjusting the depth of the tree. For Neural Networks,  the number of hidden layers, the neurons per layer and other parameters can be changed as per the experiment requirement.
 
 
@@ -222,11 +222,11 @@ The following figure \autoref{figure:regression} describes the encoding done on 
 \end{figure}
 \subsection{Build Models }
 First, there are five different machine learning regression algorithms to build models and then compared their results in term of test accuracy in the evaluation part.\newline \newline
-In the project plain multiperceptron model as deep learning artificial neural network algorithm with keras have been used. One can create Keras models and evaluate them with scikit-learn. This library is good at evaluating models and allows to use powerful data preparation and model evaluation schemes with very few lines of code.
+In the project plain multiperceptron model as deep learning artificial neural network algorithm with keras have been used. One can create Keras models and evaluate them with Scikit-learn. This library is good at evaluating models and allows to use powerful data preparation and model evaluation schemes with very few lines of code.
 \subsubsection{Multi Output Regressors}
 First one is Multioutput regression which consists of fitting one regressor per target. This is a simple strategy for extending regressors that do not natively support multi-target regression. Multioutput regressor can be created using Gradient Boosting regressor and support vector machines to make predictions on test data \cite{scikit-learn}.\newline
 Gradient Booster works on boosting or improving the week learner predictions and involve a loss function to be optimized, a week learner to make predictions and an additive model to add weak learners to minimize the loss function. It builds an additive model in a forward stage-wise fashion; it allows for the optimization of random distinguishable loss functions. The random state parameter as zero in the model is used to avoid change in the random seed given to each tree estimator at each boosting iteration \cite{scikit-learn:GradientBoostingRegressor}.\newline 
-Second multioutput regressor used is support vector regressor which uses the same principle as for classification and it relies on kernel functions. For a first try Support Vector Regression (SVR) for a regression problem with two outputs has been tested. This means that Y train data has two values for each sample. Since SVR can only produce a single output, the MultiOutputRegressor from Scikit is used.
+Second multioutput regressor used is support vector regressor which uses the same principle as for classification and it relies on kernel functions. For a first try Support Vector Regression (SVR) for a regression problem with two outputs has been tested. This means that Y train data has two values for each sample. Since SVR can only produce a single output, the MultiOutput regressor from Scikit is used.
 \subsection{Decision Tree Regressor}
 The decision tree is used to predict simultaneously the noisy x and y observations of a circle given a single underlying feature. As a result, it learns local linear regressions approximating the circle. Decision tree regression observes features of an object and trains a model in the structure of a tree to predict data in the future to produce meaningful continuous output. Continuous output means that the output/result is not discrete, i.e., it is not represented just by a discrete, known set of numbers or values. The used model random state as 0,max depth equals to 1 and mean square error as criterion\cite{tensorflow:tutorial} \cite{tensorflow:keras}.\newline
 \subsection{Random Forest Regressor}
@@ -251,7 +251,7 @@ The following figure \autoref{figure:dataPrep} describes the encoding done on ou
 \label{figure:dataPrep1}
 \end{figure}
 \subsubsection{Develop a Baseline Neural Network Model}
-In this section the reader is able to read about creation a baseline neural network model for the regression problem. It is possible to create Keras models and evaluate them with scikit-learn which allows to excels at evaluating models and to use powerful data preparation and model evaluation schemes with very few lines of code.\newline
+In this section the reader is able to read about creation a baseline neural network model for the regression problem. It is possible to create Keras models and evaluate them with Scikit-learn which allows to excels at evaluating models and to use powerful data preparation and model evaluation schemes with very few lines of code.\newline
 Below th reader can find the definition of the function to create the baseline model to be evaluated. It is a simple model that has a densely connected hidden layer with the higher number of neurons as input attributes (30). The network uses good practices such as the rectifier activation function for the hidden layer. No activation function is used for the output layers because it is a regression problem.\newline
 Also, the mean squared error and mean absolute errors are the loss functions which is an estimate of how accurate the neural network is in predicting the test data. Also 20\% of training data are used for validation and 80\% of the training data is used to test the model, while the remaining 20\% is used for testing purposes.\newline
 The baseline artificial neural network model for regression in shown in the following figure \autoref{figure:ANNmodel} \newline
